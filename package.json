@@ -11,6 +11,10 @@
     "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
+    "@fontsource/dm-serif-display": "^5.2.8",
+    "@fontsource/libre-baskerville": "^5.2.10",
+    "@fontsource/orbitron": "^5.2.8",
+    "@fontsource/playfair-display": "^5.2.8",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.15.1",

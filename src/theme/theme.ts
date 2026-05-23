@@ -1,6 +1,28 @@
 import 'styled-components';
 
-export const theme = {
+export interface AppTheme {
+  colors: {
+    background: string;
+    surface: string;
+    primary: string;
+    primaryGlow: string;
+    secondary: string;
+    text: string;
+    textDim: string;
+    border: string;
+    scanline: string;
+  };
+  fonts: {
+    display: string;
+    mono: string;
+  };
+}
+
+declare module 'styled-components' {
+  export interface DefaultTheme extends AppTheme {}
+}
+
+const dark: AppTheme = {
   colors: {
     background: '#0a0a0f',
     surface: '#13131a',
@@ -10,15 +32,67 @@ export const theme = {
     text: '#e0e0e0',
     textDim: 'rgba(0, 229, 255, 0.35)',
     border: 'rgba(0, 229, 255, 0.12)',
+    scanline: 'rgba(255, 255, 255, 0.04)',
   },
   fonts: {
     display: "'Orbitron', 'Courier New', monospace",
     mono: "'Courier New', Courier, monospace",
   },
-} as const;
+};
 
-export type AppTheme = typeof theme;
+const pink: AppTheme = {
+  colors: {
+    background: '#1a0812',
+    surface: '#2d1020',
+    primary: '#ff6b9d',
+    primaryGlow: 'rgba(255, 107, 157, 0.45)',
+    secondary: '#ffb3c8',
+    text: '#ffe0ec',
+    textDim: 'rgba(255, 107, 157, 0.35)',
+    border: 'rgba(255, 107, 157, 0.12)',
+    scanline: 'rgba(255, 255, 255, 0.04)',
+  },
+  fonts: {
+    display: "'Orbitron', 'Courier New', monospace",
+    mono: "'Courier New', Courier, monospace",
+  },
+};
 
-declare module 'styled-components' {
-  export interface DefaultTheme extends AppTheme {}
-}
+const green: AppTheme = {
+  colors: {
+    background: '#030f07',
+    surface: '#071a0d',
+    primary: '#00ff88',
+    primaryGlow: 'rgba(0, 255, 136, 0.45)',
+    secondary: '#7fffb3',
+    text: '#d0ffe0',
+    textDim: 'rgba(0, 255, 136, 0.35)',
+    border: 'rgba(0, 255, 136, 0.12)',
+    scanline: 'rgba(255, 255, 255, 0.04)',
+  },
+  fonts: {
+    display: "'Orbitron', 'Courier New', monospace",
+    mono: "'Courier New', Courier, monospace",
+  },
+};
+
+const ivory: AppTheme = {
+  colors: {
+    background: '#ffffff',
+    surface: '#f5ede0',
+    primary: '#8b6a4f',
+    primaryGlow: 'rgba(139, 106, 79, 0.3)',
+    secondary: '#c4956a',
+    text: '#3d2b1a',
+    textDim: 'rgba(139, 106, 79, 0.4)',
+    border: 'rgba(139, 106, 79, 0.15)',
+    scanline: 'rgba(0, 0, 0, 0.03)',
+  },
+  fonts: {
+    display: "'Orbitron', 'Courier New', monospace",
+    mono: "'Courier New', Courier, monospace",
+  },
+};
+
+export const themes = { dark, pink, green, ivory };
+export type ThemeName = keyof typeof themes;

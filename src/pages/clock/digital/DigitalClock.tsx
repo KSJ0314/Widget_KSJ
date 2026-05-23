@@ -4,7 +4,8 @@ import {
   ClockContainer,
   ClockInner,
   TimeRow,
-  Digit,
+  DigitGroup,
+  DigitSlot,
   Separator,
   AmPmLabel,
   Divider,
@@ -13,8 +14,8 @@ import {
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
 
 const formatDate = (date: Date) =>
@@ -24,17 +25,24 @@ export const DigitalClock = () => {
   const { ref, width, height } = useContainerSize();
   const time = useClock();
 
-  const fontSize = Math.max(Math.min(width / 6.8, height / 2.4), 12);
+  const fontSize = Math.max(Math.min(width / 8.5, height / 2.4), 12);
+
+  const renderGroup = (digits: string) => (
+    <DigitGroup $size={fontSize}>
+      <DigitSlot $size={fontSize}>{digits[0]}</DigitSlot>
+      <DigitSlot $size={fontSize}>{digits[1]}</DigitSlot>
+    </DigitGroup>
+  );
 
   return (
     <ClockContainer ref={ref}>
       <ClockInner>
         <TimeRow>
-          <Digit $size={fontSize}>{time.hours}</Digit>
+          {renderGroup(time.hours)}
           <Separator $size={fontSize}>:</Separator>
-          <Digit $size={fontSize}>{time.minutes}</Digit>
+          {renderGroup(time.minutes)}
           <Separator $size={fontSize}>:</Separator>
-          <Digit $size={fontSize}>{time.seconds}</Digit>
+          {renderGroup(time.seconds)}
           <AmPmLabel $size={fontSize}>{time.ampm}</AmPmLabel>
         </TimeRow>
         <Divider $size={fontSize} />

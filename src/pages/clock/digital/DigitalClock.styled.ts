@@ -10,6 +10,8 @@ const pulse = keyframes`
   50% { opacity: 0.75; }
 `;
 
+const DIGIT_FONT = "'Orbitron', sans-serif";
+
 export const ClockContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -28,8 +30,8 @@ export const ClockContainer = styled.div`
       0deg,
       transparent,
       transparent 2px,
-      rgba(0, 0, 0, 0.03) 2px,
-      rgba(0, 0, 0, 0.03) 4px
+      ${({ theme }) => theme.colors.scanline} 2px,
+      ${({ theme }) => theme.colors.scanline} 4px
     );
     pointer-events: none;
     z-index: 1;
@@ -50,8 +52,13 @@ export const TimeRow = styled.div`
   line-height: 1;
 `;
 
-export const Digit = styled.span<{ $size: number }>`
-  font-family: ${({ theme }) => theme.fonts.display};
+export const DigitGroup = styled.span<{ $size: number }>`
+  display: inline-flex;
+  gap: ${({ $size }) => Math.round($size * 0.06)}px;
+`;
+
+export const DigitSlot = styled.span<{ $size: number }>`
+  font-family: ${DIGIT_FONT};
   font-size: ${({ $size }) => $size}px;
   font-weight: 900;
   color: ${({ theme }) => theme.colors.primary};
@@ -59,17 +66,19 @@ export const Digit = styled.span<{ $size: number }>`
     0 0 ${({ $size }) => Math.round($size * 0.03)}px ${({ theme }) => theme.colors.primary},
     0 0 ${({ $size }) => Math.round($size * 0.07)}px ${({ theme }) => theme.colors.primaryGlow},
     0 0 ${({ $size }) => Math.round($size * 0.14)}px ${({ theme }) => theme.colors.primaryGlow};
-  letter-spacing: 0.04em;
+  display: inline-block;
+  width: 1ch;
+  text-align: center;
+  overflow: visible;
   animation: ${pulse} 2s ease-in-out infinite;
 `;
 
 export const Separator = styled.span<{ $size: number }>`
-  font-family: ${({ theme }) => theme.fonts.display};
+  font-family: ${DIGIT_FONT};
   font-size: ${({ $size }) => $size}px;
-  font-weight: 900;
   color: ${({ theme }) => theme.colors.primary};
   text-shadow: 0 0 ${({ $size }) => Math.round($size * 0.04)}px ${({ theme }) => theme.colors.primary};
-  padding: 0 ${({ $size }) => Math.round($size * 0.03)}px;
+  padding: 0 ${({ $size }) => Math.round($size * 0.14)}px;
   animation: ${blink} 1s step-start infinite;
   line-height: 1;
 `;
@@ -80,14 +89,14 @@ export const AmPmLabel = styled.span<{ $size: number }>`
   font-weight: 700;
   color: ${({ theme }) => theme.colors.secondary};
   text-shadow: 0 0 ${({ $size }) => Math.round($size * 0.05)}px ${({ theme }) => theme.colors.secondary};
-  margin-left: ${({ $size }) => Math.round($size * 0.08)}px;
+  margin-left: ${({ $size }) => Math.round($size * 0.14)}px;
   align-self: flex-end;
   padding-bottom: ${({ $size }) => Math.round($size * 0.05)}px;
   letter-spacing: 0.06em;
 `;
 
 export const Divider = styled.div<{ $size: number }>`
-  width: ${({ $size }) => Math.round($size * 3.2)}px;
+  width: ${({ $size }) => Math.round($size * 3.6)}px;
   height: 1px;
   background: linear-gradient(
     90deg,

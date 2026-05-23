@@ -1,11 +1,26 @@
-import { ThemeProvider } from './theme';
-import { AppRouter } from './router';
+import { HashRouter, useSearchParams } from 'react-router-dom';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components';
+import { themes, type ThemeName } from './theme/theme';
+import { GlobalStyle } from './theme/GlobalStyle';
+import { AppRoutes } from './router';
+
+const ThemedApp = () => {
+  const [searchParams] = useSearchParams();
+  const name = (searchParams.get('theme') ?? 'dark') as ThemeName;
+  const theme = themes[name] ?? themes.dark;
+  return (
+    <StyledThemeProvider theme={theme}>
+      <GlobalStyle />
+      <AppRoutes />
+    </StyledThemeProvider>
+  );
+};
 
 function App() {
   return (
-    <ThemeProvider>
-      <AppRouter />
-    </ThemeProvider>
+    <HashRouter>
+      <ThemedApp />
+    </HashRouter>
   );
 }
 
