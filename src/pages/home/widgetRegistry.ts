@@ -44,7 +44,7 @@ export const widgets: WidgetMeta[] = [
     name: 'Monthly Calendar',
     category: 'Calendar',
     path: '/calendar/monthly',
-    themes: ['dark', 'pink', 'green', 'ivory'],
+    themes: ['dark', 'pink', 'green', 'ivory', 'paper'],
     component: MonthlyCalendar,
   },
 ];

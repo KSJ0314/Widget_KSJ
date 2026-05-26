@@ -16,6 +16,7 @@ export interface AppTheme {
     display: string;
     mono: string;
   };
+  variant: 'digital' | 'paper';
 }
 
 declare module 'styled-components' {
@@ -38,6 +39,7 @@ const dark: AppTheme = {
     display: "'Orbitron', 'Courier New', monospace",
     mono: "'Courier New', Courier, monospace",
   },
+  variant: 'digital',
 };
 
 const pink: AppTheme = {
@@ -56,6 +58,7 @@ const pink: AppTheme = {
     display: "'Orbitron', 'Courier New', monospace",
     mono: "'Courier New', Courier, monospace",
   },
+  variant: 'digital',
 };
 
 const green: AppTheme = {
@@ -74,6 +77,7 @@ const green: AppTheme = {
     display: "'Orbitron', 'Courier New', monospace",
     mono: "'Courier New', Courier, monospace",
   },
+  variant: 'digital',
 };
 
 const ivory: AppTheme = {
@@ -92,7 +96,27 @@ const ivory: AppTheme = {
     display: "'Orbitron', 'Courier New', monospace",
     mono: "'Courier New', Courier, monospace",
   },
+  variant: 'digital',
 };
 
-export const themes = { dark, pink, green, ivory };
+const paper: AppTheme = {
+  colors: {
+    background: '#ffffff',
+    surface: '#f5f0e8',
+    primary: '#5c3d11',
+    primaryGlow: 'rgba(0, 0, 0, 0.08)',
+    secondary: '#8b6914',
+    text: '#2a1a0a',
+    textDim: 'rgba(92, 61, 17, 0.35)',
+    border: 'rgba(92, 61, 17, 0.2)',
+    scanline: 'rgba(0, 0, 0, 0)',
+  },
+  fonts: {
+    display: "'Playfair Display', Georgia, serif",
+    mono: "'Libre Baskerville', 'Times New Roman', serif",
+  },
+  variant: 'paper',
+};
+
+export const themes = { dark, pink, green, ivory, paper };
 export type ThemeName = keyof typeof themes;
