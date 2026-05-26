@@ -102,7 +102,7 @@ const ivory: AppTheme = {
 const paper: AppTheme = {
   colors: {
     background: '#ffffff',
-    surface: '#f5f0e8',
+    surface: '#faf7f2',
     primary: '#5c3d11',
     primaryGlow: 'rgba(0, 0, 0, 0.08)',
     secondary: '#8b6914',
