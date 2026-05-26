@@ -7,6 +7,7 @@ export const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: ${({ theme }) => theme.colors.background};
 `;
 
 export const Inner = styled.div<{ $cellSize: number }>`

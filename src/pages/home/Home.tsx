@@ -80,7 +80,7 @@ export const Home = () => {
                     key={themeName}
                     onClick={() => navigate(`${path}?theme=${themeName}`)}
                   >
-                    <PreviewArea $bg={themes[themeName].colors.background}>
+                    <PreviewArea>
                       <StyledThemeProvider theme={themes[themeName]}>
                         <Widget />
                       </StyledThemeProvider>
