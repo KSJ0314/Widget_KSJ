@@ -18,7 +18,7 @@ export const Inner = styled.div<{ $cellSize: number }>`
   padding: ${({ $cellSize }) => Math.round($cellSize * 0.5)}px;
   border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: ${({ $cellSize }) => Math.round($cellSize * 0.35)}px;
-  box-shadow: 0 0 20px ${({ theme }) => theme.colors.primaryGlow};
+  box-shadow: 0 0 8px ${({ theme }) => theme.colors.primaryGlow};
 `;
 
 export const CalHeader = styled.div<{ $fs: number }>`
@@ -111,7 +111,7 @@ export const DayCell = styled.div<{
         inset: 10%;
         border-radius: 50%;
         background: ${theme.colors.primary};
-        box-shadow: 0 0 8px ${theme.colors.primaryGlow};
+        box-shadow: 0 0 4px ${theme.colors.primaryGlow};
       }
     `}
 
