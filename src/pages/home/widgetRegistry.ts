@@ -4,6 +4,7 @@ import { DigitalClock } from '../clock/digital';
 import { AnalogClock } from '../clock/analog';
 import { FlipClock } from '../clock/flip';
 import { MonthlyCalendar } from '../calendar/monthly';
+import { WeatherCurrent } from '../weather/current';
 
 export interface WidgetMeta {
   id: string;
@@ -46,5 +47,13 @@ export const widgets: WidgetMeta[] = [
     path: '/calendar/monthly',
     themes: ['dark', 'pink', 'green', 'ivory', 'paper'],
     component: MonthlyCalendar,
+  },
+  {
+    id: 'weather-current',
+    name: 'Weather',
+    category: 'Weather',
+    path: '/weather/current',
+    themes: ['dark', 'pink', 'green', 'ivory', 'lightBlue', 'lightPink', 'lightGreen'],
+    component: WeatherCurrent,
   },
 ];

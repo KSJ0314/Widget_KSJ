@@ -36,7 +36,7 @@ const dark: AppTheme = {
     scanline: 'rgba(255, 255, 255, 0.04)',
   },
   fonts: {
-    display: "'Orbitron', 'Courier New', monospace",
+    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -55,7 +55,7 @@ const pink: AppTheme = {
     scanline: 'rgba(255, 255, 255, 0.04)',
   },
   fonts: {
-    display: "'Orbitron', 'Courier New', monospace",
+    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -74,7 +74,7 @@ const green: AppTheme = {
     scanline: 'rgba(255, 255, 255, 0.04)',
   },
   fonts: {
-    display: "'Orbitron', 'Courier New', monospace",
+    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -93,7 +93,64 @@ const ivory: AppTheme = {
     scanline: 'rgba(0, 0, 0, 0.03)',
   },
   fonts: {
-    display: "'Orbitron', 'Courier New', monospace",
+    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    mono: "'Courier New', Courier, monospace",
+  },
+  variant: 'digital',
+};
+
+const lightBlue: AppTheme = {
+  colors: {
+    background: '#ffffff',
+    surface: '#ddeef8',
+    primary: '#7ab2d8',
+    primaryGlow: 'rgba(122, 178, 216, 0.3)',
+    secondary: '#a8cfe8',
+    text: '#1a3348',
+    textDim: 'rgba(122, 178, 216, 0.65)',
+    border: 'rgba(122, 178, 216, 0.25)',
+    scanline: 'rgba(0, 0, 0, 0.03)',
+  },
+  fonts: {
+    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    mono: "'Courier New', Courier, monospace",
+  },
+  variant: 'digital',
+};
+
+const lightPink: AppTheme = {
+  colors: {
+    background: '#ffffff',
+    surface: '#fcdde3',
+    primary: '#ee8599',
+    primaryGlow: 'rgba(238, 133, 153, 0.3)',
+    secondary: '#f4aabb',
+    text: '#3d1520',
+    textDim: 'rgba(238, 133, 153, 0.65)',
+    border: 'rgba(238, 133, 153, 0.25)',
+    scanline: 'rgba(0, 0, 0, 0.03)',
+  },
+  fonts: {
+    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    mono: "'Courier New', Courier, monospace",
+  },
+  variant: 'digital',
+};
+
+const lightGreen: AppTheme = {
+  colors: {
+    background: '#ffffff',
+    surface: '#d8f2e6',
+    primary: '#6dc49a',
+    primaryGlow: 'rgba(109, 196, 154, 0.3)',
+    secondary: '#98d8ba',
+    text: '#1a3828',
+    textDim: 'rgba(109, 196, 154, 0.65)',
+    border: 'rgba(109, 196, 154, 0.25)',
+    scanline: 'rgba(0, 0, 0, 0.03)',
+  },
+  fonts: {
+    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -118,5 +175,5 @@ const paper: AppTheme = {
   variant: 'paper',
 };
 
-export const themes = { dark, pink, green, ivory, paper };
+export const themes = { dark, pink, green, ivory, paper, lightBlue, lightPink, lightGreen };
 export type ThemeName = keyof typeof themes;
