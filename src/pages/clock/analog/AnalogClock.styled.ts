@@ -11,7 +11,7 @@ export const ClockContainer = styled.div`
 
 export const ClockSvg = styled.svg`
   overflow: visible;
-  filter: drop-shadow(0 0 16px ${({ theme }) => theme.colors.primaryGlow});
+  filter: drop-shadow(0 0 6px ${({ theme }) => theme.colors.primaryGlow});
 `;
 
 export const Face = styled.circle`
