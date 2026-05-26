@@ -1,7 +1,8 @@
 // 날씨 데이터 로딩 훅
-// 흐름: localStorage 위치 → (없으면 geolocation → 카카오 역지오코딩 → 저장) → 날씨 API
+// 흐름: URL 파라미터(lat/lon/city) → (없으면 geolocation → 카카오 역지오코딩) → 날씨 API
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { latLonToGrid } from './kmaGrid';
 import { fetchCurrentWeather, fetchHourlyForecast } from './kmaApi';
 import { getCachedWeather, setCachedWeather } from './weatherCache';
@@ -18,33 +19,8 @@ export type WeatherState =
   | { status: 'ok'; data: WeatherData }
   | { status: 'error'; message: string };
 
-const LOCATION_KEY = 'weather_location';
-
-interface SavedLocation { lat: number; lon: number; city: string }
-
-export function getSavedLocation(): SavedLocation | null {
-  try {
-    const raw = localStorage.getItem(LOCATION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function clearSavedLocation() {
-  try {
-    localStorage.removeItem(LOCATION_KEY);
-  } catch {}
-}
-
-function saveLocation(lat: number, lon: number, city: string) {
-  try {
-    localStorage.setItem(LOCATION_KEY, JSON.stringify({ lat, lon, city }));
-  } catch {}
-}
-
 /** 카카오 로컬 API로 역지오코딩 */
-async function reverseGeocode(lat: number, lon: number): Promise<string> {
+export async function reverseGeocode(lat: number, lon: number): Promise<string> {
   try {
     const res = await fetch(
       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lon}&y=${lat}`,
@@ -60,7 +36,7 @@ async function reverseGeocode(lat: number, lon: number): Promise<string> {
 }
 
 /** 브라우저 geolocation으로 현재 위치를 가져온다 */
-function getCurrentPosition(): Promise<GeolocationPosition> {
+export function getCurrentPosition(): Promise<GeolocationPosition> {
   return new Promise((resolve, reject) =>
     navigator.geolocation.getCurrentPosition(resolve, reject, {
       timeout: 8000,
@@ -70,8 +46,9 @@ function getCurrentPosition(): Promise<GeolocationPosition> {
   );
 }
 
-export function useWeather(refreshKey = 0): WeatherState {
+export function useWeather(): WeatherState {
   const [state, setState] = useState<WeatherState>({ status: 'loading', step: '위치 확인 중...' });
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     let cancelled = false;
@@ -80,12 +57,17 @@ export function useWeather(refreshKey = 0): WeatherState {
       try {
         let lat: number, lon: number, city: string;
 
-        // 1. localStorage 저장된 위치 우선 사용
-        const saved = getSavedLocation();
-        if (saved) {
-          ({ lat, lon, city } = saved);
+        // 1. URL 파라미터 우선 사용
+        const paramLat = searchParams.get('lat');
+        const paramLon = searchParams.get('lon');
+        const paramCity = searchParams.get('city');
+
+        if (paramLat && paramLon) {
+          lat = parseFloat(paramLat);
+          lon = parseFloat(paramLon);
+          city = paramCity ?? '알 수 없는 위치';
         } else {
-          // 2. geolocation → 카카오 역지오코딩 → 저장
+          // 2. geolocation → 카카오 역지오코딩
           setState({ status: 'loading', step: '위치 확인 중...' });
           const pos = await getCurrentPosition();
           ({ latitude: lat, longitude: lon } = pos.coords);
@@ -94,8 +76,6 @@ export function useWeather(refreshKey = 0): WeatherState {
           setState({ status: 'loading', step: '지역 확인 중...' });
           city = await reverseGeocode(lat, lon);
           if (cancelled) return;
-
-          saveLocation(lat, lon, city);
         }
 
         // 3. Firestore 캐시 확인
@@ -133,7 +113,7 @@ export function useWeather(refreshKey = 0): WeatherState {
 
     load();
     return () => { cancelled = true; };
-  }, [refreshKey]);
+  }, [searchParams]);
 
   return state;
 }

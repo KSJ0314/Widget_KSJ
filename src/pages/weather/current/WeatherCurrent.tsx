@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { useTheme } from 'styled-components';
 import { useContainerSize } from '../../../hooks/useContainerSize';
-import { useWeather, clearSavedLocation } from '../useWeather';
+import { useWeather } from '../useWeather';
 import { getCondition } from '../weatherCode';
 import { WeatherIcon } from '../WeatherIcon';
 import { DAYS_SHORT } from '../../../utils/date';
@@ -11,7 +10,7 @@ import {
   CenterCol,
   RightCol, Temperature, StatsLine, StatItem, StatLabel, StatValue,
   ForecastScroll, ForecastItem, ForecastTime, ForecastTemp, ForecastPop, ForecastIconWrap,
-  StatusText, RefreshBtn,
+  StatusText,
 } from './WeatherCurrent.styled';
 
 /** HHmm 문자열을 "오전/오후 H시" 형태로 변환 */
@@ -24,14 +23,8 @@ function formatTime(time: string): string {
 
 export const WeatherCurrent = () => {
   const { ref, width, height } = useContainerSize();
-  const [refreshKey, setRefreshKey] = useState(0);
-  const state = useWeather(refreshKey);
+  const state = useWeather();
   const theme = useTheme();
-
-  const handleRefresh = () => {
-    clearSavedLocation();
-    setRefreshKey(k => k + 1);
-  };
 
   const u = Math.max(Math.min(width / 22, height / 20), 8);
 
@@ -40,7 +33,6 @@ export const WeatherCurrent = () => {
 
   return (
     <Wrapper ref={ref}>
-      <RefreshBtn $u={u} onClick={handleRefresh} title="위치 갱신">⟳</RefreshBtn>
       {state.status !== 'ok' ? (
         <StatusText $u={u}>
           {state.status === 'error' ? state.message : state.step}

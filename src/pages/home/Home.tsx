@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { widgets } from './widgetRegistry';
 import { themes } from '../../theme/theme';
+import { getCurrentPosition, reverseGeocode } from '../weather/useWeather';
 import {
   HomeContainer,
   Header,
@@ -48,9 +49,18 @@ export const Home = () => {
   const grouped = groupByCategory();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  const copyUrl = (e: React.MouseEvent, path: string, themeName: string) => {
+  const copyUrl = async (e: React.MouseEvent, path: string, themeName: string, requiresLocation?: boolean) => {
     e.stopPropagation();
-    const url = `${window.location.origin}${import.meta.env.BASE_URL}#${path}?theme=${themeName}`;
+    let extra = '';
+    if (requiresLocation) {
+      try {
+        const pos = await getCurrentPosition();
+        const { latitude: lat, longitude: lon } = pos.coords;
+        const city = await reverseGeocode(lat, lon);
+        extra = `&lat=${lat}&lon=${lon}&city=${encodeURIComponent(city)}`;
+      } catch {}
+    }
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}#${path}?theme=${themeName}${extra}`;
     navigator.clipboard.writeText(url);
     const key = `${path}-${themeName}`;
     setCopiedKey(key);
@@ -68,7 +78,7 @@ export const Home = () => {
         <CategorySection key={category}>
           <CategoryHeader>{category}</CategoryHeader>
 
-          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget }) => (
+          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation }) => (
             <WidgetSection key={id}>
               <SectionHeader>
                 <SectionName>{name}</SectionName>
@@ -89,7 +99,7 @@ export const Home = () => {
                       {themeName}
                       <CopyButton
                         $copied={copiedKey === `${path}-${themeName}`}
-                        onClick={(e) => copyUrl(e, path, themeName)}
+                        onClick={(e) => copyUrl(e, path, themeName, requiresLocation)}
                         title="URL 복사"
                       >
                         {copiedKey === `${path}-${themeName}` ? <CheckIcon /> : <ClipboardIcon />}

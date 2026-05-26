@@ -13,6 +13,7 @@ export interface WidgetMeta {
   path: string;
   themes: ThemeName[];
   component: ComponentType;
+  requiresLocation?: boolean;
 }
 
 export const widgets: WidgetMeta[] = [
@@ -55,5 +56,6 @@ export const widgets: WidgetMeta[] = [
     path: '/weather/current',
     themes: ['dark', 'pink', 'green', 'ivory', 'lightBlue', 'lightPink', 'lightGreen'],
     component: WeatherCurrent,
+    requiresLocation: true,
   },
 ];
