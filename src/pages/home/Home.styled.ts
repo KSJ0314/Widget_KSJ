@@ -141,4 +141,24 @@ export const ThemeBadge = styled.div<{ $color: string }>`
   background: ${({ theme }) => theme.colors.surface};
   color: ${({ $color }) => $color};
   border-top: 1px solid ${({ theme }) => theme.colors.border};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const CopyButton = styled.button<{ $copied: boolean }>`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  color: ${({ $copied, theme }) => $copied ? theme.colors.secondary : theme.colors.text};
+  opacity: ${({ $copied }) => $copied ? 1 : 0.6};
+  transition: opacity 0.2s, color 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 1;
+  }
 `;
