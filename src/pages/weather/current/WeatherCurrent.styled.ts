@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -156,6 +157,21 @@ export const ForecastPop = styled.span<{ $u: number }>`
 
 export const ForecastIconWrap = styled.div<{ $u: number }>`
   margin: ${({ $u }) => $u * 0.8}px 0;
+`;
+
+export const RefreshBtn = styled.button<{ $u: number }>`
+  position: absolute;
+  bottom: ${({ $u }) => $u * 0.6}px;
+  right: ${({ $u }) => $u * 0.8}px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: ${({ $u }) => $u * 0.3}px;
+  color: ${({ theme }) => theme.colors.border};
+  font-size: ${({ $u }) => $u * 0.9}px;
+  line-height: 1;
+  transition: color 0.2s;
+  &:hover { color: ${({ theme }) => theme.colors.primary}; }
 `;
 
 /* 로딩 / 에러 */
