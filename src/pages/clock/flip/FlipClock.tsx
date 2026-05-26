@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useContainerSize } from '../../../hooks/useContainerSize';
+import { DAYS_SHORT } from '../../../utils/date';
 import {
   Wrapper,
   CardsRow,
@@ -12,8 +13,6 @@ import {
   DayLabel,
   Digit,
 } from './FlipClock.styled';
-
-const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -88,7 +87,7 @@ export const FlipClock = () => {
   return (
     <Wrapper ref={ref}>
       <CardsRow $size={size}>
-        <FlipCard value={pad(h)} size={size} dayLabel={DAYS[day]} />
+        <FlipCard value={pad(h)} size={size} dayLabel={DAYS_SHORT[day].toUpperCase()} />
         <FlipCard value={pad(m)} size={size} />
       </CardsRow>
     </Wrapper>

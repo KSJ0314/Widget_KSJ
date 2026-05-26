@@ -6,7 +6,7 @@ export const ClockContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.colors.background};
+
 `;
 
 export const ClockSvg = styled.svg`

@@ -1,5 +1,6 @@
 import { useClock } from '../useClock';
 import { useContainerSize } from '../../../hooks/useContainerSize';
+import { DAYS_SHORT, MONTHS_SHORT } from '../../../utils/date';
 import {
   ClockContainer,
   ClockInner,
@@ -12,14 +13,8 @@ import {
   DateLabel,
 } from './DigitalClock.styled';
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-];
-
 const formatDate = (date: Date) =>
-  `${DAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+  `${DAYS_SHORT[date.getDay()]}, ${MONTHS_SHORT[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
 export const DigitalClock = () => {
   const { ref, width, height } = useContainerSize();

@@ -16,7 +16,7 @@ export const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => theme.colors.background};
+
 `;
 
 export const CardsRow = styled.div<{ $size: number }>`

@@ -3,6 +3,7 @@ import type { ThemeName } from '../../theme/theme';
 import { DigitalClock } from '../clock/digital';
 import { AnalogClock } from '../clock/analog';
 import { FlipClock } from '../clock/flip';
+import { MonthlyCalendar } from '../calendar/monthly';
 
 export interface WidgetMeta {
   id: string;
@@ -37,5 +38,13 @@ export const widgets: WidgetMeta[] = [
     path: '/clock/flip',
     themes: ['dark', 'pink', 'green', 'ivory'],
     component: FlipClock,
+  },
+  {
+    id: 'calendar-monthly',
+    name: 'Monthly Calendar',
+    category: 'Calendar',
+    path: '/calendar/monthly',
+    themes: ['dark', 'pink', 'green', 'ivory'],
+    component: MonthlyCalendar,
   },
 ];

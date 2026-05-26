@@ -124,11 +124,12 @@ export const ThemeCard = styled.div`
   }
 `;
 
-export const PreviewArea = styled.div`
+export const PreviewArea = styled.div<{ $bg: string }>`
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   position: relative;
+  background: ${({ $bg }) => $bg};
 `;
 
 export const ThemeBadge = styled.div<{ $color: string }>`

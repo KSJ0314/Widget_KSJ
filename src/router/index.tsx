@@ -3,6 +3,7 @@ import { Home } from '../pages/home';
 import { DigitalClock } from '../pages/clock/digital';
 import { AnalogClock } from '../pages/clock/analog';
 import { FlipClock } from '../pages/clock/flip';
+import { MonthlyCalendar } from '../pages/calendar/monthly';
 
 export const AppRoutes = () => (
   <Routes>
@@ -11,5 +12,6 @@ export const AppRoutes = () => (
     <Route path="/clock/analog" element={<AnalogClock />} />
     <Route path="/clock/flip" element={<FlipClock />} />
     <Route path="/clock" element={<Navigate to="/clock/digital" replace />} />
+    <Route path="/calendar/monthly" element={<MonthlyCalendar />} />
   </Routes>
 );
