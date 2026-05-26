@@ -26,7 +26,11 @@ export const WeatherCurrent = () => {
   const state = useWeather();
   const theme = useTheme();
 
-  const u = Math.max(Math.min(width / 22, height / 20), 8);
+  const RATIO = 16 / 9;
+  const cardWidth = Math.min(width, height * RATIO);
+  const cardHeight = cardWidth / RATIO;
+  const u = Math.max(Math.min(cardWidth / 22, cardHeight / 20), 8);
+  const itemWidth = (cardWidth - u * 0.8 * 2 - u * 3 * 2 - u * 4 * 4) / 5;
 
   const today = new Date();
   const dateStr = `${DAYS_SHORT[today.getDay()].toUpperCase()} ${today.getMonth() + 1}/${today.getDate()}`;
@@ -42,7 +46,7 @@ export const WeatherCurrent = () => {
         const condition = getCondition(data.hourly[0]?.sky ?? 1, data.current.pty);
 
         return (
-          <Card $u={u}>
+          <Card $u={u} $w={cardWidth} $h={cardHeight}>
             {/* 현재 날씨: 좌(날짜+지역) / 중(아이콘) / 우(온도+통계) */}
             <CurrentGrid $u={u}>
               <LeftCol $u={u}>
@@ -78,10 +82,10 @@ export const WeatherCurrent = () => {
               {data.hourly.map((f, i) => {
                 const fc = getCondition(f.sky, f.pty);
                 return (
-                  <ForecastItem key={i} $u={u}>
+                  <ForecastItem key={i} $u={u} $itemW={itemWidth}>
                     <ForecastTime $u={u}>{formatTime(f.time)}</ForecastTime>
                     <ForecastIconWrap $u={u}>
-                      <WeatherIcon type={fc.icon} size={u * 2.2} color={theme.colors.primary} />
+                      <WeatherIcon type={fc.icon} size={u * 2.8} color={theme.colors.primary} />
                     </ForecastIconWrap>
                     <ForecastTemp $u={u}>{f.temp}°</ForecastTemp>
                     {f.pop > 0 && <ForecastPop $u={u}>💧{f.pop}%</ForecastPop>}

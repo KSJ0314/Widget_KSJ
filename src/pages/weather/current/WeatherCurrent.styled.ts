@@ -11,12 +11,12 @@ export const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-export const Card = styled.div<{ $u: number }>`
-  width: 100%;
-  height: 100%;
+export const Card = styled.div<{ $u: number; $w: number; $h: number }>`
+  width: ${({ $w }) => $w}px;
+  height: ${({ $h }) => $h}px;
   display: flex;
   flex-direction: column;
-  padding: ${({ $u }) => $u}px ${({ $u }) => $u * 1.2}px;
+  padding: ${({ $u }) => $u}px ${({ $u }) => $u * 0.8}px;
   gap: ${({ $u }) => $u * 0.6}px;
   box-sizing: border-box;
 `;
@@ -117,18 +117,18 @@ export const ForecastScroll = styled.div<{ $u: number }>`
   overflow-x: auto;
   overflow-y: hidden;
   border-top: 1px solid ${({ theme }) => theme.colors.border};
-  padding: ${({ $u }) => $u * 0.5}px ${({ $u }) => $u * 3}px 0;
+  padding: ${({ $u }) => $u * 0.4}px ${({ $u }) => $u * 2}px 0;
   gap: ${({ $u }) => $u * 4}px;
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 `;
 
-export const ForecastItem = styled.div<{ $u: number }>`
+export const ForecastItem = styled.div<{ $u: number; $itemW: number }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: ${({ $u }) => $u * 0.2}px;
-  flex: 0 0 calc((100% - ${({ $u }) => $u * 16}px) / 5);
+  flex: 0 0 ${({ $itemW }) => $itemW}px;
   padding: ${({ $u }) => $u * 0.4}px 0;
   border-radius: ${({ $u }) => $u * 0.4}px;
   font-family: ${({ theme }) => theme.fonts.display};
@@ -138,6 +138,7 @@ export const ForecastTime = styled.span<{ $u: number }>`
   font-size: ${({ $u }) => $u * 0.6}px;
   color: ${({ theme }) => theme.colors.textDim};
   letter-spacing: 0.04em;
+  white-space: nowrap;
 `;
 
 
