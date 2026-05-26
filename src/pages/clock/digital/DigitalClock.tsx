@@ -25,7 +25,7 @@ export const DigitalClock = () => {
   const { ref, width, height } = useContainerSize();
   const time = useClock();
 
-  const fontSize = Math.max(Math.min(width / 8.5, height / 2.4), 12);
+  const fontSize = Math.max(Math.min(width / 7.5, height / 1.8), 12);
 
   const renderGroup = (digits: string) => (
     <DigitGroup $size={fontSize}>

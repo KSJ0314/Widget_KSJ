@@ -31,7 +31,7 @@ export const AnalogClock = () => {
   const { ref, width, height } = useContainerSize();
   const { hourAngle, minuteAngle, secondAngle } = useAnalogTime();
 
-  const size = Math.min(width, height) * 0.82;
+  const size = Math.min(width, height) * 0.92;
 
   return (
     <ClockContainer ref={ref}>

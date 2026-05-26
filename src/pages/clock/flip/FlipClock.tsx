@@ -83,7 +83,7 @@ const FlipCard = ({ value, size, dayLabel }: FlipCardProps) => {
 export const FlipClock = () => {
   const { ref, width, height } = useContainerSize();
   const { h, m, day } = useFlipClock();
-  const size = Math.max(Math.min(width * 0.28, height * 0.72), 48);
+  const size = Math.max(Math.min(width * 0.35, height * 0.61), 48);
 
   return (
     <Wrapper ref={ref}>
