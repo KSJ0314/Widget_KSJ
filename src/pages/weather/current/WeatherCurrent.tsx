@@ -1,5 +1,6 @@
 import { useTheme } from 'styled-components';
 import { useContainerSize } from '../../../hooks/useContainerSize';
+import { useDragScroll } from '../../../hooks/useDragScroll';
 import { useWeather } from '../useWeather';
 import { getCondition } from '../weatherCode';
 import { WeatherIcon } from '../WeatherIcon';
@@ -23,6 +24,7 @@ function formatTime(time: string): string {
 
 export const WeatherCurrent = () => {
   const { ref, width, height } = useContainerSize();
+  const drag = useDragScroll<HTMLDivElement>();
   const state = useWeather();
   const theme = useTheme();
 
@@ -81,7 +83,14 @@ export const WeatherCurrent = () => {
             </CurrentGrid>
 
             {/* 시간별 예보 (가로 스크롤) */}
-            <ForecastScroll $u={u}>
+            <ForecastScroll
+                $u={u}
+                ref={drag.ref}
+                onMouseDown={drag.onMouseDown}
+                onMouseLeave={drag.onMouseLeave}
+                onMouseUp={drag.onMouseUp}
+                onMouseMove={drag.onMouseMove}
+              >
               {data.hourly.map((f, i) => {
                 const fc = getCondition(f.sky, f.pty);
                 return (

@@ -124,6 +124,8 @@ export const ForecastScroll = styled.div<{ $u: number }>`
   padding: ${({ $u }) => $u * 0.4}px ${({ $u }) => $u * 2}px 0;
   gap: ${({ $u }) => $u * 4}px;
   scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
   &::-webkit-scrollbar { display: none; }
 `;
 
