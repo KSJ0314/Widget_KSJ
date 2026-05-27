@@ -14,6 +14,7 @@ export interface WidgetMeta {
   themes: ThemeName[];
   component: ComponentType;
   requiresLocation?: boolean;
+  description?: string;
 }
 
 export const widgets: WidgetMeta[] = [
@@ -57,5 +58,6 @@ export const widgets: WidgetMeta[] = [
     themes: ['dark', 'pink', 'green', 'ivory', 'lightBlue', 'lightPink', 'lightGreen'],
     component: WeatherCurrent,
     requiresLocation: true,
+    description: 'URL 복사 시 현재 위치가 자동으로 포함됩니다. 복사된 URL을 임베드하면 해당 지역 날씨로 고정됩니다.',
   },
 ];

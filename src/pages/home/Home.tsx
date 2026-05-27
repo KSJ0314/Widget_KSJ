@@ -18,6 +18,8 @@ import {
   ThemeRow,
   ThemeCard,
   PreviewArea,
+  PreviewScaler,
+  WidgetDescription,
   ThemeBadge,
   CopyButton,
 } from './Home.styled';
@@ -78,12 +80,13 @@ export const Home = () => {
         <CategorySection key={category}>
           <CategoryHeader>{category}</CategoryHeader>
 
-          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation }) => (
+          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, description }) => (
             <WidgetSection key={id}>
               <SectionHeader>
                 <SectionName>{name}</SectionName>
                 <SectionCategory>{cat}</SectionCategory>
               </SectionHeader>
+              {description && <WidgetDescription>{description}</WidgetDescription>}
               <ThemeRow>
                 {widgetThemes.map(themeName => (
                   <ThemeCard
@@ -91,9 +94,11 @@ export const Home = () => {
                     onClick={() => navigate(`${path}?theme=${themeName}`)}
                   >
                     <PreviewArea>
-                      <StyledThemeProvider theme={themes[themeName]}>
-                        <Widget />
-                      </StyledThemeProvider>
+                      <PreviewScaler>
+                        <StyledThemeProvider theme={themes[themeName]}>
+                          <Widget />
+                        </StyledThemeProvider>
+                      </PreviewScaler>
                     </PreviewArea>
                     <ThemeBadge $color={themes[themeName].colors.primary}>
                       {themeName}

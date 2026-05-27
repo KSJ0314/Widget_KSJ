@@ -102,6 +102,16 @@ export const SectionCategory = styled.span`
   opacity: 0.8;
 `;
 
+export const WidgetDescription = styled.p`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 13px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textDim};
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+  margin-bottom: 14px;
+`;
+
 export const ThemeRow = styled.div`
   display: flex;
   gap: 16px;
@@ -129,6 +139,14 @@ export const PreviewArea = styled.div`
   aspect-ratio: 16 / 9;
   overflow: hidden;
   position: relative;
+`;
+
+export const PreviewScaler = styled.div`
+  width: 400px;
+  height: 225px;
+  transform: scale(0.55);
+  transform-origin: top left;
+  pointer-events: none;
 `;
 
 export const ThemeBadge = styled.div<{ $color: string }>`
