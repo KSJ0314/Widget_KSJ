@@ -22,7 +22,7 @@ export const Card = styled.div<{ $u: number; $w: number; $h: number }>`
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ $u }) => $u * 0.8}px;
-  box-shadow: 0 2px 10px ${({ theme }) => theme.colors.primaryGlow};
+  box-shadow: 0 2px 10px ${({ theme }) => theme.colors.accentGlow};
 `;
 
 /* 현재 날씨 영역 — 3열 그리드 (좌: 날짜+지역 / 중: 아이콘 / 우: 온도+통계) */
@@ -53,7 +53,7 @@ export const CityText = styled.span<{ $u: number }>`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $u }) => $u * 0.9}px;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.accent};
   letter-spacing: 0.04em;
 `;
 
@@ -78,10 +78,10 @@ export const Temperature = styled.span<{ $u: number }>`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $u }) => $u * 2.2}px;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.accent};
   line-height: 1;
   letter-spacing: -0.02em;
-  text-shadow: 0 0 ${({ $u }) => $u * 1.2}px ${({ theme }) => theme.colors.primaryGlow};
+  text-shadow: 0 0 ${({ $u }) => $u * 1.2}px ${({ theme }) => theme.colors.accentGlow};
 `;
 
 /* 습도/풍속/강수를 한 줄로 나열 */
@@ -140,7 +140,7 @@ export const ForecastItem = styled.div<{ $u: number; $itemW: number }>`
 
 export const ForecastTime = styled.span<{ $u: number; $mini: boolean }>`
   font-size: ${({ $u }) => $u * 0.6}px;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.accent};
   font-weight: ${({ $mini }) => ($mini ? 700 : 400)};
   letter-spacing: 0.04em;
   white-space: nowrap;
@@ -149,7 +149,7 @@ export const ForecastTime = styled.span<{ $u: number; $mini: boolean }>`
 
 export const ForecastTemp = styled.span<{ $u: number; $mini: boolean }>`
   font-size: ${({ $u, $mini }) => ($mini ? $u * 0.9 : $u * 0.72)}px;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.accent};
   font-weight: 600;
   text-align: center;
 `;

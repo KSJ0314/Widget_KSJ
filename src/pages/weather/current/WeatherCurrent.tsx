@@ -58,7 +58,7 @@ export const WeatherCurrent = () => {
               </LeftCol>
 
               <CenterCol>
-                <WeatherIcon type={condition.icon} size={u * 6} color={theme.colors.primary} />
+                <WeatherIcon type={condition.icon} size={u * 6} color={theme.colors.accent} />
               </CenterCol>
 
               <RightCol $u={u}>
@@ -88,7 +88,7 @@ export const WeatherCurrent = () => {
                   <ForecastItem key={i} $u={u} $itemW={itemWidth}>
                     <ForecastTime $u={u} $mini={isMini}>{formatTime(f.time)}</ForecastTime>
                     <ForecastIconWrap $u={u}>
-                      <WeatherIcon type={fc.icon} size={u * 2.8} color={theme.colors.primary} />
+                      <WeatherIcon type={fc.icon} size={u * 2.8} color={theme.colors.accent} />
                     </ForecastIconWrap>
                     <ForecastTemp $u={u} $mini={isMini}>{f.temp}°</ForecastTemp>
                     {f.pop > 0 && <ForecastPop $u={u} $mini={isMini}>💧{f.pop}%</ForecastPop>}
