@@ -19,6 +19,10 @@ export const Card = styled.div<{ $u: number; $w: number; $h: number }>`
   padding: ${({ $u }) => $u}px ${({ $u }) => $u * 0.8}px;
   gap: ${({ $u }) => $u * 0.6}px;
   box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ $u }) => $u * 0.8}px;
+  box-shadow: 0 2px 10px ${({ theme }) => theme.colors.primaryGlow};
 `;
 
 /* 현재 날씨 영역 — 3열 그리드 (좌: 날짜+지역 / 중: 아이콘 / 우: 온도+통계) */
@@ -81,8 +85,8 @@ export const Temperature = styled.span<{ $u: number }>`
 `;
 
 /* 습도/풍속/강수를 한 줄로 나열 */
-export const StatsLine = styled.div<{ $u: number }>`
-  display: flex;
+export const StatsLine = styled.div<{ $u: number; $mini: boolean }>`
+  display: ${({ $mini }) => ($mini ? 'none' : 'flex')};
   align-items: center;
   gap: ${({ $u }) => $u * 0.8}px;
   font-family: ${({ theme }) => theme.fonts.display};
@@ -134,22 +138,24 @@ export const ForecastItem = styled.div<{ $u: number; $itemW: number }>`
   font-family: ${({ theme }) => theme.fonts.display};
 `;
 
-export const ForecastTime = styled.span<{ $u: number }>`
+export const ForecastTime = styled.span<{ $u: number; $mini: boolean }>`
   font-size: ${({ $u }) => $u * 0.6}px;
-  color: ${({ theme }) => theme.colors.textDim};
+  color: ${({ theme }) => theme.colors.primary};
+  font-weight: ${({ $mini }) => ($mini ? 700 : 400)};
   letter-spacing: 0.04em;
   white-space: nowrap;
 `;
 
 
-export const ForecastTemp = styled.span<{ $u: number }>`
-  font-size: ${({ $u }) => $u * 0.72}px;
+export const ForecastTemp = styled.span<{ $u: number; $mini: boolean }>`
+  font-size: ${({ $u, $mini }) => ($mini ? $u * 0.9 : $u * 0.72)}px;
   color: ${({ theme }) => theme.colors.primary};
   font-weight: 600;
   text-align: center;
 `;
 
-export const ForecastPop = styled.span<{ $u: number }>`
+export const ForecastPop = styled.span<{ $u: number; $mini: boolean }>`
+  display: ${({ $mini }) => ($mini ? 'none' : 'block')};
   font-size: ${({ $u }) => $u * 0.4}px;
   color: ${({ theme }) => theme.colors.textDim};
   text-align: center;

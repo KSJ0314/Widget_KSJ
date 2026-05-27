@@ -27,10 +27,13 @@ export const WeatherCurrent = () => {
   const theme = useTheme();
 
   const RATIO = 16 / 9;
-  const cardWidth = Math.min(width, height * RATIO);
+  const marginY = 8;
+  const marginX = 8;
+  const cardWidth = Math.min(width - marginX * 2, (height - marginY * 2) * RATIO);
   const cardHeight = cardWidth / RATIO;
   const u = Math.max(Math.min(cardWidth / 22, cardHeight / 20), 8);
   const itemWidth = (cardWidth - u * 0.8 * 2 - u * 3 * 2 - u * 4 * 4) / 5;
+  const isMini = u < 14;
 
   const today = new Date();
   const dateStr = `${DAYS_SHORT[today.getDay()].toUpperCase()} ${today.getMonth() + 1}/${today.getDate()}`;
@@ -60,7 +63,7 @@ export const WeatherCurrent = () => {
 
               <RightCol $u={u}>
                 <Temperature $u={u}>{data.current.temp}°</Temperature>
-                <StatsLine $u={u}>
+                <StatsLine $u={u} $mini={isMini}>
                   <StatItem $u={u}>
                     <StatValue $u={u}>{data.current.humidity}%</StatValue>
                     <StatLabel $u={u}>습도</StatLabel>
@@ -83,12 +86,12 @@ export const WeatherCurrent = () => {
                 const fc = getCondition(f.sky, f.pty);
                 return (
                   <ForecastItem key={i} $u={u} $itemW={itemWidth}>
-                    <ForecastTime $u={u}>{formatTime(f.time)}</ForecastTime>
+                    <ForecastTime $u={u} $mini={isMini}>{formatTime(f.time)}</ForecastTime>
                     <ForecastIconWrap $u={u}>
                       <WeatherIcon type={fc.icon} size={u * 2.8} color={theme.colors.primary} />
                     </ForecastIconWrap>
-                    <ForecastTemp $u={u}>{f.temp}°</ForecastTemp>
-                    {f.pop > 0 && <ForecastPop $u={u}>💧{f.pop}%</ForecastPop>}
+                    <ForecastTemp $u={u} $mini={isMini}>{f.temp}°</ForecastTemp>
+                    {f.pop > 0 && <ForecastPop $u={u} $mini={isMini}>💧{f.pop}%</ForecastPop>}
                   </ForecastItem>
                 );
               })}
