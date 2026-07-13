@@ -21,6 +21,8 @@ export interface AppTheme {
     mono: string;
     /** 시계 숫자 전용. 값이 없으면 각 위젯의 기본 폰트를 쓴다 */
     digit?: string;
+    /** 폰트마다 글자가 작아 보이는 정도가 달라, 이를 보정할 배율 (기본 1) */
+    scale?: number;
   };
   variant: 'digital' | 'paper';
 }

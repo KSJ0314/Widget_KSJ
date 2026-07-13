@@ -51,7 +51,7 @@ export const DateText = styled.span<{ $u: number }>`
 
 export const CityText = styled.span<{ $u: number }>`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: ${({ $u }) => $u * 0.9}px;
+  font-size: ${({ $u, theme }) => $u * 0.9 * (theme.fonts.scale ?? 1)}px;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.accent};
   letter-spacing: 0.04em;
@@ -141,9 +141,9 @@ export const ForecastItem = styled.div<{ $u: number; $itemW: number }>`
 `;
 
 export const ForecastTime = styled.span<{ $u: number; $mini: boolean }>`
-  font-size: ${({ $u }) => $u * 0.6}px;
+  font-size: ${({ $u }) => $u * 0.72}px;
   color: ${({ theme }) => theme.colors.accent};
-  font-weight: ${({ $mini }) => ($mini ? 700 : 400)};
+  font-weight: 700;
   letter-spacing: 0.04em;
   white-space: nowrap;
 `;

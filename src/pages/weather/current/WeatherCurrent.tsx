@@ -24,9 +24,7 @@ export interface WeatherCurrentProps {
 
 function formatTime(time: string): string {
   const h = parseInt(time.slice(0, 2), 10);
-  const ampm = h < 12 ? '오전' : '오후';
-  const h12 = h % 12 === 0 ? 12 : h % 12;
-  return `${ampm} ${h12}시`;
+  return `${h}시`;
 }
 
 export const WeatherCurrent = ({ city, apiKey, db }: WeatherCurrentProps) => {

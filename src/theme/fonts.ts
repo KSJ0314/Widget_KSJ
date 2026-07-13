@@ -12,6 +12,7 @@ export const fontSets: Record<string, AppTheme['fonts'] | undefined> = {
     display: `'Griun', ${KO_FALLBACK}`,
     mono: `'Griun', ${KO_FALLBACK}`,
     digit: `'Griun', ${KO_FALLBACK}`,
+    scale: 1.3,
   },
 };
 
