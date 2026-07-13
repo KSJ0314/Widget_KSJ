@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { widgets } from './widgetRegistry';
 import { themes } from '../../theme/theme';
-import { getCurrentPosition, reverseGeocode } from '../weather/useWeather';
+import { getCurrentPosition } from '../weather/useWeather';
+import { findNearestCity } from '../../data/cityMap';
 import {
   HomeContainer,
   Header,
@@ -58,8 +59,8 @@ export const Home = () => {
       try {
         const pos = await getCurrentPosition();
         const { latitude: lat, longitude: lon } = pos.coords;
-        const city = await reverseGeocode(lat, lon);
-        extra = `&lat=${lat}&lon=${lon}&city=${encodeURIComponent(city)}`;
+        const city = findNearestCity(lat, lon);
+        extra = `&city=${city.en}`;
       } catch {}
     }
     const url = `${window.location.origin}${import.meta.env.BASE_URL}#${path}?theme=${themeName}${extra}`;

@@ -4,7 +4,7 @@ import { DigitalClock } from '../clock/digital';
 import { AnalogClock } from '../clock/analog';
 import { FlipClock } from '../clock/flip';
 import { MonthlyCalendar } from '../calendar/monthly';
-import { WeatherCurrent } from '../weather/current';
+import { WeatherCurrentPage } from '../weather/current';
 
 export interface WidgetMeta {
   id: string;
@@ -39,7 +39,11 @@ export const widgets: WidgetMeta[] = [
     name: 'Flip Clock',
     category: 'Clock',
     path: '/clock/flip',
-    themes: ['dark', 'pink', 'green', 'ivory'],
+    themes: [
+      'dark', 'pink', 'green', 'ivory',
+      'lightBlue', 'lightPink', 'lightGreen',
+      'lightBlueWhite', 'lightPinkWhite', 'lightGreenWhite',
+    ],
     component: FlipClock,
   },
   {
@@ -47,7 +51,7 @@ export const widgets: WidgetMeta[] = [
     name: 'Monthly Calendar',
     category: 'Calendar',
     path: '/calendar/monthly',
-    themes: ['dark', 'pink', 'green', 'ivory', 'paper'],
+    themes: ['dark', 'pink', 'green', 'ivory', 'paper', 'lightBlue', 'lightPink', 'lightGreen'],
     component: MonthlyCalendar,
   },
   {
@@ -56,7 +60,7 @@ export const widgets: WidgetMeta[] = [
     category: 'Weather',
     path: '/weather/current',
     themes: ['dark', 'pink', 'green', 'ivory', 'lightBlue', 'lightPink', 'lightGreen'],
-    component: WeatherCurrent,
+    component: WeatherCurrentPage,
     requiresLocation: true,
     description: 'URL 복사 시 현재 위치가 자동으로 포함됩니다. 복사된 URL을 임베드하면 해당 지역 날씨로 고정됩니다.',
   },

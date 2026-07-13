@@ -13,6 +13,8 @@ export interface AppTheme {
     textDim: string;
     border: string;
     scanline: string;
+    /** 값이 있으면 플립 시계 카드에 이 색으로 테두리를 두른다 */
+    cardBorder?: string;
   };
   fonts: {
     display: string;
@@ -172,6 +174,33 @@ const lightGreen: AppTheme = {
   variant: 'digital',
 };
 
+const lightBlueWhite: AppTheme = {
+  ...lightBlue,
+  colors: {
+    ...lightBlue.colors,
+    surface: '#ffffff',
+    cardBorder: '#7ab2d8',
+  },
+};
+
+const lightPinkWhite: AppTheme = {
+  ...lightPink,
+  colors: {
+    ...lightPink.colors,
+    surface: '#ffffff',
+    cardBorder: '#ee8599',
+  },
+};
+
+const lightGreenWhite: AppTheme = {
+  ...lightGreen,
+  colors: {
+    ...lightGreen.colors,
+    surface: '#ffffff',
+    cardBorder: '#6dc49a',
+  },
+};
+
 const paper: AppTheme = {
   colors: {
     background: '#ffffff',
@@ -193,5 +222,17 @@ const paper: AppTheme = {
   variant: 'paper',
 };
 
-export const themes = { dark, pink, green, ivory, paper, lightBlue, lightPink, lightGreen };
+export const themes = {
+  dark,
+  pink,
+  green,
+  ivory,
+  paper,
+  lightBlue,
+  lightPink,
+  lightGreen,
+  lightBlueWhite,
+  lightPinkWhite,
+  lightGreenWhite,
+};
 export type ThemeName = keyof typeof themes;

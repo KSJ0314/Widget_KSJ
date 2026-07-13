@@ -62,12 +62,28 @@ const halfBase = css<{ $size: number }>`
   box-shadow: 0 2px 12px ${({ theme }) => theme.colors.primaryGlow};
 `;
 
+// 위/아래 반쪽이 맞닿는 선에서 테두리가 겹쳐 두꺼워지지 않도록 방향을 나눠 그린다
+const topBorder = css<{ $size: number }>`
+  ${({ theme, $size }) => theme.colors.cardBorder && css`
+    border: ${Math.max(Math.round($size * 0.02), 1)}px solid ${theme.colors.cardBorder};
+    border-bottom: none;
+  `}
+`;
+
+const bottomBorder = css<{ $size: number }>`
+  ${({ theme, $size }) => theme.colors.cardBorder && css`
+    border: ${Math.max(Math.round($size * 0.02), 1)}px solid ${theme.colors.cardBorder};
+    border-top: none;
+  `}
+`;
+
 export const CardTop = styled.div<{ $size: number }>`
   ${halfBase}
   top: 0;
   border-radius: ${({ $size }) => Math.round($size * 0.07)}px ${({ $size }) => Math.round($size * 0.07)}px 0 0;
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   z-index: 1;
+  ${topBorder}
 `;
 
 export const CardBottom = styled.div<{ $size: number }>`
@@ -75,12 +91,14 @@ export const CardBottom = styled.div<{ $size: number }>`
   bottom: 0;
   border-radius: 0 0 ${({ $size }) => Math.round($size * 0.07)}px ${({ $size }) => Math.round($size * 0.07)}px;
   z-index: 1;
+  ${bottomBorder}
 `;
 
 export const FlipTop = styled.div<{ $size: number }>`
   ${halfBase}
   top: 0;
   border-radius: ${({ $size }) => Math.round($size * 0.07)}px ${({ $size }) => Math.round($size * 0.07)}px 0 0;
+  ${topBorder}
   transform-origin: bottom center;
   z-index: 3;
   animation: ${flipDown} 0.3s ease-in forwards;
@@ -92,6 +110,7 @@ export const FlipBottom = styled.div<{ $size: number }>`
   ${halfBase}
   bottom: 0;
   border-radius: 0 0 ${({ $size }) => Math.round($size * 0.07)}px ${({ $size }) => Math.round($size * 0.07)}px;
+  ${bottomBorder}
   transform-origin: top center;
   z-index: 2;
   animation: ${unfold} 0.3s ease-out 0.3s forwards;

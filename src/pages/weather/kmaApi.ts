@@ -1,7 +1,6 @@
 // 기상청 단기예보 조회서비스 API 호출 모듈
 
 const BASE_URL = 'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0';
-const SERVICE_KEY = import.meta.env.VITE_KMA_KEY;
 
 /** 현재 날씨 데이터 (초단기실황) */
 export interface CurrentWeather {
@@ -24,7 +23,6 @@ export interface HourlyForecast {
   windSpeed: number; // 풍속 (m/s)
 }
 
-/** YYYYMMDD 형식 날짜 문자열 반환 */
 function toDateStr(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -32,7 +30,6 @@ function toDateStr(d: Date): string {
   return `${y}${m}${day}`;
 }
 
-/** HHmm 형식 시각 문자열 반환 */
 function toTimeStr(h: number, m: number): string {
   return `${String(h).padStart(2, '0')}${String(m).padStart(2, '0')}`;
 }
@@ -61,17 +58,14 @@ function getFcstBaseDateTime(): { date: string; time: string } {
   const currentHour = now.getHours();
   const currentMin  = now.getMinutes();
 
-  // 현재 시각 이전의 가장 최근 발표 시각 탐색
   let baseHour = BASE_HOURS[0];
   for (const h of BASE_HOURS) {
-    // 발표 후 10분이 지나야 조회 가능
     if (currentHour > h || (currentHour === h && currentMin >= 10)) {
       baseHour = h;
     }
   }
 
   const d = new Date(now);
-  // 아직 당일 첫 발표(02:10)가 안 됐으면 전날 23시 데이터 사용
   if (currentHour < 2 || (currentHour === 2 && currentMin < 10)) {
     d.setDate(d.getDate() - 1);
     baseHour = 23;
@@ -80,10 +74,13 @@ function getFcstBaseDateTime(): { date: string; time: string } {
   return { date: toDateStr(d), time: toTimeStr(baseHour, 0) };
 }
 
-/** 기상청 API 공통 호출 함수 */
-async function fetchKma(endpoint: string, params: Record<string, string | number>): Promise<any[]> {
+async function fetchKma(
+  endpoint: string,
+  params: Record<string, string | number>,
+  apiKey: string,
+): Promise<any[]> {
   const query = new URLSearchParams({
-    serviceKey: SERVICE_KEY,
+    serviceKey: apiKey,
     dataType: 'JSON',
     numOfRows: '1000',
     pageNo: '1',
@@ -99,14 +96,10 @@ async function fetchKma(endpoint: string, params: Record<string, string | number
   return items;
 }
 
-/**
- * 초단기실황 조회 — 현재 기온, 습도, 풍속, 강수형태 반환
- */
-export async function fetchCurrentWeather(nx: number, ny: number): Promise<CurrentWeather> {
+export async function fetchCurrentWeather(nx: number, ny: number, apiKey: string): Promise<CurrentWeather> {
   const { date, time } = getNcstBaseDateTime();
-  const items = await fetchKma('getUltraSrtNcst', { base_date: date, base_time: time, nx, ny });
+  const items = await fetchKma('getUltraSrtNcst', { base_date: date, base_time: time, nx, ny }, apiKey);
 
-  // items를 category 기준으로 맵핑
   const map: Record<string, string> = {};
   for (const item of items) {
     map[item.category] = item.obsrValue;
@@ -121,14 +114,10 @@ export async function fetchCurrentWeather(nx: number, ny: number): Promise<Curre
   };
 }
 
-/**
- * 단기예보 조회 — 향후 24시간 시간별 예보 반환
- */
-export async function fetchHourlyForecast(nx: number, ny: number): Promise<HourlyForecast[]> {
+export async function fetchHourlyForecast(nx: number, ny: number, apiKey: string): Promise<HourlyForecast[]> {
   const { date, time } = getFcstBaseDateTime();
-  const items = await fetchKma('getVilageFcst', { base_date: date, base_time: time, nx, ny });
+  const items = await fetchKma('getVilageFcst', { base_date: date, base_time: time, nx, ny }, apiKey);
 
-  // (날짜+시각) 기준으로 그룹핑
   const grouped: Record<string, Record<string, string>> = {};
   for (const item of items) {
     const key = `${item.fcstDate}_${item.fcstTime}`;
@@ -152,7 +141,6 @@ export async function fetchHourlyForecast(nx: number, ny: number): Promise<Hourl
         windSpeed: parseFloat(cat['WSD'] ?? '0'),
       };
     })
-    // 현재 시각 이후 24시간만 필터링
     .filter(f => {
       const fDate = new Date(
         `${f.date.slice(0, 4)}-${f.date.slice(4, 6)}-${f.date.slice(6, 8)}T${f.time.slice(0, 2)}:${f.time.slice(2, 4)}:00`

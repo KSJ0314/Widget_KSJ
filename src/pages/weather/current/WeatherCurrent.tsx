@@ -1,4 +1,6 @@
 import { useTheme } from 'styled-components';
+import type { Firestore } from 'firebase/firestore';
+import type { CityName } from '../../../data/cityMap';
 import { useContainerSize } from '../../../hooks/useContainerSize';
 import { useDragScroll } from '../../../hooks/useDragScroll';
 import { useWeather } from '../useWeather';
@@ -14,7 +16,12 @@ import {
   StatusText,
 } from './WeatherCurrent.styled';
 
-/** HHmm 문자열을 "오전/오후 H시" 형태로 변환 */
+export interface WeatherCurrentProps {
+  city?: CityName;
+  apiKey: string;
+  db?: Firestore | null;
+}
+
 function formatTime(time: string): string {
   const h = parseInt(time.slice(0, 2), 10);
   const ampm = h < 12 ? '오전' : '오후';
@@ -22,10 +29,10 @@ function formatTime(time: string): string {
   return `${ampm} ${h12}시`;
 }
 
-export const WeatherCurrent = () => {
+export const WeatherCurrent = ({ city, apiKey, db }: WeatherCurrentProps) => {
   const { ref, width, height } = useContainerSize();
   const drag = useDragScroll<HTMLDivElement>();
-  const state = useWeather();
+  const state = useWeather({ city, apiKey, db });
   const theme = useTheme();
 
   const RATIO = 16 / 9;
@@ -52,13 +59,12 @@ export const WeatherCurrent = () => {
 
         return (
           <Card $u={u} $w={cardWidth} $h={cardHeight}>
-            {/* 현재 날씨: 좌(날짜+지역) / 중(아이콘) / 우(온도+통계) */}
             <CurrentGrid $u={u}>
               <LeftCol $u={u}>
                 <DateText $u={u}>{dateStr}</DateText>
                 <CityText $u={u}>{data.city}</CityText>
               </LeftCol>
-
+              
               <CenterCol>
                 <WeatherIcon type={condition.icon} size={u * 6} color={theme.colors.accent} />
               </CenterCol>
@@ -82,15 +88,14 @@ export const WeatherCurrent = () => {
               </RightCol>
             </CurrentGrid>
 
-            {/* 시간별 예보 (가로 스크롤) */}
             <ForecastScroll
-                $u={u}
-                ref={drag.ref}
-                onMouseDown={drag.onMouseDown}
-                onMouseLeave={drag.onMouseLeave}
-                onMouseUp={drag.onMouseUp}
-                onMouseMove={drag.onMouseMove}
-              >
+              $u={u}
+              ref={drag.ref}
+              onMouseDown={drag.onMouseDown}
+              onMouseLeave={drag.onMouseLeave}
+              onMouseUp={drag.onMouseUp}
+              onMouseMove={drag.onMouseMove}
+            >
               {data.hourly.map((f, i) => {
                 const fc = getCondition(f.sky, f.pty);
                 return (
