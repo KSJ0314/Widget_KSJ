@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { widgets } from './widgetRegistry';
 import { themes } from '../../theme/theme';
+import { fontNames, withFont, type FontName } from '../../theme/fonts';
 import { getCurrentPosition } from '../weather/useWeather';
 import { findNearestCity } from '../../data/cityMap';
 import {
@@ -16,6 +17,9 @@ import {
   SectionHeader,
   SectionName,
   SectionCategory,
+  FontRow,
+  FontLabel,
+  FontChip,
   ThemeRow,
   ThemeCard,
   PreviewArea,
@@ -51,8 +55,18 @@ export const Home = () => {
   const navigate = useNavigate();
   const grouped = groupByCategory();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [fontByWidget, setFontByWidget] = useState<Record<string, FontName>>({});
 
-  const copyUrl = async (e: React.MouseEvent, path: string, themeName: string, requiresLocation?: boolean) => {
+  // 기본 폰트는 테마가 정의한 값을 쓰므로 URL에 넣지 않는다
+  const fontParam = (font: FontName) => (font === 'default' ? '' : `&font=${font}`);
+
+  const copyUrl = async (
+    e: React.MouseEvent,
+    path: string,
+    themeName: string,
+    font: FontName,
+    requiresLocation?: boolean,
+  ) => {
     e.stopPropagation();
     let extra = '';
     if (requiresLocation) {
@@ -63,7 +77,7 @@ export const Home = () => {
         extra = `&city=${city.en}`;
       } catch {}
     }
-    const url = `${window.location.origin}${import.meta.env.BASE_URL}#${path}?theme=${themeName}${extra}`;
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}#${path}?theme=${themeName}${fontParam(font)}${extra}`;
     navigator.clipboard.writeText(url);
     const key = `${path}-${themeName}`;
     setCopiedKey(key);
@@ -81,41 +95,57 @@ export const Home = () => {
         <CategorySection key={category}>
           <CategoryHeader>{category}</CategoryHeader>
 
-          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, description }) => (
-            <WidgetSection key={id}>
-              <SectionHeader>
-                <SectionName>{name}</SectionName>
-                <SectionCategory>{cat}</SectionCategory>
-              </SectionHeader>
-              {description && <WidgetDescription>{description}</WidgetDescription>}
-              <ThemeRow>
-                {widgetThemes.map(themeName => (
-                  <ThemeCard
-                    key={themeName}
-                    onClick={() => navigate(`${path}?theme=${themeName}`)}
-                  >
-                    <PreviewArea>
-                      <PreviewScaler>
-                        <StyledThemeProvider theme={themes[themeName]}>
-                          <Widget />
-                        </StyledThemeProvider>
-                      </PreviewScaler>
-                    </PreviewArea>
-                    <ThemeBadge $color={themes[themeName].colors.primary}>
-                      {themeName}
-                      <CopyButton
-                        $copied={copiedKey === `${path}-${themeName}`}
-                        onClick={(e) => copyUrl(e, path, themeName, requiresLocation)}
-                        title="URL 복사"
-                      >
-                        {copiedKey === `${path}-${themeName}` ? <CheckIcon /> : <ClipboardIcon />}
-                      </CopyButton>
-                    </ThemeBadge>
-                  </ThemeCard>
-                ))}
-              </ThemeRow>
-            </WidgetSection>
-          ))}
+          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, description }) => {
+            const font = fontByWidget[id] ?? 'default';
+
+            return (
+              <WidgetSection key={id}>
+                <SectionHeader>
+                  <SectionName>{name}</SectionName>
+                  <SectionCategory>{cat}</SectionCategory>
+                </SectionHeader>
+                {description && <WidgetDescription>{description}</WidgetDescription>}
+                <FontRow>
+                  <FontLabel>Font</FontLabel>
+                  {fontNames.map(fontName => (
+                    <FontChip
+                      key={fontName}
+                      $active={font === fontName}
+                      onClick={() => setFontByWidget(prev => ({ ...prev, [id]: fontName }))}
+                    >
+                      {fontName}
+                    </FontChip>
+                  ))}
+                </FontRow>
+                <ThemeRow>
+                  {widgetThemes.map(themeName => (
+                    <ThemeCard
+                      key={themeName}
+                      onClick={() => navigate(`${path}?theme=${themeName}${fontParam(font)}`)}
+                    >
+                      <PreviewArea>
+                        <PreviewScaler>
+                          <StyledThemeProvider theme={withFont(themes[themeName], font)}>
+                            <Widget />
+                          </StyledThemeProvider>
+                        </PreviewScaler>
+                      </PreviewArea>
+                      <ThemeBadge $color={themes[themeName].colors.primary}>
+                        {themeName}
+                        <CopyButton
+                          $copied={copiedKey === `${path}-${themeName}`}
+                          onClick={(e) => copyUrl(e, path, themeName, font, requiresLocation)}
+                          title="URL 복사"
+                        >
+                          {copiedKey === `${path}-${themeName}` ? <CheckIcon /> : <ClipboardIcon />}
+                        </CopyButton>
+                      </ThemeBadge>
+                    </ThemeCard>
+                  ))}
+                </ThemeRow>
+              </WidgetSection>
+            );
+          })}
         </CategorySection>
       ))}
     </HomeContainer>

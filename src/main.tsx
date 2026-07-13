@@ -8,6 +8,7 @@ import '@fontsource/playfair-display/700.css'
 import '@fontsource/libre-baskerville/400.css'
 import '@fontsource/libre-baskerville/700.css'
 import '@fontsource/dm-serif-display/400.css'
+import './theme/fonts.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

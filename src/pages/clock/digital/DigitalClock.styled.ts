@@ -58,7 +58,7 @@ export const DigitGroup = styled.span<{ $size: number }>`
 `;
 
 export const DigitSlot = styled.span<{ $size: number }>`
-  font-family: ${DIGIT_FONT};
+  font-family: ${({ theme }) => theme.fonts.digit ?? DIGIT_FONT};
   font-size: ${({ $size }) => $size}px;
   font-weight: 900;
   color: ${({ theme }) => theme.colors.primary};
@@ -74,7 +74,7 @@ export const DigitSlot = styled.span<{ $size: number }>`
 `;
 
 export const Separator = styled.span<{ $size: number }>`
-  font-family: ${DIGIT_FONT};
+  font-family: ${({ theme }) => theme.fonts.digit ?? DIGIT_FONT};
   font-size: ${({ $size }) => $size}px;
   color: ${({ theme }) => theme.colors.primary};
   text-shadow: 0 0 ${({ $size }) => Math.round($size * 0.04)}px ${({ theme }) => theme.colors.primary};

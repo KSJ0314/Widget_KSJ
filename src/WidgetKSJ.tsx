@@ -5,6 +5,8 @@ import { getFirestore } from 'firebase/firestore';
 import type { FirebaseOptions } from 'firebase/app';
 import type { Firestore } from 'firebase/firestore';
 import { themes } from './theme/theme';
+import { withFont } from './theme/fonts';
+import type { FontName } from './theme/fonts';
 import type { ThemeName } from './theme/theme';
 import type { CityName } from './data/cityMap';
 import { WeatherCurrent } from './pages/weather/current/WeatherCurrent';
@@ -26,24 +28,38 @@ interface BaseProps {
    * @default '100%'
    */
   height?: number | string;
+  /**
+   * 폰트 프리셋. 지정하지 않으면 테마가 정의한 폰트를 씁니다.
+   * @example 'griun'
+   */
+  font?: FontName;
 }
 
+type LightTheme = 'lightBlue' | 'lightPink' | 'lightGreen';
+type LightWhiteTheme = 'lightBlueWhite' | 'lightPinkWhite' | 'lightGreenWhite';
+
 interface ClockProps extends BaseProps {
-  widget: 'clock/digital' | 'clock/analog' | 'clock/flip';
+  widget: 'clock/digital' | 'clock/analog';
   /** 지원 테마: dark, pink, green, ivory */
   theme?: 'dark' | 'pink' | 'green' | 'ivory';
 }
 
+interface FlipClockProps extends BaseProps {
+  widget: 'clock/flip';
+  /** 지원 테마: dark, pink, green, ivory, light*(3종), light*White(3종) */
+  theme?: 'dark' | 'pink' | 'green' | 'ivory' | LightTheme | LightWhiteTheme;
+}
+
 interface CalendarProps extends BaseProps {
   widget: 'calendar/monthly';
-  /** 지원 테마: dark, pink, green, ivory, paper */
-  theme?: 'dark' | 'pink' | 'green' | 'ivory' | 'paper';
+  /** 지원 테마: dark, pink, green, ivory, paper, light*(3종) */
+  theme?: 'dark' | 'pink' | 'green' | 'ivory' | 'paper' | LightTheme;
 }
 
 interface WeatherProps extends BaseProps {
   widget: 'weather';
-  /** 지원 테마: dark, pink, green, ivory, lightBlue, lightPink, lightGreen */
-  theme?: 'dark' | 'pink' | 'green' | 'ivory' | 'lightBlue' | 'lightPink' | 'lightGreen';
+  /** 지원 테마: dark, pink, green, ivory, light*(3종) */
+  theme?: 'dark' | 'pink' | 'green' | 'ivory' | LightTheme;
   /**
    * 도시명 (영어). 없으면 브라우저 Geolocation으로 자동 감지합니다.
    * @example 'Seoul', 'Busan', 'Naju'
@@ -62,7 +78,7 @@ interface WeatherProps extends BaseProps {
   firebase?: FirebaseOptions;
 }
 
-export type WidgetKSJProps = ClockProps | CalendarProps | WeatherProps;
+export type WidgetKSJProps = ClockProps | FlipClockProps | CalendarProps | WeatherProps;
 export type WidgetType = WidgetKSJProps['widget'];
 export type { CityName };
 
@@ -70,7 +86,7 @@ const NAMED_APP = 'widget-ksj';
 
 export const WidgetKSJ = (props: WidgetKSJProps) => {
   const { width = '100%', height = '100%' } = props;
-  const theme = (props.theme ?? 'dark') as ThemeName;
+  const theme = withFont(themes[(props.theme ?? 'dark') as ThemeName], props.font ?? null);
   const dbRef = useRef<Firestore | null>(null);
 
   if (props.widget === 'weather' && props.firebase && !dbRef.current) {
@@ -80,7 +96,7 @@ export const WidgetKSJ = (props: WidgetKSJProps) => {
   }
 
   return (
-    <ThemeProvider theme={themes[theme]}>
+    <ThemeProvider theme={theme}>
       <div style={{ width, height }}>
         {props.widget === 'weather' && (
           <WeatherCurrent city={props.city} apiKey={props.weatherApiKey} db={dbRef.current} />

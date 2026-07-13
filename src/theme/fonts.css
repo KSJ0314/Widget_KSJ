@@ -1,0 +1,8 @@
+/* 외부 서비스(Notion 등) 임베드 시 CSP로 CDN 폰트가 차단되므로 자체 호스팅한다 */
+@font-face {
+  font-family: 'Griun';
+  src: url('../assets/fonts/Griun_LEFTSG-Rg.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

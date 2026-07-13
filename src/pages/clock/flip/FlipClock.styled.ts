@@ -33,7 +33,7 @@ export const DayLabel = styled.div<{ $size: number }>`
   position: absolute;
   top: ${({ $size }) => Math.round($size * 0.1)}px;
   left: ${({ $size }) => Math.round($size * 0.1)}px;
-  font-family: 'DM Serif Display', 'Georgia', serif;
+  font-family: ${({ theme }) => theme.fonts.digit ?? "'DM Serif Display', 'Georgia', serif"};
   font-size: ${({ $size }) => Math.round($size * 0.13)}px;
   font-weight: 400;
   color: ${({ theme }) => theme.colors.primary};
@@ -127,7 +127,7 @@ export const Digit = styled.div<{ $size: number; $half: 'top' | 'bottom' }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'DM Serif Display', 'Georgia', serif;
+  font-family: ${({ theme }) => theme.fonts.digit ?? "'DM Serif Display', 'Georgia', serif"};
   font-size: ${({ $size }) => Math.round($size * 0.82)}px;
   font-weight: 400;
   line-height: 1;
@@ -140,7 +140,7 @@ export const Digit = styled.div<{ $size: number; $half: 'top' | 'bottom' }>`
 
 
 export const Colon = styled.div<{ $size: number }>`
-  font-family: 'DM Serif Display', 'Georgia', serif;
+  font-family: ${({ theme }) => theme.fonts.digit ?? "'DM Serif Display', 'Georgia', serif"};
   font-size: ${({ $size }) => Math.round($size * 0.55)}px;
   color: ${({ theme }) => theme.colors.primary};
   opacity: 0.45;

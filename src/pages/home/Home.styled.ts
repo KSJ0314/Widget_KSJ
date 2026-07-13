@@ -112,6 +112,42 @@ export const WidgetDescription = styled.p`
   margin-bottom: 14px;
 `;
 
+export const FontRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+`;
+
+export const FontLabel = styled.span`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 9px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.textDim};
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+`;
+
+export const FontChip = styled.button<{ $active: boolean }>`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 20px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  background: ${({ $active, theme }) => ($active ? theme.colors.primaryGlow : 'transparent')};
+  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.border)};
+  color: ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.textDim)};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
 export const ThemeRow = styled.div`
   display: flex;
   gap: 16px;

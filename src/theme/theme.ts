@@ -19,6 +19,8 @@ export interface AppTheme {
   fonts: {
     display: string;
     mono: string;
+    /** 시계 숫자 전용. 값이 없으면 각 위젯의 기본 폰트를 쓴다 */
+    digit?: string;
   };
   variant: 'digital' | 'paper';
 }
