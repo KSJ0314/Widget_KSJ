@@ -25,6 +25,12 @@ export interface AppTheme {
     scale?: number;
   };
   variant: 'digital' | 'paper';
+  /**
+   * 배경이 어두운 테마. 그림자를 테마색 대신 검정으로 쓴다.
+   * ThemeProvider가 바깥 테마와 얕게 병합하므로(홈 화면의 테마별 미리보기)
+   * 모든 테마가 이 값을 명시해야 바깥 값이 새어 들어오지 않는다.
+   */
+  isDark: boolean;
 }
 
 declare module 'styled-components' {
@@ -50,6 +56,7 @@ const dark: AppTheme = {
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
+  isDark: true,
 };
 
 const pink: AppTheme = {
@@ -71,6 +78,7 @@ const pink: AppTheme = {
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
+  isDark: true,
 };
 
 const green: AppTheme = {
@@ -92,6 +100,7 @@ const green: AppTheme = {
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
+  isDark: true,
 };
 
 const ivory: AppTheme = {
@@ -113,6 +122,7 @@ const ivory: AppTheme = {
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
+  isDark: false,
 };
 
 const lightBlue: AppTheme = {
@@ -134,6 +144,7 @@ const lightBlue: AppTheme = {
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
+  isDark: false,
 };
 
 const lightPink: AppTheme = {
@@ -155,6 +166,7 @@ const lightPink: AppTheme = {
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
+  isDark: false,
 };
 
 const lightGreen: AppTheme = {
@@ -176,6 +188,7 @@ const lightGreen: AppTheme = {
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
+  isDark: false,
 };
 
 const lightBlueWhite: AppTheme = {
@@ -224,6 +237,7 @@ const paper: AppTheme = {
     mono: "'Libre Baskerville', 'Times New Roman', serif",
   },
   variant: 'paper',
+  isDark: false,
 };
 
 export const themes = {
