@@ -59,7 +59,7 @@ const halfBase = css<{ $size: number }>`
   height: 50%;
   overflow: hidden;
   background: ${({ theme }) => theme.colors.surface};
-  box-shadow: 0 2px 12px ${({ theme }) => theme.colors.primaryGlow};
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 `;
 
 // 위/아래 반쪽이 맞닿는 선에서 테두리가 겹쳐 두꺼워지지 않도록 방향을 나눠 그린다
