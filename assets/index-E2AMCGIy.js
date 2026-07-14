@@ -212,7 +212,7 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
   height: 50%;
   overflow: hidden;
   background: ${({theme:e})=>e.colors.surface};
-  box-shadow: 0 2px 12px ${({theme:e})=>e.colors.primaryGlow};
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 `,ds=$a`
   ${({theme:e,$size:t})=>e.colors.cardBorder&&$a`
     border: ${Math.max(Math.round(t*.02),1)}px solid ${e.colors.cardBorder};
