@@ -62,8 +62,9 @@ export const CalHeader = styled.div<{ $fs: number }>`
   align-items: center;
   justify-content: space-between;
   gap: ${({ $fs }) => $fs * 0.4}px;
-  padding-bottom: ${({ $fs }) => $fs * 0.2}px;
+  padding-bottom: ${({ $fs }) => $fs * 0.5}px;
   margin-bottom: ${({ $fs }) => $fs * 0.4}px;
+  border-bottom: 1px solid ${lineColor};
 `;
 
 export const HeaderLeft = styled.div<{ $fs: number }>`
