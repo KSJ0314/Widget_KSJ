@@ -15,6 +15,8 @@ export interface AppTheme {
     scanline: string;
     /** 값이 있으면 플립 시계 카드에 이 색으로 테두리를 두른다 */
     cardBorder?: string;
+    /** paper variant에서 오늘 날짜 셀 강조 배경색 */
+    todayHighlight?: string;
   };
   fonts: {
     display: string;
@@ -231,6 +233,76 @@ const paper: AppTheme = {
     textDim: 'rgba(92, 61, 17, 0.35)',
     border: 'rgba(92, 61, 17, 0.2)',
     scanline: 'rgba(0, 0, 0, 0)',
+    todayHighlight: '#e8dcc8',
+  },
+  fonts: {
+    display: "'Playfair Display', Georgia, serif",
+    mono: "'Libre Baskerville', 'Times New Roman', serif",
+  },
+  variant: 'paper',
+  isDark: false,
+};
+
+const paperLightBlue: AppTheme = {
+  colors: {
+    background: '#ffffff',
+    surface: '#f2f8fb',
+    primary: '#3d6b8a',
+    primaryGlow: 'rgba(61, 107, 138, 0.15)',
+    accent: '#3d6b8a',
+    accentGlow: 'rgba(61, 107, 138, 0.15)',
+    secondary: '#5c8fac',
+    text: '#1a3348',
+    textDim: 'rgba(61, 107, 138, 0.35)',
+    border: 'rgba(61, 107, 138, 0.2)',
+    scanline: 'rgba(0, 0, 0, 0)',
+    todayHighlight: '#cfe4f0',
+  },
+  fonts: {
+    display: "'Playfair Display', Georgia, serif",
+    mono: "'Libre Baskerville', 'Times New Roman', serif",
+  },
+  variant: 'paper',
+  isDark: false,
+};
+
+const paperLightPink: AppTheme = {
+  colors: {
+    background: '#ffffff',
+    surface: '#fbf1f3',
+    primary: '#8a3d52',
+    primaryGlow: 'rgba(138, 61, 82, 0.15)',
+    accent: '#8a3d52',
+    accentGlow: 'rgba(138, 61, 82, 0.15)',
+    secondary: '#ac5c74',
+    text: '#3d1520',
+    textDim: 'rgba(138, 61, 82, 0.35)',
+    border: 'rgba(138, 61, 82, 0.2)',
+    scanline: 'rgba(0, 0, 0, 0)',
+    todayHighlight: '#f4d4dc',
+  },
+  fonts: {
+    display: "'Playfair Display', Georgia, serif",
+    mono: "'Libre Baskerville', 'Times New Roman', serif",
+  },
+  variant: 'paper',
+  isDark: false,
+};
+
+const paperLightGreen: AppTheme = {
+  colors: {
+    background: '#ffffff',
+    surface: '#f1f8f4',
+    primary: '#3d7a5c',
+    primaryGlow: 'rgba(61, 122, 92, 0.15)',
+    accent: '#3d7a5c',
+    accentGlow: 'rgba(61, 122, 92, 0.15)',
+    secondary: '#5c9c78',
+    text: '#1a3828',
+    textDim: 'rgba(61, 122, 92, 0.35)',
+    border: 'rgba(61, 122, 92, 0.2)',
+    scanline: 'rgba(0, 0, 0, 0)',
+    todayHighlight: '#cdeadb',
   },
   fonts: {
     display: "'Playfair Display', Georgia, serif",
@@ -246,6 +318,9 @@ export const themes = {
   green,
   ivory,
   paper,
+  paperLightBlue,
+  paperLightPink,
+  paperLightGreen,
   lightBlue,
   lightPink,
   lightGreen,

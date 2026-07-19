@@ -140,7 +140,7 @@ export const DayCell = styled.div<{
   `}
 
   ${({ $isToday, theme }) => $isToday && theme.variant === 'paper' && css`
-    background: #e8dcc8;
+    background: ${theme.colors.todayHighlight};
     font-weight: 700;
   `}
 

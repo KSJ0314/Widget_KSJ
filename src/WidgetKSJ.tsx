@@ -50,10 +50,12 @@ interface FlipClockProps extends BaseProps {
   theme?: 'dark' | 'pink' | 'green' | 'ivory' | LightTheme | LightWhiteTheme;
 }
 
+type PaperLightTheme = 'paperLightBlue' | 'paperLightPink' | 'paperLightGreen';
+
 interface CalendarProps extends BaseProps {
   widget: 'calendar/monthly';
-  /** 지원 테마: dark, pink, green, ivory, paper, light*(3종) */
-  theme?: 'dark' | 'pink' | 'green' | 'ivory' | 'paper' | LightTheme;
+  /** 지원 테마: dark, pink, green, ivory, paper, paperLight*(3종), light*(3종) */
+  theme?: 'dark' | 'pink' | 'green' | 'ivory' | 'paper' | PaperLightTheme | LightTheme;
 }
 
 interface WeatherProps extends BaseProps {
