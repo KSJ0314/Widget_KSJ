@@ -4,6 +4,8 @@ import { withAlpha } from '../../../../../utils/styleUtils';
 export const Bar = styled.div<{
   $left: number;
   $width: number;
+  $hoverLeft: number;
+  $hoverWidth: number;
   $top: number;
   $height: number;
   $inset: number;
@@ -29,12 +31,11 @@ export const Bar = styled.div<{
   background: ${({ theme }) => withAlpha(theme.colors.primary, 0.16)};
   opacity: ${({ $done }) => ($done ? 0.55 : 1)};
 
-  /*
-   * 잘린 제목을 읽으려고 펼치는 것이므로 아래로만 늘린다.
-   * 가로로 늘리면 오른쪽 끝 칸에서 달력 밖으로 삐져나간다.
-   */
+  /* 잘린 제목을 읽으려고 펼친다. 가로는 최소 두 칸, 세로는 내용만큼 */
   &:hover {
     z-index: 5;
+    left: calc(${({ $hoverLeft }) => $hoverLeft}% + ${({ $inset }) => $inset}px);
+    width: calc(${({ $hoverWidth }) => $hoverWidth}% - ${({ $inset }) => $inset * 2}px);
     height: auto;
     min-height: ${({ $height }) => $height}px;
     opacity: 1;

@@ -17,10 +17,16 @@ export const EventBar = ({ segment, cols, layout, canEdit, onToggle, onOpen }: P
   const { event, startIdx, span, lane, isStart } = segment;
   const { dateFs, barH, barGap, barInset } = layout;
 
+  // 펼쳤을 때 최소 두 칸은 확보한다. 오른쪽 끝이면 왼쪽으로 당겨 칸을 넘지 않게 한다
+  const hoverSpan = Math.min(Math.max(span, 2), cols);
+  const hoverStart = Math.max(Math.min(startIdx, cols - hoverSpan), 0);
+
   return (
     <Bar
       $left={(startIdx / cols) * 100}
       $width={(span / cols) * 100}
+      $hoverLeft={(hoverStart / cols) * 100}
+      $hoverWidth={(hoverSpan / cols) * 100}
       $top={lane * (barH + barGap)}
       $height={barH}
       $inset={barInset}
