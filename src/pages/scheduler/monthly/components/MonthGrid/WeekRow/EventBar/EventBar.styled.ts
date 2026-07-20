@@ -77,7 +77,7 @@ export const Check = styled.span<{ $size: number; $done: boolean; $fs: number }>
   }
 `;
 
-export const Title = styled.span<{ $fs: number; $done: boolean }>`
+export const Title = styled.span<{ $fs: number }>`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $fs }) => $fs}px;
   line-height: 1;
@@ -85,7 +85,6 @@ export const Title = styled.span<{ $fs: number; $done: boolean }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-decoration: ${({ $done }) => ($done ? 'line-through' : 'none')};
 
   /* 펼쳐졌을 때만 여러 줄로 흘린다 */
   ${Bar}:hover & {

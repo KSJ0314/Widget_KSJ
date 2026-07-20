@@ -49,7 +49,7 @@ export const EventBar = ({ segment, cols, layout, canEdit, onToggle, onOpen }: P
           {event.done && <CheckIcon />}
         </Check>
       )}
-      <Title $fs={dateFs} $done={event.done}>{event.title}</Title>
+      <Title $fs={dateFs}>{event.title}</Title>
       {event.time && <Time $fs={dateFs}>{event.time}</Time>}
     </Bar>
   );
