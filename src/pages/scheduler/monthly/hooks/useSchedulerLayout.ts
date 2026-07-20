@@ -41,9 +41,10 @@ export const useSchedulerLayout = (width: number, height: number): SchedulerLayo
       dayNameH,
       // 남는 높이를 6주로 나눈 값이 칸의 기본 높이. 일정이 넘치면 이 값을 넘겨 늘어난다
       rowMin: Math.max((height - pad * 2 - headerH - dayNameH - 9) / 6, 18),
-      barH: Math.max(dateFs * 1.75, 11),
-      barGap: Math.max(Math.round(cellPad * 1.8), 2),
+      // 기본 칸 높이 안에 막대 2개까지는 들어가도록 잡은 값들
+      barH: Math.max(dateFs * 1.5, 10),
+      barGap: Math.max(Math.round(cellPad * 0.8), 1),
       barInset: Math.max(Math.round(cellPad * 0.9), 1),
-      dateRowH: dateFs * 1.6 + cellPad * 2,
+      dateRowH: dateFs * 1.45 + cellPad * 2,
     };
   }, [width, height]);
