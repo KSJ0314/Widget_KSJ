@@ -17,3 +17,5 @@ export const db = getFirestore(app);
 // 로그인은 홈 화면(최상위 페이지)에서만 한다. 위젯은 URL 고유키만 쓴다
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+// 지정하지 않으면 브라우저에 로그인된 계정이 하나일 때 선택 화면 없이 바로 로그인된다
+googleProvider.setCustomParameters({ prompt: 'select_account' });
