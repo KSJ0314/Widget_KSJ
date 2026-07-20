@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import { withAlpha, lineColor } from '../../../utils/styleUtils';
 
+/** 모달과 같은 배율을 쓴다 */
+const S = 1.3;
+const px = (n: number) => `${n * S}px`;
+
 export const Overlay = styled.div`
   position: fixed;
   inset: 0;
@@ -13,8 +17,8 @@ export const Overlay = styled.div`
 `;
 
 export const Box = styled.div`
-  padding: 14px;
-  border-radius: 6px;
+  padding: ${px(14)};
+  border-radius: ${px(6)};
   border: 1px solid ${lineColor};
   background: ${({ theme }) => theme.colors.background};
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
@@ -24,13 +28,13 @@ export const Head = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 10px;
+  gap: ${px(16)};
+  margin-bottom: ${px(10)};
 `;
 
 export const Title = styled.span`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 12px;
+  font-size: ${px(12)};
   font-weight: 700;
   letter-spacing: 0.03em;
   color: ${({ theme }) => theme.colors.primary};
@@ -38,21 +42,21 @@ export const Title = styled.span`
 
 export const Preview = styled.span`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 12px;
+  font-size: ${px(12)};
   color: ${({ theme }) => theme.colors.text};
 `;
 
 export const Columns = styled.div`
   display: flex;
-  gap: 8px;
+  gap: ${px(8)};
 `;
 
 export const Column = styled.div`
-  width: 56px;
-  height: 150px;
+  width: ${px(56)};
+  height: ${px(150)};
   overflow-y: auto;
   border: 1px solid ${lineColor};
-  border-radius: 4px;
+  border-radius: ${px(4)};
 
   scrollbar-width: thin;
   scrollbar-color: ${lineColor} transparent;
@@ -71,10 +75,10 @@ export const Column = styled.div`
 
 export const ColumnLabel = styled.div`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 10px;
+  font-size: ${px(10)};
   letter-spacing: 0.06em;
   color: ${({ theme }) => theme.colors.textDim};
-  margin-bottom: 4px;
+  margin-bottom: ${px(4)};
 `;
 
 export const Option = styled.button<{ $selected: boolean }>`
@@ -82,8 +86,8 @@ export const Option = styled.button<{ $selected: boolean }>`
   border: none;
   cursor: pointer;
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 12px;
-  padding: 6px 0;
+  font-size: ${px(12)};
+  padding: ${px(6)} 0;
   background: ${({ theme, $selected }) =>
     $selected ? theme.colors.primary : 'transparent'};
   color: ${({ theme, $selected }) =>
@@ -99,8 +103,8 @@ export const Option = styled.button<{ $selected: boolean }>`
 export const Actions = styled.div`
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 12px;
+  gap: ${px(6)};
+  margin-top: ${px(12)};
 `;
 
 export const Spacer = styled.div`
@@ -110,10 +114,10 @@ export const Spacer = styled.div`
 export const Button = styled.button<{ $variant?: 'primary' }>`
   cursor: pointer;
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 11px;
+  font-size: ${px(11)};
   letter-spacing: 0.06em;
-  padding: 6px 11px;
-  border-radius: 4px;
+  padding: ${px(6)} ${px(11)};
+  border-radius: ${px(4)};
   transition: opacity 0.15s;
 
   ${({ theme, $variant }) =>

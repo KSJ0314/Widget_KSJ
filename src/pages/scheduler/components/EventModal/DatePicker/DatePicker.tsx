@@ -9,6 +9,7 @@ import {
   MonthLabel,
   NavGroup,
   NavBtn,
+  CloseBtn,
   EndToggleRow,
   ToggleLabel,
   Switch,
@@ -87,13 +88,20 @@ export const DatePicker = ({ start, end, onChange, onClose }: Props) => {
   const rangeEnd = pending ?? end ?? start;
 
   return (
-    <Overlay onClick={onClose}>
+    <Overlay
+      // 모달 안에 겹쳐 뜨므로, 전파를 막지 않으면 상세창까지 함께 닫힌다
+      onClick={e => {
+        e.stopPropagation();
+        onClose();
+      }}
+    >
       <Box onClick={e => e.stopPropagation()}>
         <Head>
           <MonthLabel>{view.year} {MONTHS_SHORT[view.month].toUpperCase()}</MonthLabel>
           <NavGroup>
             <NavBtn onClick={goPrev} title="이전 달"><ChevronIcon dir="prev" /></NavBtn>
             <NavBtn onClick={goNext} title="다음 달"><ChevronIcon dir="next" /></NavBtn>
+            <CloseBtn onClick={onClose} title="닫기">×</CloseBtn>
           </NavGroup>
         </Head>
 

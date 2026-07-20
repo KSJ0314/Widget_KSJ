@@ -51,7 +51,13 @@ export const TimePicker = ({ value, onChange, onClose }: Props) => {
   };
 
   return (
-    <Overlay onClick={onClose}>
+    <Overlay
+      // 모달 안에 겹쳐 뜨므로, 전파를 막지 않으면 상세창까지 함께 닫힌다
+      onClick={e => {
+        e.stopPropagation();
+        onClose();
+      }}
+    >
       <Box onClick={e => e.stopPropagation()}>
         <Head>
           <Title>시간</Title>
