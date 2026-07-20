@@ -7,6 +7,7 @@ import { fontNames, withFont, type FontName } from '@/theme/fonts';
 import { getCurrentPosition } from '../weather/useWeather';
 import { findNearestCity } from '@/data/cityMap';
 import { useAuthStore } from '@/store/authStore';
+import { LockableThemeRow } from './LockableThemeRow';
 import {
   HomeContainer,
   Header,
@@ -29,10 +30,10 @@ import {
   FontRow,
   FontLabel,
   FontChip,
-  ThemeRow,
   ThemeCard,
   PreviewArea,
   PreviewScaler,
+  previewSpec,
   WidgetDescription,
   WidgetWarning,
   ThemeBadge,
@@ -145,8 +146,9 @@ export const Home = () => {
         <CategorySection key={category}>
           <CategoryHeader>{category}</CategoryHeader>
 
-          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, requiresWidgetKey, description }) => {
+          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, requiresWidgetKey, requiresLogin, previewPortrait, description }) => {
             const font = fontByWidget[id] ?? 'default';
+            const preview = previewSpec(Boolean(previewPortrait));
 
             return (
               <WidgetSection key={id}>
@@ -172,14 +174,22 @@ export const Home = () => {
                     </FontChip>
                   ))}
                 </FontRow>
-                <ThemeRow>
+                <LockableThemeRow
+                  locked={Boolean(requiresLogin) && !loading && !user}
+                  cardWidth={preview.cardWidth}
+                >
                   {widgetThemes.map(themeName => (
                     <ThemeCard
                       key={themeName}
+                      $width={preview.cardWidth}
                       onClick={() => navigate(`${path}?theme=${themeName}${fontParam(font)}${keyParam(requiresWidgetKey)}`)}
                     >
-                      <PreviewArea>
-                        <PreviewScaler>
+                      <PreviewArea $ratio={preview.ratio}>
+                        <PreviewScaler
+                          $w={preview.baseWidth}
+                          $h={preview.baseHeight}
+                          $scale={preview.scale}
+                        >
                           <StyledThemeProvider theme={withFont(themes[themeName], font)}>
                             <Widget />
                           </StyledThemeProvider>
@@ -197,7 +207,7 @@ export const Home = () => {
                       </ThemeBadge>
                     </ThemeCard>
                   ))}
-                </ThemeRow>
+                </LockableThemeRow>
               </WidgetSection>
             );
           })}

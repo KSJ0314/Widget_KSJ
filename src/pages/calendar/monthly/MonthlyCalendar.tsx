@@ -34,7 +34,8 @@ export const MonthlyCalendar = () => {
   const [month, setMonth] = useState(today.getMonth());
 
   // outer: 8*cellSize wide (7 cells + 0.5 pad × 2), 9.5*cellSize tall (header+names+6rows + pad × 2)
-  const cellSize = Math.max(Math.min(width / 8, height / 9.5), 14);
+  // 8.4로 나누면 세로가 길 때 좌우에 각각 cellSize의 0.2만큼 여백이 남는다
+  const cellSize = Math.max(Math.min(width / 8.4, height / 9.5), 14);
   const fs = Math.max(cellSize * 0.38, 6);
   const headerFs = Math.max(cellSize * 0.44, 7);
 

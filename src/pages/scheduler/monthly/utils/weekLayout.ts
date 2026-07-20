@@ -1,5 +1,6 @@
 import { toDateKey } from '@/utils/date';
 import type { ScheduleEvent } from '../../types';
+import { compareEvents, covers } from '../../utils/eventOrder';
 
 /** 한 주 안에서 일정이 차지하는 가로 구간 하나 */
 export interface WeekSegment {
@@ -13,29 +14,14 @@ export interface WeekSegment {
   lane: number;
 }
 
-/** 'YYYY-MM-DD'는 사전순 비교가 곧 날짜순 비교라 문자열 그대로 비교한다 */
-const covers = (event: ScheduleEvent, key: string) =>
-  key >= event.start && key <= (event.end ?? event.start);
-
-/** 위에 놓일수록 작은 값. 여러 날 → 시간 없음 → 시간 있음 순으로 쌓는다 */
-const rank = (event: ScheduleEvent) => {
-  if (event.end && event.end !== event.start) return 0;
-  return event.time ? 2 : 1;
-};
-
 const compareSegments = (
   a: Omit<WeekSegment, 'lane'>,
   b: Omit<WeekSegment, 'lane'>,
 ) => {
-  const diff = rank(a.event) - rank(b.event);
-  if (diff !== 0) return diff;
+  const byEvent = compareEvents(a.event, b.event);
+  if (byEvent !== 0) return byEvent;
 
-  // 시간이 있는 것끼리는 이른 시간이 위로
-  if (a.event.time && b.event.time && a.event.time !== b.event.time) {
-    return a.event.time < b.event.time ? -1 : 1;
-  }
-
-  // 나머지는 왼쪽부터, 같은 자리면 긴 쪽이 위로
+  // 같은 순위면 왼쪽부터, 같은 자리면 긴 쪽이 위로
   return a.startIdx - b.startIdx || b.span - a.span;
 };
 

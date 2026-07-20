@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { withAlpha } from '@/theme/colorUtils';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(12px); }
@@ -181,6 +182,39 @@ export const WidgetSection = styled.div`
   margin-bottom: 36px;
 `;
 
+/** 로그인해야 쓸 수 있는 위젯의 미리보기만 가린다. 이름·설명은 그대로 보인다 */
+export const LockOverlay = styled.div<{ $width: number }>`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  /* 카드가 실제로 차지하는 폭. 그래야 문구가 카드 무리의 중앙에 온다 */
+  width: ${({ $width }) => ($width > 0 ? `${$width}px` : '100%')};
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  svg {
+    width: 26px;
+    height: 26px;
+    display: block;
+    color: ${({ theme }) => theme.colors.textDim};
+  }
+  border-radius: 6px;
+  /* 뒤의 미리보기가 비쳐 보일 만큼만 덮는다 */
+  background: ${({ theme }) => withAlpha(theme.colors.background, 0.72)};
+`;
+
+export const LockText = styled.p`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
 export const SectionHeader = styled.div`
   display: flex;
   align-items: baseline;
@@ -271,14 +305,51 @@ export const FontChip = styled.button<{ $active: boolean }>`
   }
 `;
 
+/** 잠금 화면이 카드 무리의 폭을 계산할 때도 같은 값을 써야 한다 */
+export const CARD_WIDTH = 220;
+export const CARD_GAP = 16;
+
+/** 세로형 미리보기 크기. 가로만 조정하고 세로는 그대로 두면 된다 */
+const PORTRAIT_CARD_WIDTH = 170;
+const PORTRAIT_CARD_HEIGHT = 215;
+
+/**
+ * 미리보기는 실제 위젯을 축소해 보여준다.
+ * 위젯을 그리는 기준 크기를 카드와 같은 비율로 잡아야 잘리지 않는다.
+ */
+export const previewSpec = (portrait: boolean) => {
+  if (!portrait) {
+    return {
+      cardWidth: CARD_WIDTH,
+      ratio: '16 / 9',
+      baseWidth: 400,
+      baseHeight: 225,
+      scale: 0.55,
+    };
+  }
+
+  const baseHeight = 400;
+  const baseWidth = Math.round((baseHeight * PORTRAIT_CARD_WIDTH) / PORTRAIT_CARD_HEIGHT);
+
+  return {
+    cardWidth: PORTRAIT_CARD_WIDTH,
+    ratio: `${PORTRAIT_CARD_WIDTH} / ${PORTRAIT_CARD_HEIGHT}`,
+    baseWidth,
+    baseHeight,
+    scale: PORTRAIT_CARD_WIDTH / baseWidth,
+  };
+};
+
 export const ThemeRow = styled.div`
   display: flex;
-  gap: 16px;
+  gap: ${CARD_GAP}px;
   flex-wrap: wrap;
+  /* 잠금 화면이 이 영역만 덮는다 */
+  position: relative;
 `;
 
-export const ThemeCard = styled.div`
-  width: 220px;
+export const ThemeCard = styled.div<{ $width: number }>`
+  width: ${({ $width }) => $width}px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 8px;
   overflow: hidden;
@@ -293,17 +364,17 @@ export const ThemeCard = styled.div`
   }
 `;
 
-export const PreviewArea = styled.div`
+export const PreviewArea = styled.div<{ $ratio: string }>`
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: ${({ $ratio }) => $ratio};
   overflow: hidden;
   position: relative;
 `;
 
-export const PreviewScaler = styled.div`
-  width: 400px;
-  height: 225px;
-  transform: scale(0.55);
+export const PreviewScaler = styled.div<{ $w: number; $h: number; $scale: number }>`
+  width: ${({ $w }) => $w}px;
+  height: ${({ $h }) => $h}px;
+  transform: scale(${({ $scale }) => $scale});
   transform-origin: top left;
   pointer-events: none;
 `;
