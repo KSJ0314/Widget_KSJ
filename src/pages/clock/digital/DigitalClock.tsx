@@ -1,6 +1,6 @@
 import { useClock } from '../useClock';
-import { useContainerSize } from '../../../hooks/useContainerSize';
-import { DAYS_SHORT, MONTHS_SHORT } from '../../../utils/date';
+import { useContainerSize } from '@/hooks/useContainerSize';
+import { DAYS_SHORT, MONTHS_SHORT } from '@/utils/date';
 import {
   ClockContainer,
   ClockInner,

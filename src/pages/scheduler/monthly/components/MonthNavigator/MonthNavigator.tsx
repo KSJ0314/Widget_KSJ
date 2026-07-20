@@ -1,4 +1,4 @@
-import { MONTHS_SHORT } from '../../../../../utils/date';
+import { MONTHS_SHORT } from '@/utils/date';
 import { ChevronIcon } from '../../../icons';
 import { SettingsPopover } from './SettingsPopover';
 import { Bar, Left, MonthLabel, NavGroup, NavBtn, TodayBtn } from './MonthNavigator.styled';

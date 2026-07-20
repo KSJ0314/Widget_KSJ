@@ -1,5 +1,5 @@
-import { isSameDay, toDateKey } from '../../../../../../utils/date';
-import { getHolidayName } from '../../../../../../utils/holidays';
+import { isSameDay, toDateKey } from '@/utils/date';
+import { getHolidayName } from '@/utils/holidays';
 import { PlusIcon } from '../../../../icons';
 import type { SchedulerLayout } from '../../../hooks/useSchedulerLayout';
 import type { WeekSegment } from '../../../utils/weekLayout';

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { lineColor } from '../../../utils/styleUtils';
-import { weekendColor } from '../../../../../theme/weekendColors';
+import { weekendColor } from '@/theme/weekendColors';
 
 /**
  * 일정 막대가 여러 칸을 가로질러야 해서 주 단위 행으로 나눈다.

@@ -3,7 +3,7 @@ import type { Firestore } from 'firebase/firestore';
 import { latLonToGrid } from './kmaGrid';
 import { fetchCurrentWeather, fetchHourlyForecast } from './kmaApi';
 import { getCachedWeather, setCachedWeather } from './weatherCache';
-import { findCityByEn, findNearestCity } from '../../data/cityMap';
+import { findCityByEn, findNearestCity } from '@/data/cityMap';
 import type { CurrentWeather, HourlyForecast } from './kmaApi';
 
 export interface WeatherData {

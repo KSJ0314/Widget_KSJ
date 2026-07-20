@@ -7,6 +7,9 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
+    /* src 바로 아래 공유 폴더는 @/ 로 참조한다. baseUrl은 TS6에서 폐기돼 쓰지 않는다 */
+    "paths": { "@/*": ["./src/*"] },
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,

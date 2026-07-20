@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
-import { weekendColor, SUNDAY_COLOR } from '../../../theme/weekendColors';
-import { tooltipCss } from '../../../theme/tooltip';
+import { weekendColor, SUNDAY_COLOR } from '@/theme/weekendColors';
+import { tooltipCss } from '@/theme/tooltip';
 
 export const Wrapper = styled.div`
   width: 100%;

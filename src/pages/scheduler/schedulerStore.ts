@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { doc, onSnapshot, setDoc, type Unsubscribe } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+import { db } from '@/lib/firebase';
 import { DEFAULT_SETTINGS, type ScheduleEvent, type SchedulerSettings } from './types';
 import { omitUndefined } from './utils/omitUndefined';
 

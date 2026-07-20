@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components';
 import { withAlpha, lineColor } from '../../../utils/styleUtils';
-import { weekendColor, SUNDAY_COLOR } from '../../../../../theme/weekendColors';
-import { tooltipCss } from '../../../../../theme/tooltip';
-import { restDayBg } from '../../../../../theme/colorUtils';
+import { weekendColor, SUNDAY_COLOR } from '@/theme/weekendColors';
+import { tooltipCss } from '@/theme/tooltip';
+import { restDayBg } from '@/theme/colorUtils';
 
 /** 모달과 같은 배율을 쓴다 */
 const S = 1.3;

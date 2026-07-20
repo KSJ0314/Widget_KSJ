@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import type { ThemeName } from '../../theme/theme';
+import type { ThemeName } from '@/theme/theme';
 import { DigitalClock } from '../clock/digital';
 import { AnalogClock } from '../clock/analog';
 import { FlipClock } from '../clock/flip';

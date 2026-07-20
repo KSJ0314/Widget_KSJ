@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useContainerSize } from '../../../hooks/useContainerSize';
-import { DAYS_SHORT, MONTHS_SHORT, toDateKey } from '../../../utils/date';
-import { getHolidayName } from '../../../utils/holidays';
+import { useContainerSize } from '@/hooks/useContainerSize';
+import { DAYS_SHORT, MONTHS_SHORT, toDateKey } from '@/utils/date';
+import { getHolidayName } from '@/utils/holidays';
 import {
   Wrapper,
   Inner,

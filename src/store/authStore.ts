@@ -6,7 +6,7 @@ import {
   type User,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, googleProvider, db } from '../lib/firebase';
+import { auth, googleProvider, db } from '@/lib/firebase';
 
 const keyCacheName = (uid: string) => `widget-ksj:widgetKey:${uid}`;
 

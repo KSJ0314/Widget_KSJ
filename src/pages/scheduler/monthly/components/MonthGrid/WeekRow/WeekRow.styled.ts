@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components';
 import { lineColor } from '../../../../utils/styleUtils';
-import { restDayBg } from '../../../../../../theme/colorUtils';
-import { weekendColor, SUNDAY_COLOR } from '../../../../../../theme/weekendColors';
-import { tooltipCss } from '../../../../../../theme/tooltip';
+import { restDayBg } from '@/theme/colorUtils';
+import { weekendColor, SUNDAY_COLOR } from '@/theme/weekendColors';
+import { tooltipCss } from '@/theme/tooltip';
 
 export const Row = styled.div<{ $cols: number; $minHeight: number }>`
   /* 남는 높이를 행들이 나눠 가져야 마지막 행 아래에 빈 공간이 안 남는다 */

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DAYS_SHORT } from '../../../../../utils/date';
+import { DAYS_SHORT } from '@/utils/date';
 import type { SchedulerLayout } from '../../hooks/useSchedulerLayout';
 import { buildWeekSegments, laneCount, type WeekSegment } from '../../utils/weekLayout';
 import type { DayCellData, ScheduleEvent } from '../../../types';

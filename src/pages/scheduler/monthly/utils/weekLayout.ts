@@ -1,4 +1,4 @@
-import { toDateKey } from '../../../../utils/date';
+import { toDateKey } from '@/utils/date';
 import type { ScheduleEvent } from '../../types';
 
 /** 한 주 안에서 일정이 차지하는 가로 구간 하나 */

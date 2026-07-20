@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { widgets } from './widgetRegistry';
-import { themes } from '../../theme/theme';
-import { fontNames, withFont, type FontName } from '../../theme/fonts';
+import { themes } from '@/theme/theme';
+import { fontNames, withFont, type FontName } from '@/theme/fonts';
 import { getCurrentPosition } from '../weather/useWeather';
-import { findNearestCity } from '../../data/cityMap';
-import { useAuthStore } from '../../store/authStore';
+import { findNearestCity } from '@/data/cityMap';
+import { useAuthStore } from '@/store/authStore';
 import {
   HomeContainer,
   Header,

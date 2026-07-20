@@ -1,12 +1,12 @@
 import { useTheme } from 'styled-components';
 import type { Firestore } from 'firebase/firestore';
-import type { CityName } from '../../../data/cityMap';
-import { useContainerSize } from '../../../hooks/useContainerSize';
-import { useDragScroll } from '../../../hooks/useDragScroll';
+import type { CityName } from '@/data/cityMap';
+import { useContainerSize } from '@/hooks/useContainerSize';
+import { useDragScroll } from '@/hooks/useDragScroll';
 import { useWeather } from '../useWeather';
 import { getCondition } from '../weatherCode';
 import { WeatherIcon } from '../WeatherIcon';
-import { DAYS_SHORT } from '../../../utils/date';
+import { DAYS_SHORT } from '@/utils/date';
 import {
   Wrapper, Card,
   CurrentGrid, LeftCol, DateText, CityText,

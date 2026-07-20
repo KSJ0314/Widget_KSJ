@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useContainerSize } from '../../../hooks/useContainerSize';
+import { useContainerSize } from '@/hooks/useContainerSize';
 import { useSchedulerStore } from '../schedulerStore';
 import { useSchedulerLayout } from './hooks/useSchedulerLayout';
 import { buildCells } from '../utils/calendarCells';

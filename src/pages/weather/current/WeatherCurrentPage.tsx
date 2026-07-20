@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
-import { db } from '../../../lib/firebase';
-import { findCityByEn, findNearestCity } from '../../../data/cityMap';
-import type { CityName } from '../../../data/cityMap';
+import { db } from '@/lib/firebase';
+import { findCityByEn, findNearestCity } from '@/data/cityMap';
+import type { CityName } from '@/data/cityMap';
 import { WeatherCurrent } from './WeatherCurrent';
 
 export const WeatherCurrentPage = () => {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { useContainerSize } from '../../../hooks/useContainerSize';
-import { DAYS_SHORT } from '../../../utils/date';
+import { useContainerSize } from '@/hooks/useContainerSize';
+import { DAYS_SHORT } from '@/utils/date';
 import {
   Wrapper,
   CardsRow,

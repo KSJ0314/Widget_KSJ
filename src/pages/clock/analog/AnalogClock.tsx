@@ -1,4 +1,4 @@
-import { useContainerSize } from '../../../hooks/useContainerSize';
+import { useContainerSize } from '@/hooks/useContainerSize';
 import { useAnalogTime } from './useAnalogTime';
 import {
   ClockContainer,
