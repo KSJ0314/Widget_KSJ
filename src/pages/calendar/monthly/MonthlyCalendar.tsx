@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useContainerSize } from '../../../hooks/useContainerSize';
-import { DAYS_SHORT, MONTHS_SHORT } from '../../../utils/date';
+import { DAYS_SHORT, MONTHS_SHORT, toDateKey } from '../../../utils/date';
+import { getHolidayName } from '../../../utils/holidays';
 import {
   Wrapper,
   Inner,
@@ -15,24 +16,15 @@ import {
 
 type CellType = 'prev' | 'cur' | 'next';
 
+/** 공휴일을 조회하려면 실제 Date가 필요해 날짜 객체까지 함께 만든다 */
 const buildCells = (year: number, month: number) => {
   const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const prevMonthDays = new Date(year, month, 0).getDate();
-
-  const cells: { day: number; type: CellType }[] = [
-    ...Array.from({ length: firstDay }, (_, i) => ({
-      day: prevMonthDays - firstDay + 1 + i,
-      type: 'prev' as CellType,
-    })),
-    ...Array.from({ length: daysInMonth }, (_, i) => ({
-      day: i + 1,
-      type: 'cur' as CellType,
-    })),
-  ];
-  const trailing = 42 - cells.length;
-  for (let i = 1; i <= trailing; i++) cells.push({ day: i, type: 'next' as CellType });
-  return cells;
+  return Array.from({ length: 42 }, (_, i) => {
+    const date = new Date(year, month, i - firstDay + 1);
+    const type: CellType =
+      date.getMonth() === month ? 'cur' : date < new Date(year, month, 1) ? 'prev' : 'next';
+    return { day: date.getDate(), date, type };
+  });
 };
 
 export const MonthlyCalendar = () => {
@@ -79,18 +71,23 @@ export const MonthlyCalendar = () => {
           ))}
         </WeekRow>
         <CellGrid $cellSize={cellSize}>
-          {cells.map((cell, idx) => (
-            <DayCell
-              key={idx}
-              $cellSize={cellSize}
-              $fs={fs}
-              $isToday={isToday(cell.day, cell.type)}
-              $isDim={cell.type !== 'cur'}
-              $col={idx % 7}
-            >
-              <span>{cell.day}</span>
-            </DayCell>
-          ))}
+          {cells.map((cell, idx) => {
+            const holiday = getHolidayName(toDateKey(cell.date));
+            return (
+              <DayCell
+                key={idx}
+                $cellSize={cellSize}
+                $fs={fs}
+                $isToday={isToday(cell.day, cell.type)}
+                $isDim={cell.type !== 'cur'}
+                $col={idx % 7}
+                $isHoliday={holiday !== null}
+                data-tooltip={holiday ?? undefined}
+              >
+                <span>{cell.day}</span>
+              </DayCell>
+            );
+          })}
         </CellGrid>
       </Inner>
     </Wrapper>

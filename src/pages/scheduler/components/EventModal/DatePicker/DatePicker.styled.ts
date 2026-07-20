@@ -1,5 +1,8 @@
 import styled, { css } from 'styled-components';
 import { withAlpha, lineColor } from '../../../utils/styleUtils';
+import { weekendColor, SUNDAY_COLOR } from '../../../../../theme/weekendColors';
+import { tooltipCss } from '../../../../../theme/tooltip';
+import { restDayBg } from '../../../../../theme/colorUtils';
 
 /** 모달과 같은 배율을 쓴다 */
 const S = 1.3;
@@ -132,7 +135,7 @@ export const Grid = styled.div`
   grid-template-columns: repeat(7, ${px(30)});
 `;
 
-export const DayName = styled.div<{ $isWeekend: boolean }>`
+export const DayName = styled.div<{ $col: number }>`
   height: ${px(20)};
   display: flex;
   align-items: center;
@@ -140,8 +143,7 @@ export const DayName = styled.div<{ $isWeekend: boolean }>`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${px(10)};
   letter-spacing: 0.04em;
-  color: ${({ theme, $isWeekend }) =>
-    $isWeekend ? theme.colors.primary : theme.colors.textDim};
+  color: ${({ theme, $col }) => weekendColor($col) ?? theme.colors.textDim};
 `;
 
 export const DayBtn = styled.button<{
@@ -149,6 +151,8 @@ export const DayBtn = styled.button<{
   $isToday: boolean;
   $isEdge: boolean;
   $inRange: boolean;
+  $col: number;
+  $isHoliday: boolean;
 }>`
   height: ${px(28)};
   border: none;
@@ -158,8 +162,18 @@ export const DayBtn = styled.button<{
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  color: ${({ theme, $isDim }) => ($isDim ? theme.colors.textDim : theme.colors.text)};
+  background: ${props =>
+    props.$col === 0 || props.$col === 6 || props.$isHoliday
+      ? restDayBg(props)
+      : 'transparent'};
+
+  ${tooltipCss}
+
+  color: ${({ theme, $isDim, $col, $isHoliday }) => {
+    if ($isDim) return theme.colors.textDim;
+    if ($isHoliday) return SUNDAY_COLOR;
+    return weekendColor($col) ?? theme.colors.text;
+  }};
 
   /* 범위 안쪽은 옅게, 시작·종료일은 진하게 */
   ${({ $inRange, theme }) =>

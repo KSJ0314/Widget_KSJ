@@ -1,5 +1,8 @@
 import styled, { css } from 'styled-components';
 import { lineColor } from '../../../../utils/styleUtils';
+import { restDayBg } from '../../../../../../theme/colorUtils';
+import { weekendColor, SUNDAY_COLOR } from '../../../../../../theme/weekendColors';
+import { tooltipCss } from '../../../../../../theme/tooltip';
 
 export const Row = styled.div<{ $cols: number; $minHeight: number }>`
   /* 남는 높이를 행들이 나눠 가져야 마지막 행 아래에 빈 공간이 안 남는다 */
@@ -15,13 +18,19 @@ export const Row = styled.div<{ $cols: number; $minHeight: number }>`
   }
 `;
 
-export const Cell = styled.div<{ $pad: number }>`
+export const Cell = styled.div<{ $pad: number; $isRestDay: boolean }>`
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border-right: 1px solid ${lineColor};
   border-bottom: 1px solid ${lineColor};
   padding: ${({ $pad }) => $pad}px;
+  background: ${props => (props.$isRestDay ? restDayBg(props) : 'transparent')};
+
+  /* 공휴일 말풍선이 칸 밖으로 나가야 해서 hover 동안만 클리핑을 푼다 */
+  &:hover {
+    overflow: visible;
+  }
 `;
 
 export const DateRow = styled.div`
@@ -64,7 +73,8 @@ export const DateNum = styled.span<{
   $fs: number;
   $isToday: boolean;
   $isDim: boolean;
-  $isWeekend: boolean;
+  $col: number;
+  $isHoliday: boolean;
 }>`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $fs }) => $fs}px;
@@ -78,11 +88,13 @@ export const DateNum = styled.span<{
   height: ${({ $fs }) => $fs * 1.6}px;
   border-radius: 50%;
 
-  color: ${({ theme, $isToday, $isDim, $isWeekend }) => {
+  ${tooltipCss}
+
+  color: ${({ theme, $isToday, $isDim, $col, $isHoliday }) => {
     if ($isToday) return theme.colors.background;
     if ($isDim) return theme.colors.textDim;
-    if ($isWeekend) return theme.colors.primary;
-    return theme.colors.text;
+    if ($isHoliday) return SUNDAY_COLOR;
+    return weekendColor($col) ?? theme.colors.text;
   }};
 
   /* 오늘은 숫자에만 표시하고 칸 배경은 건드리지 않는다 */

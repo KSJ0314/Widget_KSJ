@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { DAYS_SHORT, MONTHS_SHORT, isSameDay, toDateKey } from '../../../../../utils/date';
 import { ChevronIcon } from '../../../icons';
 import { buildCells } from '../../../utils/calendarCells';
+import { getHolidayName } from '../../../../../utils/holidays';
 import {
   Overlay,
   Box,
@@ -112,13 +113,14 @@ export const DatePicker = ({ start, end, onChange, onClose }: Props) => {
 
         <Grid>
           {DAYS_SHORT.map((day, i) => (
-            <DayName key={day} $isWeekend={i === 0 || i === 6}>
+            <DayName key={day} $col={i}>
               {day.toUpperCase()}
             </DayName>
           ))}
 
           {cells.map(({ date, isCurrentMonth }) => {
             const key = toDateKey(date);
+            const holiday = getHolidayName(key);
             return (
               <DayBtn
                 key={key}
@@ -126,6 +128,9 @@ export const DatePicker = ({ start, end, onChange, onClose }: Props) => {
                 $isToday={isSameDay(date, today)}
                 $isEdge={key === rangeStart || key === rangeEnd}
                 $inRange={key > rangeStart && key < rangeEnd}
+                $col={date.getDay()}
+                $isHoliday={holiday !== null}
+                data-tooltip={holiday ?? undefined}
                 onClick={() => pick(key)}
               >
                 {date.getDate()}

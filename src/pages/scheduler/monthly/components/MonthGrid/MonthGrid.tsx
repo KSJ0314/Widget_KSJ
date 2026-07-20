@@ -41,7 +41,7 @@ export const MonthGrid = ({
     <Body>
       <DayNameRow $cols={visibleCols.length} $height={dayNameH}>
         {visibleCols.map(col => (
-          <DayName key={col} $fs={dayNameFs} $isWeekend={col === 0 || col === 6}>
+          <DayName key={col} $fs={dayNameFs} $col={col}>
             {DAYS_SHORT[col].toUpperCase()}
           </DayName>
         ))}

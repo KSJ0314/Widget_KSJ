@@ -1,4 +1,6 @@
 import styled, { css } from 'styled-components';
+import { weekendColor, SUNDAY_COLOR } from '../../../theme/weekendColors';
+import { tooltipCss } from '../../../theme/tooltip';
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -88,8 +90,7 @@ export const DayName = styled.div<{ $cellSize: number; $fs: number; $col: number
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $fs }) => $fs * 0.68}px;
   letter-spacing: 0.04em;
-  color: ${({ theme, $col }) =>
-    $col === 0 ? theme.colors.primary : theme.colors.textDim};
+  color: ${({ theme, $col }) => weekendColor($col) ?? theme.colors.textDim};
 
   ${({ theme }) => theme.variant === 'paper' && css`
     border-right: 1px solid ${theme.colors.border};
@@ -112,6 +113,7 @@ export const DayCell = styled.div<{
   $isToday: boolean;
   $isDim: boolean;
   $col: number;
+  $isHoliday: boolean;
 }>`
   width: ${({ $cellSize }) => $cellSize}px;
   height: ${({ $cellSize }) => $cellSize}px;
@@ -122,11 +124,11 @@ export const DayCell = styled.div<{
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $fs }) => $fs}px;
 
-  color: ${({ theme, $isToday, $isDim, $col }) => {
+  color: ${({ theme, $isToday, $isDim, $col, $isHoliday }) => {
     if ($isToday) return theme.variant === 'paper' ? theme.colors.primary : theme.colors.background;
     if ($isDim) return theme.colors.textDim;
-    if ($col === 0) return theme.colors.primary;
-    return theme.colors.text;
+    if ($isHoliday) return SUNDAY_COLOR;
+    return weekendColor($col) ?? theme.colors.text;
   }};
 
   ${({ theme, $fs }) => theme.variant === 'paper' && css`
@@ -161,4 +163,6 @@ export const DayCell = styled.div<{
     position: relative;
     z-index: 1;
   }
+
+  ${tooltipCss}
 `;

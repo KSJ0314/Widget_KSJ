@@ -1,4 +1,5 @@
 import { isSameDay, toDateKey } from '../../../../../../utils/date';
+import { getHolidayName } from '../../../../../../utils/holidays';
 import { PlusIcon } from '../../../../icons';
 import type { SchedulerLayout } from '../../../hooks/useSchedulerLayout';
 import type { WeekSegment } from '../../../utils/weekLayout';
@@ -28,8 +29,13 @@ export const WeekRow = ({
     <Row $cols={cols} $minHeight={minHeight}>
       {days.map(({ date, isCurrentMonth }) => {
         const col = date.getDay();
+        const holiday = getHolidayName(toDateKey(date));
         return (
-          <Cell key={date.getTime()} $pad={cellPad}>
+          <Cell
+            key={date.getTime()}
+            $pad={cellPad}
+            $isRestDay={col === 0 || col === 6 || holiday !== null}
+          >
             <DateRow>
               {canEdit && (
                 <AddBtn $fs={dateFs} onClick={() => onAdd(toDateKey(date))} title="일정 추가">
@@ -40,7 +46,9 @@ export const WeekRow = ({
                 $fs={dateFs}
                 $isToday={isSameDay(date, today)}
                 $isDim={!isCurrentMonth}
-                $isWeekend={col === 0 || col === 6}
+                $col={col}
+                $isHoliday={holiday !== null}
+                data-tooltip={holiday ?? undefined}
               >
                 {date.getDate()}
               </DateNum>

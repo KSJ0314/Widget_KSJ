@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { lineColor } from '../../../utils/styleUtils';
+import { weekendColor } from '../../../../../theme/weekendColors';
 
 /**
  * 일정 막대가 여러 칸을 가로질러야 해서 주 단위 행으로 나눈다.
@@ -19,7 +20,7 @@ export const DayNameRow = styled.div<{ $cols: number; $height: number }>`
   height: ${({ $height }) => $height}px;
 `;
 
-export const DayName = styled.div<{ $fs: number; $isWeekend: boolean }>`
+export const DayName = styled.div<{ $fs: number; $col: number }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,6 +29,5 @@ export const DayName = styled.div<{ $fs: number; $isWeekend: boolean }>`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $fs }) => $fs}px;
   letter-spacing: 0.06em;
-  color: ${({ theme, $isWeekend }) =>
-    $isWeekend ? theme.colors.primary : theme.colors.textDim};
+  color: ${({ theme, $col }) => weekendColor($col) ?? theme.colors.textDim};
 `;
