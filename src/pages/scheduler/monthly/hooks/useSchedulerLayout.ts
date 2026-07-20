@@ -25,7 +25,7 @@ export interface SchedulerLayout {
 export const useSchedulerLayout = (width: number, height: number): SchedulerLayout =>
   useMemo(() => {
     const base = Math.max(Math.min(width / 8, height / 9), 14);
-    const pad = Math.round(base * 0.35);
+    const pad = Math.round(base * 0.25);
     const headerFs = Math.max(base * 0.28, 7);
     const dateFs = Math.max(base * 0.2, 5);
     const cellPad = Math.max(Math.round(base * 0.06), 1);
