@@ -28,6 +28,114 @@ export const HomeContainer = styled.div`
 export const Header = styled.header`
   margin-bottom: 48px;
   animation: ${fadeIn} 0.5s ease;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+`;
+
+/** 로고 + 소개글 묶음 */
+export const HeaderInfo = styled.div``;
+
+export const LoginButton = styled.button`
+  flex-shrink: 0;
+  cursor: pointer;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: none;
+  color: ${({ theme }) => theme.colors.primary};
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+export const ProfileButton = styled.button`
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: none;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  transition: border-color 0.15s;
+
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+`;
+
+export const ModalBox = styled.div`
+  min-width: 260px;
+  padding: 24px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.surface};
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+`;
+
+export const ModalText = styled.p`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 13px;
+  color: ${({ theme }) => theme.colors.text};
+  margin-bottom: 20px;
+`;
+
+export const ModalActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+`;
+
+export const ModalButton = styled.button<{ $primary?: boolean }>`
+  cursor: pointer;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 8px 14px;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+
+  ${({ theme, $primary }) =>
+    $primary
+      ? `
+        border: 1px solid ${theme.colors.primary};
+        background: ${theme.colors.primary};
+        color: ${theme.colors.background};
+      `
+      : `
+        border: 1px solid ${theme.colors.border};
+        background: none;
+        color: ${theme.colors.textDim};
+      `}
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 export const Title = styled.h1`
@@ -110,6 +218,21 @@ export const WidgetDescription = styled.p`
   letter-spacing: 0.05em;
   line-height: 1.6;
   margin-bottom: 14px;
+  /* 설명에 넣은 줄바꿈(\n)을 그대로 살린다 */
+  white-space: pre-line;
+`;
+
+/** 고유키를 못 가져왔을 때처럼, 그냥 두면 잘못된 URL이 복사되는 상황을 알린다 */
+export const WidgetWarning = styled.p`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: ${({ theme }) => theme.colors.accent};
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.accent};
 `;
 
 export const FontRow = styled.div`

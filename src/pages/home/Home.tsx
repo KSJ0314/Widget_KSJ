@@ -6,11 +6,20 @@ import { themes } from '../../theme/theme';
 import { fontNames, withFont, type FontName } from '../../theme/fonts';
 import { getCurrentPosition } from '../weather/useWeather';
 import { findNearestCity } from '../../data/cityMap';
+import { useAuthStore } from '../../store/authStore';
 import {
   HomeContainer,
   Header,
+  HeaderInfo,
   Title,
   Subtitle,
+  LoginButton,
+  ProfileButton,
+  ModalOverlay,
+  ModalBox,
+  ModalText,
+  ModalActions,
+  ModalButton,
   CategorySection,
   CategoryHeader,
   WidgetSection,
@@ -25,6 +34,7 @@ import {
   PreviewArea,
   PreviewScaler,
   WidgetDescription,
+  WidgetWarning,
   ThemeBadge,
   CopyButton,
 } from './Home.styled';
@@ -54,11 +64,17 @@ const groupByCategory = () => {
 export const Home = () => {
   const navigate = useNavigate();
   const grouped = groupByCategory();
+  const { user, loading, keyError, widgetKey, signIn, signOut } = useAuthStore();
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [fontByWidget, setFontByWidget] = useState<Record<string, FontName>>({});
 
   // 기본 폰트는 테마가 정의한 값을 쓰므로 URL에 넣지 않는다
   const fontParam = (font: FontName) => (font === 'default' ? '' : `&font=${font}`);
+
+  // 개인 데이터를 다루는 위젯만, 그리고 로그인해 키가 있을 때만 붙인다
+  const keyParam = (needsKey?: boolean) =>
+    needsKey && widgetKey ? `&u=${widgetKey}` : '';
 
   const copyUrl = async (
     e: React.MouseEvent,
@@ -66,6 +82,7 @@ export const Home = () => {
     themeName: string,
     font: FontName,
     requiresLocation?: boolean,
+    needsKey?: boolean,
   ) => {
     e.stopPropagation();
     let extra = '';
@@ -77,7 +94,7 @@ export const Home = () => {
         extra = `&city=${city.en}`;
       } catch {}
     }
-    const url = `${window.location.origin}${import.meta.env.BASE_URL}#${path}?theme=${themeName}${fontParam(font)}${extra}`;
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}#${path}?theme=${themeName}${fontParam(font)}${extra}${keyParam(needsKey)}`;
     navigator.clipboard.writeText(url);
     const key = `${path}-${themeName}`;
     setCopiedKey(key);
@@ -87,15 +104,48 @@ export const Home = () => {
   return (
     <HomeContainer>
       <Header>
-        <Title>WIDGET KSJ</Title>
-        <Subtitle>Personal widget collection</Subtitle>
+        <HeaderInfo>
+          <Title>WIDGET KSJ</Title>
+          <Subtitle>Personal widget collection</Subtitle>
+        </HeaderInfo>
+        {!loading && (
+          user ? (
+            <ProfileButton onClick={() => setLogoutOpen(true)} title={user.email ?? '계정'}>
+              {user.photoURL
+                ? <img src={user.photoURL} alt="" referrerPolicy="no-referrer" />
+                : (user.email?.[0]?.toUpperCase() ?? '?')}
+            </ProfileButton>
+          ) : (
+            <LoginButton onClick={() => signIn()}>Google로 로그인</LoginButton>
+          )
+        )}
       </Header>
+
+      {logoutOpen && (
+        <ModalOverlay onClick={() => setLogoutOpen(false)}>
+          <ModalBox onClick={e => e.stopPropagation()}>
+            <ModalText>로그아웃하시겠습니까?</ModalText>
+            <ModalActions>
+              <ModalButton onClick={() => setLogoutOpen(false)}>취소</ModalButton>
+              <ModalButton
+                $primary
+                onClick={() => {
+                  setLogoutOpen(false);
+                  signOut();
+                }}
+              >
+                로그아웃
+              </ModalButton>
+            </ModalActions>
+          </ModalBox>
+        </ModalOverlay>
+      )}
 
       {[...grouped.entries()].map(([category, categoryWidgets]) => (
         <CategorySection key={category}>
           <CategoryHeader>{category}</CategoryHeader>
 
-          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, description }) => {
+          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, requiresWidgetKey, description }) => {
             const font = fontByWidget[id] ?? 'default';
 
             return (
@@ -105,6 +155,11 @@ export const Home = () => {
                   <SectionCategory>{cat}</SectionCategory>
                 </SectionHeader>
                 {description && <WidgetDescription>{description}</WidgetDescription>}
+                {id === 'calendar-scheduler' && keyError && (
+                  <WidgetWarning>
+                    고유키를 불러오지 못했습니다. 지금 URL을 복사하면 일정이 저장되지 않습니다. 새로고침해 주세요.
+                  </WidgetWarning>
+                )}
                 <FontRow>
                   <FontLabel>Font</FontLabel>
                   {fontNames.map(fontName => (
@@ -121,7 +176,7 @@ export const Home = () => {
                   {widgetThemes.map(themeName => (
                     <ThemeCard
                       key={themeName}
-                      onClick={() => navigate(`${path}?theme=${themeName}${fontParam(font)}`)}
+                      onClick={() => navigate(`${path}?theme=${themeName}${fontParam(font)}${keyParam(requiresWidgetKey)}`)}
                     >
                       <PreviewArea>
                         <PreviewScaler>
@@ -134,7 +189,7 @@ export const Home = () => {
                         {themeName}
                         <CopyButton
                           $copied={copiedKey === `${path}-${themeName}`}
-                          onClick={(e) => copyUrl(e, path, themeName, font, requiresLocation)}
+                          onClick={(e) => copyUrl(e, path, themeName, font, requiresLocation, requiresWidgetKey)}
                           title="URL 복사"
                         >
                           {copiedKey === `${path}-${themeName}` ? <CheckIcon /> : <ClipboardIcon />}

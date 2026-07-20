@@ -1,0 +1,112 @@
+import styled, { css } from 'styled-components';
+import { withAlpha } from '../../../../../utils/styleUtils';
+
+export const Bar = styled.div<{
+  $left: number;
+  $width: number;
+  $top: number;
+  $height: number;
+  $inset: number;
+  $fs: number;
+  $done: boolean;
+  $canEdit: boolean;
+  $hasTime: boolean;
+}>`
+  position: absolute;
+  /* 층 자체는 클릭을 통과시킨다. 막대는 읽기 전용일 때도 hover로 제목을 펼쳐야 해서 받는다 */
+  pointer-events: auto;
+  cursor: ${({ $canEdit }) => ($canEdit ? 'pointer' : 'default')};
+  left: calc(${({ $left }) => $left}% + ${({ $inset }) => $inset}px);
+  width: calc(${({ $width }) => $width}% - ${({ $inset }) => $inset * 2}px);
+  top: ${({ $top }) => $top}px;
+  height: ${({ $height }) => $height}px;
+  display: flex;
+  align-items: center;
+  gap: ${({ $fs }) => $fs * 0.35}px;
+  padding: ${({ $fs }) => $fs * 0.3}px ${({ $fs }) => $fs * 0.55}px;
+  box-sizing: border-box;
+  border-radius: ${({ $fs }) => $fs * 0.3}px;
+  background: ${({ theme }) => withAlpha(theme.colors.primary, 0.16)};
+  opacity: ${({ $done }) => ($done ? 0.55 : 1)};
+
+  /*
+   * 잘린 제목을 읽으려고 펼치는 것이므로 아래로만 늘린다.
+   * 가로로 늘리면 오른쪽 끝 칸에서 달력 밖으로 삐져나간다.
+   */
+  &:hover {
+    z-index: 5;
+    height: auto;
+    min-height: ${({ $height }) => $height}px;
+    opacity: 1;
+    /* 아래 칸이 비쳐 보이지 않도록 불투명하게 덮는다 */
+    background: ${({ theme }) => theme.colors.background};
+    box-shadow:
+      inset 0 0 0 1px ${({ theme }) => withAlpha(theme.colors.primary, 0.45)},
+      0 3px 10px rgba(0, 0, 0, 0.18);
+    ${({ $hasTime, $fs }) =>
+      $hasTime &&
+      css`
+        padding-bottom: ${$fs * 1.5}px;
+      `}
+  }
+`;
+
+export const Check = styled.span<{ $size: number; $done: boolean; $fs: number }>`
+  flex-shrink: 0;
+  /* 펼쳐져 여러 줄이 되면 가운데가 아니라 첫 줄 옆에 붙어야 한다 */
+  ${Bar}:hover & {
+    align-self: flex-start;
+    margin-top: ${({ $fs, $size }) => ($fs * 1.4 - $size) / 2}px;
+  }
+
+  width: ${({ $size }) => $size}px;
+  height: ${({ $size }) => $size}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  background: ${({ theme, $done }) => ($done ? theme.colors.primary : 'transparent')};
+
+  svg {
+    width: 78%;
+    height: 78%;
+    display: block;
+    color: ${({ theme }) => theme.colors.background};
+  }
+`;
+
+export const Title = styled.span<{ $fs: number; $done: boolean }>`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: ${({ $fs }) => $fs}px;
+  line-height: 1;
+  color: ${({ theme }) => theme.colors.text};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: ${({ $done }) => ($done ? 'line-through' : 'none')};
+
+  /* 펼쳐졌을 때만 여러 줄로 흘린다 */
+  ${Bar}:hover & {
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+  }
+`;
+
+/** 펼친 상태에서만 우측 하단에 나타난다 */
+export const Time = styled.span<{ $fs: number }>`
+  display: none;
+  position: absolute;
+  right: ${({ $fs }) => $fs * 0.55}px;
+  bottom: ${({ $fs }) => $fs * 0.4}px;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: ${({ $fs }) => $fs * 0.9}px;
+  line-height: 1;
+  color: ${({ theme }) => theme.colors.primary};
+
+  ${Bar}:hover & {
+    display: block;
+  }
+`;

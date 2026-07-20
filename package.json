@@ -33,7 +33,8 @@
     "@fontsource/libre-baskerville": "^5.2.10",
     "@fontsource/orbitron": "^5.2.8",
     "@fontsource/playfair-display": "^5.2.8",
-    "firebase": "^12.13.0"
+    "firebase": "^12.13.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

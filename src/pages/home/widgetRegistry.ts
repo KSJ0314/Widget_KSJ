@@ -4,7 +4,7 @@ import { DigitalClock } from '../clock/digital';
 import { AnalogClock } from '../clock/analog';
 import { FlipClock } from '../clock/flip';
 import { MonthlyCalendar } from '../calendar/monthly';
-import { SchedulerCalendar } from '../calendar/scheduler';
+import { MonthlyScheduler } from '../scheduler/monthly';
 import { WeatherCurrentPage } from '../weather/current';
 
 export interface WidgetMeta {
@@ -15,6 +15,8 @@ export interface WidgetMeta {
   themes: ThemeName[];
   component: ComponentType;
   requiresLocation?: boolean;
+  /** URL에 계정 고유키(&u=)를 붙여야 하는 위젯. 개인 데이터를 다루는 위젯만 해당한다 */
+  requiresWidgetKey?: boolean;
   description?: string;
 }
 
@@ -60,16 +62,22 @@ export const widgets: WidgetMeta[] = [
     component: MonthlyCalendar,
   },
   {
-    id: 'calendar-scheduler',
-    name: 'Scheduler',
-    category: 'Calendar',
-    path: '/calendar/scheduler',
+    id: 'scheduler-monthly',
+    name: 'Monthly Scheduler',
+    category: 'Scheduler',
+    path: '/scheduler/monthly',
     themes: [
       'dark', 'pink', 'green', 'ivory', 'paper',
       'paperLightBlue', 'paperLightPink', 'paperLightGreen',
       'lightBlue', 'lightPink', 'lightGreen',
     ],
-    component: SchedulerCalendar,
+    component: MonthlyScheduler,
+    requiresWidgetKey: true,
+    description:
+      '로그인하면 일정을 관리할 수 있고, 복사되는 URL에 사용자의 고유키가 추가됩니다.\n' +
+      '고유키가 있는 URL을 이용하시면 사용자의 일정이 나타납니다.\n' +
+      '고유키는 로그인한 사용자만 확인할 수 있으나 URL에 노출되므로 URL이 유출되지 않도록 주의하세요!\n' +
+      '로그인하지 않으면 일정 없는 달력만 표시됩니다.',
   },
   {
     id: 'weather-current',

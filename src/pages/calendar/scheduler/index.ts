@@ -1,1 +1,0 @@
-export { SchedulerCalendar } from './SchedulerCalendar';
