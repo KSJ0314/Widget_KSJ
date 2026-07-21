@@ -1,8 +1,8 @@
 import { HashRouter, useSearchParams } from 'react-router-dom';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { themes, type ThemeName } from './theme/theme';
-import { withFont } from './theme/fonts';
-import { GlobalStyle } from './theme/GlobalStyle';
+import { themes, type ThemeName } from '@/theme/theme';
+import { withFont } from '@/theme/fonts';
+import { GlobalStyle } from '@/theme/GlobalStyle';
 import { AppRoutes } from './router';
 
 const ThemedApp = () => {

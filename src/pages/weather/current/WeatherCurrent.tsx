@@ -3,9 +3,9 @@ import type { Firestore } from 'firebase/firestore';
 import type { CityName } from '@/data/cityMap';
 import { useContainerSize } from '@/hooks/useContainerSize';
 import { useDragScroll } from '@/hooks/useDragScroll';
-import { useWeather } from '../useWeather';
-import { getCondition } from '../weatherCode';
-import { WeatherIcon } from '../WeatherIcon';
+import { useWeather } from '@weather/useWeather';
+import { getCondition } from '@weather/weatherCode';
+import { WeatherIcon } from '@weather/WeatherIcon';
 import { DAYS_SHORT } from '@/utils/date';
 import {
   Wrapper, Card,

@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useContainerSize } from '@/hooks/useContainerSize';
 import { toDateKey } from '@/utils/date';
-import { useSchedulerStore } from '../schedulerStore';
-import { compareEvents, covers } from '../utils/eventOrder';
-import { PlusIcon } from '../icons';
-import { EventRow } from './components/EventRow';
+import { useSchedulerStore } from '@scheduler/schedulerStore';
+import { compareEvents, covers } from '@scheduler/utils/eventOrder';
+import { PlusIcon } from '@scheduler/icons';
+import { EventRow } from '@scheduler/daily/components/EventRow';
 import { Wrapper, Inner, List, EmptyText, Footer, NewBtn } from './DailyScheduler.styled';
 
 /** 아직 저장되지 않은 새 행 */

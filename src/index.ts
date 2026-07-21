@@ -10,5 +10,5 @@ import './theme/fonts.css';
 
 export { WidgetKSJ } from './WidgetKSJ';
 export type { WidgetKSJProps, WidgetType, CityName } from './WidgetKSJ';
-export type { ThemeName } from './theme/theme';
-export type { FontName } from './theme/fonts';
+export type { ThemeName } from '@/theme/theme';
+export type { FontName } from '@/theme/fonts';

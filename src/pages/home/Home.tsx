@@ -4,7 +4,7 @@ import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { widgets } from './widgetRegistry';
 import { themes } from '@/theme/theme';
 import { fontNames, fontPreview, withFont, type FontName } from '@/theme/fonts';
-import { getCurrentPosition } from '../weather/useWeather';
+import { getCurrentPosition } from '@weather/useWeather';
 import { findNearestCity } from '@/data/cityMap';
 import { useAuthStore } from '@/store/authStore';
 import { LockableThemeRow } from './LockableThemeRow';

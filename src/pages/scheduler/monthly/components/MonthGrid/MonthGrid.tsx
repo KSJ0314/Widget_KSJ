@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { DAYS_SHORT } from '@/utils/date';
-import type { SchedulerLayout } from '../../hooks/useSchedulerLayout';
-import { buildWeekSegments, laneCount, type WeekSegment } from '../../utils/weekLayout';
-import type { ColorPreview, DayCellData, DragState, ScheduleEvent } from '../../../types';
+import type { SchedulerLayout } from '@scheduler/monthly/hooks/useSchedulerLayout';
+import { buildWeekSegments, laneCount, type WeekSegment } from '@scheduler/monthly/utils/weekLayout';
+import type { ColorPreview, DayCellData, DragState, ScheduleEvent } from '@scheduler/types';
 import { WeekRow } from './WeekRow';
 import { Body, DayNameRow, DayName } from './MonthGrid.styled';
 

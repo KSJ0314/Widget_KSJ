@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { withAlpha } from '../../../../../utils/styleUtils';
+import { withAlpha } from '@scheduler/utils/styleUtils';
 import { eventBg } from '@/theme/colorUtils';
 
 export const Bar = styled.div<{

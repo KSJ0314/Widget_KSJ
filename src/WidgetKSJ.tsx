@@ -4,16 +4,16 @@ import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import type { FirebaseOptions } from 'firebase/app';
 import type { Firestore } from 'firebase/firestore';
-import { themes } from './theme/theme';
-import { withFont } from './theme/fonts';
-import type { FontName } from './theme/fonts';
-import type { ThemeName } from './theme/theme';
-import type { CityName } from './data/cityMap';
-import { WeatherCurrent } from './pages/weather/current/WeatherCurrent';
-import { DigitalClock } from './pages/clock/digital';
-import { AnalogClock } from './pages/clock/analog';
-import { FlipClock } from './pages/clock/flip';
-import { MonthlyCalendar } from './pages/calendar/monthly';
+import { themes } from '@/theme/theme';
+import { withFont } from '@/theme/fonts';
+import type { FontName } from '@/theme/fonts';
+import type { ThemeName } from '@/theme/theme';
+import type { CityName } from '@/data/cityMap';
+import { WeatherCurrent } from '@weather/current/WeatherCurrent';
+import { DigitalClock } from '@clock/digital';
+import { AnalogClock } from '@clock/analog';
+import { FlipClock } from '@clock/flip';
+import { MonthlyCalendar } from '@calendar/monthly';
 
 interface BaseProps {
   /**

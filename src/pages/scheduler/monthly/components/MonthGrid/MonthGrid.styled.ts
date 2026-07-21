@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { lineColor } from '../../../utils/styleUtils';
+import { lineColor } from '@scheduler/utils/styleUtils';
 import { weekendColor } from '@/theme/weekendColors';
 
 /**

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { GearIcon } from '../../../../icons';
+import { GearIcon } from '@scheduler/icons';
 import {
   Wrap,
   GearBtn,

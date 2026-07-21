@@ -1,12 +1,12 @@
 import type { ComponentType } from 'react';
 import type { ThemeName } from '@/theme/theme';
-import { DigitalClock } from '../clock/digital';
-import { AnalogClock } from '../clock/analog';
-import { FlipClock } from '../clock/flip';
-import { MonthlyCalendar } from '../calendar/monthly';
-import { MonthlyScheduler } from '../scheduler/monthly';
-import { DailyScheduler } from '../scheduler/daily';
-import { WeatherCurrentPage } from '../weather/current';
+import { DigitalClock } from '@clock/digital';
+import { AnalogClock } from '@clock/analog';
+import { FlipClock } from '@clock/flip';
+import { MonthlyCalendar } from '@calendar/monthly';
+import { MonthlyScheduler } from '@scheduler/monthly';
+import { DailyScheduler } from '@scheduler/daily';
+import { WeatherCurrentPage } from '@weather/current';
 
 export interface WidgetMeta {
   id: string;

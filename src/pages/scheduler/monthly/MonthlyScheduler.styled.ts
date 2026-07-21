@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { lineColor } from '../utils/styleUtils';
+import { lineColor } from '@scheduler/utils/styleUtils';
 import { eventBg, withAlpha } from '@/theme/colorUtils';
 
 /** 스크롤 거터 두께. Inner의 오른쪽 padding 보정에도 같은 값을 쓴다 */

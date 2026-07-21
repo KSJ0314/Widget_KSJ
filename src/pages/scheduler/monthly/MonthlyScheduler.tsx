@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useContainerSize } from '@/hooks/useContainerSize';
-import { useSchedulerStore } from '../schedulerStore';
-import { useSchedulerLayout } from './hooks/useSchedulerLayout';
-import { buildCells } from '../utils/calendarCells';
-import type { DragState, ScheduleEvent } from '../types';
-import { moveEvent } from '../utils/moveEvent';
-import { MonthNavigator } from './components/MonthNavigator';
-import { MonthGrid } from './components/MonthGrid';
-import { EventModal } from '../components/EventModal';
+import { useSchedulerStore } from '@scheduler/schedulerStore';
+import { useSchedulerLayout } from '@scheduler/monthly/hooks/useSchedulerLayout';
+import { buildCells } from '@scheduler/utils/calendarCells';
+import type { DragState, ScheduleEvent } from '@scheduler/types';
+import { moveEvent } from '@scheduler/utils/moveEvent';
+import { MonthNavigator } from '@scheduler/monthly/components/MonthNavigator';
+import { MonthGrid } from '@scheduler/monthly/components/MonthGrid';
+import { EventModal } from '@scheduler/components/EventModal';
 import { Wrapper, Inner, DragGhost } from './MonthlyScheduler.styled';
 
 /** null이면 닫힘. event가 null이면 추가, 있으면 수정 */

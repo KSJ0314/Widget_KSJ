@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { lineColor } from '../../../utils/styleUtils';
+import { lineColor } from '@scheduler/utils/styleUtils';
 
 export const Bar = styled.div<{ $fs: number }>`
   display: flex;

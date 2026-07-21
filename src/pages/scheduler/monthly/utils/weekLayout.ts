@@ -1,6 +1,6 @@
 import { toDateKey } from '@/utils/date';
-import type { ScheduleEvent } from '../../types';
-import { compareEvents, covers } from '../../utils/eventOrder';
+import type { ScheduleEvent } from '@scheduler/types';
+import { compareEvents, covers } from '@scheduler/utils/eventOrder';
 
 /** 한 주 안에서 일정이 차지하는 가로 구간 하나 */
 export interface WeekSegment {

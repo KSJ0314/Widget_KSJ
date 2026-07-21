@@ -1,4 +1,4 @@
-import type { ScheduleEvent } from '../types';
+import type { ScheduleEvent } from '@scheduler/types';
 
 /** 'YYYY-MM-DD'는 사전순 비교가 곧 날짜순 비교라 문자열 그대로 비교한다 */
 export const covers = (event: ScheduleEvent, dateKey: string) =>

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { doc, onSnapshot, setDoc, type Unsubscribe } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { DEFAULT_SETTINGS, type ScheduleEvent, type SchedulerSettings } from './types';
-import { omitUndefined } from './utils/omitUndefined';
+import { omitUndefined } from '@scheduler/utils/omitUndefined';
 
 const LOCAL_KEY = 'widget-ksj:scheduler:settings';
 

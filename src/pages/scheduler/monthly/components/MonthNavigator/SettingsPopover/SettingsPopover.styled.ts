@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { withAlpha, lineColor } from '../../../../utils/styleUtils';
+import { withAlpha, lineColor } from '@scheduler/utils/styleUtils';
 
 /** 톱니바퀴와 팝오버의 위치 기준 */
 export const Wrap = styled.div`

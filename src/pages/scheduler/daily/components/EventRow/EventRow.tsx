@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckIcon } from '../../../icons';
+import { CheckIcon } from '@scheduler/icons';
 import { Row, Check, TitleInput } from './EventRow.styled';
 
 /** 타이핑이 멈춘 뒤 저장하기까지 기다리는 시간 */

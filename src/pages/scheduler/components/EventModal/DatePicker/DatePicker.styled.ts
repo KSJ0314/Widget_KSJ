@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { withAlpha, lineColor } from '../../../utils/styleUtils';
+import { withAlpha, lineColor } from '@scheduler/utils/styleUtils';
 import { weekendColor, SUNDAY_COLOR } from '@/theme/weekendColors';
 import { tooltipCss } from '@/theme/tooltip';
 import { restDayBg } from '@/theme/colorUtils';

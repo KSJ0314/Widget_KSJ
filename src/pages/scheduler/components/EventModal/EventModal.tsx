@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from 'styled-components';
 import { selectableColors } from '@/theme/eventColors';
-import type { ScheduleEvent } from '../../types';
+import type { ScheduleEvent } from '@scheduler/types';
 import { DatePicker } from './DatePicker';
 import { TimePicker } from './TimePicker';
 import {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DAYS_SHORT, MONTHS_SHORT, isSameDay, toDateKey } from '@/utils/date';
-import { ChevronIcon } from '../../../icons';
-import { buildCells } from '../../../utils/calendarCells';
+import { ChevronIcon } from '@scheduler/icons';
+import { buildCells } from '@scheduler/utils/calendarCells';
 import { getHolidayName } from '@/utils/holidays';
 import {
   Overlay,

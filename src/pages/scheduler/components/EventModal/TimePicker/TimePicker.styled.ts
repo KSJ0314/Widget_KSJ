@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { withAlpha, lineColor } from '../../../utils/styleUtils';
+import { withAlpha, lineColor } from '@scheduler/utils/styleUtils';
 
 /** 모달과 같은 배율을 쓴다 */
 const S = 1.3;

@@ -1,8 +1,8 @@
 import { useRef } from 'react';
-import { CheckIcon } from '../../../../../icons';
-import type { SchedulerLayout } from '../../../../hooks/useSchedulerLayout';
-import type { WeekSegment } from '../../../../utils/weekLayout';
-import type { ColorPreview, ScheduleEvent } from '../../../../../types';
+import { CheckIcon } from '@scheduler/icons';
+import type { SchedulerLayout } from '@scheduler/monthly/hooks/useSchedulerLayout';
+import type { WeekSegment } from '@scheduler/monthly/utils/weekLayout';
+import type { ColorPreview, ScheduleEvent } from '@scheduler/types';
 import { Bar, Check, Title, Time } from './EventBar.styled';
 
 interface Props {

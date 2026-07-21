@@ -1,9 +1,9 @@
 import { isSameDay, toDateKey } from '@/utils/date';
 import { getHolidayName } from '@/utils/holidays';
-import { PlusIcon } from '../../../../icons';
-import type { SchedulerLayout } from '../../../hooks/useSchedulerLayout';
-import type { WeekSegment } from '../../../utils/weekLayout';
-import type { ColorPreview, DayCellData, DragState, ScheduleEvent } from '../../../../types';
+import { PlusIcon } from '@scheduler/icons';
+import type { SchedulerLayout } from '@scheduler/monthly/hooks/useSchedulerLayout';
+import type { WeekSegment } from '@scheduler/monthly/utils/weekLayout';
+import type { ColorPreview, DayCellData, DragState, ScheduleEvent } from '@scheduler/types';
 import { EventBar } from './EventBar';
 import { Row, Cell, DateRow, AddBtn, DateNum, EventLayer } from './WeekRow.styled';
 

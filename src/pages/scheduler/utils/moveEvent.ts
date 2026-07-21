@@ -1,5 +1,5 @@
 import { toDateKey } from '@/utils/date';
-import type { ScheduleEvent } from '../types';
+import type { ScheduleEvent } from '@scheduler/types';
 
 const parseKey = (key: string) => {
   const [y, m, d] = key.split('-').map(Number);
