@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { widgets } from './widgetRegistry';
 import { themes } from '@/theme/theme';
-import { fontNames, withFont, type FontName } from '@/theme/fonts';
+import { fontNames, fontPreview, withFont, type FontName } from '@/theme/fonts';
 import { getCurrentPosition } from '../weather/useWeather';
 import { findNearestCity } from '@/data/cityMap';
 import { useAuthStore } from '@/store/authStore';
@@ -30,6 +30,7 @@ import {
   FontRow,
   FontLabel,
   FontChip,
+  FontChipLabel,
   ThemeCard,
   PreviewArea,
   PreviewScaler,
@@ -146,7 +147,7 @@ export const Home = () => {
         <CategorySection key={category}>
           <CategoryHeader>{category}</CategoryHeader>
 
-          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, requiresWidgetKey, requiresLogin, previewPortrait, description }) => {
+          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, requiresWidgetKey, requiresLogin, previewPortrait, hideFont, description }) => {
             const font = fontByWidget[id] ?? 'default';
             const preview = previewSpec(Boolean(previewPortrait));
 
@@ -155,6 +156,25 @@ export const Home = () => {
                 <SectionHeader>
                   <SectionName>{name}</SectionName>
                   <SectionCategory>{cat}</SectionCategory>
+                  {!hideFont && (
+                    <FontRow>
+                      <FontLabel>Font</FontLabel>
+                      {fontNames.map(fontName => {
+                        const { family, scale, nudge } = fontPreview(fontName);
+                        return (
+                          <FontChip
+                            key={fontName}
+                            $active={font === fontName}
+                            $family={family}
+                            $scale={scale}
+                            onClick={() => setFontByWidget(prev => ({ ...prev, [id]: fontName }))}
+                          >
+                            <FontChipLabel $offsetY={nudge}>{fontName}</FontChipLabel>
+                          </FontChip>
+                        );
+                      })}
+                    </FontRow>
+                  )}
                 </SectionHeader>
                 {description && <WidgetDescription>{description}</WidgetDescription>}
                 {id === 'calendar-scheduler' && keyError && (
@@ -162,18 +182,6 @@ export const Home = () => {
                     고유키를 불러오지 못했습니다. 지금 URL을 복사하면 일정이 저장되지 않습니다. 새로고침해 주세요.
                   </WidgetWarning>
                 )}
-                <FontRow>
-                  <FontLabel>Font</FontLabel>
-                  {fontNames.map(fontName => (
-                    <FontChip
-                      key={fontName}
-                      $active={font === fontName}
-                      onClick={() => setFontByWidget(prev => ({ ...prev, [id]: fontName }))}
-                    >
-                      {fontName}
-                    </FontChip>
-                  ))}
-                </FontRow>
                 <LockableThemeRow
                   locked={Boolean(requiresLogin) && !loading && !user}
                   cardWidth={preview.cardWidth}

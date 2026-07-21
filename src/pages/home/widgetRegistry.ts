@@ -22,6 +22,8 @@ export interface WidgetMeta {
   requiresLogin?: boolean;
   /** 미리보기를 가로가 아닌 세로 비율로 보여줄 위젯 */
   previewPortrait?: boolean;
+  /** 글자가 없어 폰트를 고를 이유가 없는 위젯 */
+  hideFont?: boolean;
   description?: string;
 }
 
@@ -41,6 +43,7 @@ export const widgets: WidgetMeta[] = [
     path: '/clock/analog',
     themes: ['dark', 'pink', 'green', 'ivory'],
     component: AnalogClock,
+    hideFont: true,
   },
   {
     id: 'clock-flip',

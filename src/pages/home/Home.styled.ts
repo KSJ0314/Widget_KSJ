@@ -269,33 +269,51 @@ export const WidgetWarning = styled.p`
   border: 1px solid ${({ theme }) => theme.colors.accent};
 `;
 
+/** 제목 줄에 함께 놓는다. 아래에 따로 두면 있는 줄도 모르고 지나친다 */
 export const FontRow = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 14px;
+  /* 카테고리 표시에 바로 붙지 않게 한 칸 띄운다 */
+  margin-left: 16px;
 `;
 
 export const FontLabel = styled.span`
   font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.textDim};
+  color: ${({ theme }) => theme.colors.primary};
   letter-spacing: 0.15em;
   text-transform: uppercase;
 `;
 
-export const FontChip = styled.button<{ $active: boolean }>`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 9px;
+export const FontChip = styled.button<{
+  $active: boolean;
+  /** 없으면 default 칩이라 테마 폰트를 그대로 쓴다 */
+  $family?: string;
+  $scale: number;
+}>`
+  /* 칩마다 자기 폰트로 이름을 보여준다 */
+  font-family: ${({ theme, $family }) => $family ?? theme.fonts.display};
+  /* scale을 그대로 곱하면 칩 크기가 제각각이라 살짝만 반영한다 */
+  font-size: ${({ $scale }) => 9 * Math.min($scale, 1.15)}px;
+  /* 폰트마다 글자 상자 높이가 달라 세로 중앙이 어긋난다 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 22px;
+  box-sizing: border-box;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  padding: 4px 10px;
+  padding: 0 10px;
   border-radius: 20px;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
-  background: ${({ $active, theme }) => ($active ? theme.colors.primaryGlow : 'transparent')};
+  /* primaryGlow는 글자색과 밝기가 비슷해 고른 칩의 글자가 묻힌다 */
+  background: ${({ $active, theme }) =>
+    $active ? withAlpha(theme.colors.primary, 0.18) : 'transparent'};
   border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.border)};
   color: ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.textDim)};
 
@@ -303,6 +321,11 @@ export const FontChip = styled.button<{ $active: boolean }>`
     border-color: ${({ theme }) => theme.colors.primary};
     color: ${({ theme }) => theme.colors.primary};
   }
+`;
+
+/** 칩 크기는 그대로 두고 글자만 위아래로 미세하게 옮긴다 */
+export const FontChipLabel = styled.span<{ $offsetY: number }>`
+  transform: translateY(${({ $offsetY }) => $offsetY}px);
 `;
 
 /** 잠금 화면이 카드 무리의 폭을 계산할 때도 같은 값을 써야 한다 */
