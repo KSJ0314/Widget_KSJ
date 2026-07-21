@@ -30,3 +30,5 @@ reference/
 test_bg.png
 CLAUDE.md
 NOTES.md
+migrate-events.mjs
+backup-*.json
