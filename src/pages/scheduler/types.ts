@@ -28,6 +28,16 @@ export interface ColorPreview {
   color?: string;
 }
 
+/** 일정을 끌고 있는 동안의 상태 */
+export interface DragState {
+  event: ScheduleEvent;
+  /** 커서가 올라가 있는 칸의 날짜. 칸 밖이면 null */
+  overDate: string | null;
+  /** 고스트가 처음 그려질 자리. 이후 이동은 DOM을 직접 건드린다 */
+  startX: number;
+  startY: number;
+}
+
 /** 달력 한 칸이 나타내는 날짜 */
 export interface DayCellData {
   date: Date;

@@ -14,6 +14,7 @@ export const Bar = styled.div<{
   $done: boolean;
   $canEdit: boolean;
   $hasTime: boolean;
+  $dragging: boolean;
   /** 일정에 지정된 색. 없으면 테마 포인트 색 */
   $color?: string;
 }>`
@@ -21,6 +22,9 @@ export const Bar = styled.div<{
   /* 층 자체는 클릭을 통과시킨다. 막대는 읽기 전용일 때도 hover로 제목을 펼쳐야 해서 받는다 */
   pointer-events: auto;
   cursor: ${({ $canEdit }) => ($canEdit ? 'pointer' : 'default')};
+  /* 끌 때 글자가 선택되거나 브라우저 제스처가 끼어들면 포인터가 취소된다 */
+  user-select: none;
+  touch-action: none;
   left: calc(${({ $left }) => $left}% + ${({ $inset }) => $inset}px);
   width: calc(${({ $width }) => $width}% - ${({ $inset }) => $inset * 2}px);
   top: ${({ $top }) => $top}px;
@@ -32,41 +36,53 @@ export const Bar = styled.div<{
   box-sizing: border-box;
   border-radius: ${({ $fs }) => $fs * 0.3}px;
   background: ${({ theme, $color }) => eventBg($color ?? theme.colors.primary)};
-  opacity: ${({ $done }) => ($done ? 0.55 : 1)};
+  opacity: ${({ $done, $dragging }) => {
+    if ($dragging) return 0.4;
+    return $done ? 0.55 : 1;
+  }};
 
-  /* 잘린 제목을 읽으려고 펼친다. 가로는 최소 두 칸, 세로는 내용만큼 */
-  &:hover {
-    z-index: 5;
-    left: calc(${({ $hoverLeft }) => $hoverLeft}% + ${({ $inset }) => $inset}px);
-    width: calc(${({ $hoverWidth }) => $hoverWidth}% - ${({ $inset }) => $inset * 2}px);
-    height: auto;
-    min-height: ${({ $height }) => $height}px;
-    opacity: 1;
-    /* 아래 칸이 비쳐 보이지 않도록 불투명하게 덮는다 */
-    background: ${({ theme }) => theme.colors.background};
-    box-shadow:
-      inset 0 0 0 1px ${({ theme, $color }) => withAlpha($color ?? theme.colors.primary, 0.45)},
-      0 3px 10px rgba(0, 0, 0, 0.18);
-    ${({ $hasTime, $fs }) =>
-      $hasTime &&
-      css`
-        padding-bottom: ${$fs * 1.5}px;
-      `}
-  }
+  /* 끌고 있는 동안에는 펼치지 않는다. 포인터가 붙잡혀 있어 hover가 계속 걸린다 */
+  ${({ $dragging, $hoverLeft, $hoverWidth, $inset, $height, $hasTime, $fs, theme, $color }) =>
+    !$dragging &&
+    css`
+      /* 잘린 제목을 읽으려고 펼친다. 가로는 최소 두 칸, 세로는 내용만큼 */
+      &:hover {
+        z-index: 5;
+        left: calc(${$hoverLeft}% + ${$inset}px);
+        width: calc(${$hoverWidth}% - ${$inset * 2}px);
+        height: auto;
+        min-height: ${$height}px;
+        opacity: 1;
+        /* 아래 칸이 비쳐 보이지 않도록 불투명하게 덮는다 */
+        background: ${theme.colors.background};
+        box-shadow:
+          inset 0 0 0 1px ${withAlpha($color ?? theme.colors.primary, 0.45)},
+          0 3px 10px rgba(0, 0, 0, 0.18);
+        ${$hasTime &&
+        css`
+          padding-bottom: ${$fs * 1.5}px;
+        `}
+      }
+    `}
 `;
 
 export const Check = styled.span<{
   $size: number;
   $done: boolean;
   $fs: number;
+  $dragging: boolean;
   $color?: string;
 }>`
   flex-shrink: 0;
   /* 펼쳐져 여러 줄이 되면 가운데가 아니라 첫 줄 옆에 붙어야 한다 */
-  ${Bar}:hover & {
-    align-self: flex-start;
-    margin-top: ${({ $fs, $size }) => ($fs * 1.4 - $size) / 2}px;
-  }
+  ${({ $dragging, $fs, $size }) =>
+    !$dragging &&
+    css`
+      ${Bar}:hover & {
+        align-self: flex-start;
+        margin-top: ${($fs * 1.4 - $size) / 2}px;
+      }
+    `}
 
   width: ${({ $size }) => $size}px;
   height: ${({ $size }) => $size}px;
@@ -86,7 +102,7 @@ export const Check = styled.span<{
   }
 `;
 
-export const Title = styled.span<{ $fs: number }>`
+export const Title = styled.span<{ $fs: number; $dragging: boolean }>`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $fs }) => $fs}px;
   line-height: 1;
@@ -96,16 +112,20 @@ export const Title = styled.span<{ $fs: number }>`
   text-overflow: ellipsis;
 
   /* 펼쳐졌을 때만 여러 줄로 흘린다 */
-  ${Bar}:hover & {
-    white-space: normal;
-    overflow: visible;
-    overflow-wrap: anywhere;
-    line-height: 1.4;
-  }
+  ${({ $dragging }) =>
+    !$dragging &&
+    css`
+      ${Bar}:hover & {
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+        line-height: 1.4;
+      }
+    `}
 `;
 
 /** 펼친 상태에서만 우측 하단에 나타난다 */
-export const Time = styled.span<{ $fs: number }>`
+export const Time = styled.span<{ $fs: number; $dragging: boolean }>`
   display: none;
   position: absolute;
   right: ${({ $fs }) => $fs * 0.55}px;
@@ -115,7 +135,11 @@ export const Time = styled.span<{ $fs: number }>`
   line-height: 1;
   color: ${({ theme }) => theme.colors.primary};
 
-  ${Bar}:hover & {
-    display: block;
-  }
+  ${({ $dragging }) =>
+    !$dragging &&
+    css`
+      ${Bar}:hover & {
+        display: block;
+      }
+    `}
 `;

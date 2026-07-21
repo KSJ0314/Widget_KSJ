@@ -1,14 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useContainerSize } from '@/hooks/useContainerSize';
 import { useSchedulerStore } from '../schedulerStore';
 import { useSchedulerLayout } from './hooks/useSchedulerLayout';
 import { buildCells } from '../utils/calendarCells';
-import type { ScheduleEvent } from '../types';
+import type { DragState, ScheduleEvent } from '../types';
+import { moveEvent } from '../utils/moveEvent';
 import { MonthNavigator } from './components/MonthNavigator';
 import { MonthGrid } from './components/MonthGrid';
 import { EventModal } from '../components/EventModal';
-import { Wrapper, Inner } from './MonthlyScheduler.styled';
+import { Wrapper, Inner, DragGhost } from './MonthlyScheduler.styled';
 
 /** null이면 닫힘. event가 null이면 추가, 있으면 수정 */
 interface Editing {
@@ -35,6 +36,53 @@ export const MonthlyScheduler = () => {
   // 미리보기는 수정 중인 일정에만 적용한다. 새로 추가하는 중이면 그릴 막대가 없다
   const colorPreview =
     editing?.event && hoverColor ? { id: editing.event.id, color: hoverColor.color } : null;
+
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const ghostRef = useRef<HTMLDivElement>(null);
+
+  const handleDragStart = (event: ScheduleEvent, x: number, y: number) => {
+    setDrag({ event, overDate: null, startX: x, startY: y });
+  };
+
+  const handleDragMove = (x: number, y: number) => {
+    // 커서를 따라가는 건 고스트뿐이라, 상태를 건드리지 않고 DOM만 옮긴다
+    const ghost = ghostRef.current;
+    if (ghost) ghost.style.transform = `translate(${x + 10}px, ${y}px) translateY(-50%)`;
+
+    // 커서 아래에 막대가 겹쳐 있을 수 있으니 그 지점의 요소를 모두 훑어 칸을 찾는다
+    const cell = document
+      .elementsFromPoint(x, y)
+      .find((el): el is HTMLElement => el instanceof HTMLElement && Boolean(el.dataset.date));
+    const overDate = cell?.dataset.date ?? null;
+    setDrag(prev => (prev && prev.overDate !== overDate ? { ...prev, overDate } : prev));
+  };
+
+  const handleDragEnd = () => {
+    if (!drag) return;
+    const { event, overDate } = drag;
+    setDrag(null);
+
+    if (!overDate || overDate === event.start) return;
+    updateEvent(moveEvent(event, overDate));
+  };
+
+  const isDragging = drag !== null;
+
+  /**
+   * 막대가 포인터를 놓치는 경우가 있어(포인터 취소, 리렌더 중 이탈)
+   * 창 단위로 한 번 더 받아 고스트가 남지 않게 한다.
+   * 막대의 핸들러가 먼저 실행되므로 이동 처리를 가로채지 않는다.
+   */
+  useEffect(() => {
+    if (!isDragging) return;
+    const clear = () => setDrag(null);
+    window.addEventListener('pointerup', clear);
+    window.addEventListener('pointercancel', clear);
+    return () => {
+      window.removeEventListener('pointerup', clear);
+      window.removeEventListener('pointercancel', clear);
+    };
+  }, [isDragging]);
 
   const [searchParams] = useSearchParams();
   const widgetKey = searchParams.get('u');
@@ -99,11 +147,30 @@ export const MonthlyScheduler = () => {
           today={today}
           canEdit={canEdit}
           colorPreview={colorPreview}
+          drag={drag}
           onAdd={date => setEditing({ event: null, date })}
           onToggle={toggleEvent}
           onOpen={segment => setEditing({ event: segment.event, date: segment.event.start })}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+          onDragCancel={() => setDrag(null)}
         />
       </Inner>
+
+      {drag && (
+        <DragGhost
+          ref={ghostRef}
+          $x={drag.startX}
+          $y={drag.startY}
+          $width={Math.max((width - layout.pad * 2) / visibleCols.length, 40)}
+          $height={layout.barH}
+          $fs={layout.dateFs}
+          $color={drag.event.color}
+        >
+          {drag.event.title}
+        </DragGhost>
+      )}
 
       {editing && (
         <EventModal

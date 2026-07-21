@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { lineColor } from '../../../../utils/styleUtils';
-import { restDayBg } from '@/theme/colorUtils';
+import { restDayBg, withAlpha } from '@/theme/colorUtils';
 import { weekendColor, SUNDAY_COLOR } from '@/theme/weekendColors';
 import { tooltipCss } from '@/theme/tooltip';
 
@@ -18,7 +18,7 @@ export const Row = styled.div<{ $cols: number; $minHeight: number }>`
   }
 `;
 
-export const Cell = styled.div<{ $pad: number; $isRestDay: boolean }>`
+export const Cell = styled.div<{ $pad: number; $isRestDay: boolean; $isDropTarget: boolean }>`
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -26,6 +26,13 @@ export const Cell = styled.div<{ $pad: number; $isRestDay: boolean }>`
   border-bottom: 1px solid ${lineColor};
   padding: ${({ $pad }) => $pad}px;
   background: ${props => (props.$isRestDay ? restDayBg(props) : 'transparent')};
+
+  /* 일정을 끌어와 놓을 칸 */
+  ${({ $isDropTarget, theme }) =>
+    $isDropTarget &&
+    css`
+      background: ${withAlpha(theme.colors.primary, 0.22)};
+    `}
 
   /* 공휴일 말풍선이 칸 밖으로 나가야 해서 hover 동안만 클리핑을 푼다 */
   &:hover {
