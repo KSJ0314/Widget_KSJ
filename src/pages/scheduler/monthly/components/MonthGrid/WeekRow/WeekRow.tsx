@@ -3,7 +3,7 @@ import { getHolidayName } from '@/utils/holidays';
 import { PlusIcon } from '../../../../icons';
 import type { SchedulerLayout } from '../../../hooks/useSchedulerLayout';
 import type { WeekSegment } from '../../../utils/weekLayout';
-import type { DayCellData } from '../../../../types';
+import type { ColorPreview, DayCellData } from '../../../../types';
 import { EventBar } from './EventBar';
 import { Row, Cell, DateRow, AddBtn, DateNum, EventLayer } from './WeekRow.styled';
 
@@ -14,13 +14,14 @@ interface Props {
   layout: SchedulerLayout;
   today: Date;
   canEdit: boolean;
+  colorPreview: ColorPreview | null;
   onAdd: (dateKey: string) => void;
   onToggle: (id: string) => void;
   onOpen: (segment: WeekSegment) => void;
 }
 
 export const WeekRow = ({
-  days, segments, minHeight, layout, today, canEdit, onAdd, onToggle, onOpen,
+  days, segments, minHeight, layout, today, canEdit, colorPreview, onAdd, onToggle, onOpen,
 }: Props) => {
   const cols = days.length;
   const { cellPad, dateFs, dateRowH } = layout;
@@ -65,6 +66,7 @@ export const WeekRow = ({
             cols={cols}
             layout={layout}
             canEdit={canEdit}
+            colorPreview={colorPreview}
             onToggle={onToggle}
             onOpen={onOpen}
           />

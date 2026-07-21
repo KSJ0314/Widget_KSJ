@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useTheme } from 'styled-components';
+import { selectableColors } from '@/theme/eventColors';
 import type { ScheduleEvent } from '../../types';
 import { DatePicker } from './DatePicker';
 import { TimePicker } from './TimePicker';
@@ -16,6 +18,8 @@ import {
   Spacer,
   Button,
   ErrorText,
+  SwatchRow,
+  Swatch,
 } from './EventModal.styled';
 
 interface Props {
@@ -27,17 +31,23 @@ interface Props {
   onSave: (event: ScheduleEvent) => Promise<boolean>;
   onDelete: (id: string) => Promise<boolean>;
   onClose: () => void;
+  /** 색 견본에 마우스를 올린 동안 달력에 미리 보여준다. null이면 미리보기 해제 */
+  onPreviewColor: (preview: { color?: string } | null) => void;
 }
 
 const formatRange = (start: string, end?: string) =>
   end && end !== start ? `${start} ~ ${end}` : start;
 
-export const EventModal = ({ event, defaultDate, onSave, onDelete, onClose }: Props) => {
+export const EventModal = ({
+  event, defaultDate, onSave, onDelete, onClose, onPreviewColor,
+}: Props) => {
+  const theme = useTheme();
   const isEdit = event !== null;
   const [title, setTitle] = useState(event?.title ?? '');
   const [start, setStart] = useState(event?.start ?? defaultDate);
   const [end, setEnd] = useState(event?.end);
   const [time, setTime] = useState(event?.time);
+  const [color, setColor] = useState(event?.color);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [error, setError] = useState('');
@@ -50,6 +60,11 @@ export const EventModal = ({ event, defaultDate, onSave, onDelete, onClose }: Pr
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
+
+  const pickColor = (next?: string) => {
+    setColor(next);
+    onPreviewColor({ color: next });
+  };
 
   const run = async (action: () => Promise<boolean>) => {
     setBusy(true);
@@ -69,6 +84,7 @@ export const EventModal = ({ event, defaultDate, onSave, onDelete, onClose }: Pr
         start,
         end,
         time,
+        color,
         title: trimmed,
         done: event?.done ?? false,
       }),
@@ -109,6 +125,31 @@ export const EventModal = ({ event, defaultDate, onSave, onDelete, onClose }: Pr
           <PickerButton type="button" onClick={() => setTimePickerOpen(true)}>
             {time ?? '없음'}
           </PickerButton>
+        </Field>
+
+        <Field as="div">
+          <FieldLabel>색상</FieldLabel>
+          {/* 마우스를 빼면 고른 색으로 돌아간다. 저장이나 취소 전까지 미리보기가 유지된다 */}
+          <SwatchRow onMouseLeave={() => onPreviewColor({ color })}>
+            {/* 맨 앞은 색 미지정. 위젯 테마의 포인트 색을 그대로 따른다 */}
+            <Swatch
+              type="button"
+              $color={theme.colors.primary}
+              $selected={color === undefined}
+              onMouseEnter={() => onPreviewColor({ color: undefined })}
+              onClick={() => pickColor(undefined)}
+            />
+            {selectableColors(theme.colors.primary).map(c => (
+              <Swatch
+                key={c}
+                type="button"
+                $color={c}
+                $selected={color === c}
+                onMouseEnter={() => onPreviewColor({ color: c })}
+                onClick={() => pickColor(c)}
+              />
+            ))}
+          </SwatchRow>
         </Field>
 
         {error && <ErrorText>{error}</ErrorText>}

@@ -1,6 +1,7 @@
 import { CheckIcon } from '../../../../../icons';
 import type { SchedulerLayout } from '../../../../hooks/useSchedulerLayout';
 import type { WeekSegment } from '../../../../utils/weekLayout';
+import type { ColorPreview } from '../../../../../types';
 import { Bar, Check, Title, Time } from './EventBar.styled';
 
 interface Props {
@@ -9,13 +10,19 @@ interface Props {
   cols: number;
   layout: SchedulerLayout;
   canEdit: boolean;
+  colorPreview: ColorPreview | null;
   onToggle: (id: string) => void;
   onOpen: (segment: WeekSegment) => void;
 }
 
-export const EventBar = ({ segment, cols, layout, canEdit, onToggle, onOpen }: Props) => {
+export const EventBar = ({
+  segment, cols, layout, canEdit, colorPreview, onToggle, onOpen,
+}: Props) => {
   const { event, startIdx, span, lane, isStart } = segment;
   const { dateFs, barH, barGap, barInset } = layout;
+
+  // 미리보기 중인 일정이면 저장된 색 대신 고르는 중인 색으로 그린다
+  const color = colorPreview?.id === event.id ? colorPreview.color : event.color;
 
   // 펼쳤을 때 최소 두 칸은 확보한다. 오른쪽 끝이면 왼쪽으로 당겨 칸을 넘지 않게 한다
   const hoverSpan = Math.min(Math.max(span, 2), cols);
@@ -34,6 +41,7 @@ export const EventBar = ({ segment, cols, layout, canEdit, onToggle, onOpen }: P
       $done={event.done}
       $canEdit={canEdit}
       $hasTime={Boolean(event.time)}
+      $color={color}
       onClick={() => canEdit && onOpen(segment)}
     >
       {isStart && (
@@ -41,6 +49,7 @@ export const EventBar = ({ segment, cols, layout, canEdit, onToggle, onOpen }: P
           $size={dateFs * 0.9}
           $fs={dateFs}
           $done={event.done}
+          $color={color}
           onClick={e => {
             e.stopPropagation();
             onToggle(event.id);

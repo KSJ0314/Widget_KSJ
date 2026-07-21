@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { lineColor } from '../../utils/styleUtils';
+import { eventBg } from '@/theme/colorUtils';
 
 /**
  * 모달은 위젯 크기와 무관하게 고정 px를 쓴다.
@@ -17,7 +18,8 @@ export const Overlay = styled.div`
   align-items: center;
   justify-content: center;
   padding: 12px;
-  background: rgba(0, 0, 0, 0.4);
+  /* 뒤 달력이 그대로 보여야 색 미리보기가 확인된다. 바깥 클릭은 이 층이 계속 받는다 */
+  background: transparent;
 `;
 
 export const Box = styled.div`
@@ -104,6 +106,29 @@ export const PickerButton = styled.button<{ $disabled?: boolean }>`
   color: ${({ theme }) => theme.colors.text};
   cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
+`;
+
+/** 동그라미가 한 줄에 들어가도록 남는 폭을 나눠 갖는다 */
+export const SwatchRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${px(4)};
+`;
+
+export const Swatch = styled.button<{ $color: string; $selected: boolean }>`
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  cursor: pointer;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* 달력의 막대와 같은 값이라 고른 색이 그대로 나타난다 */
+  background: ${({ $color }) => eventBg($color)};
+  border: ${px(2)} solid
+    ${({ theme, $selected }) => ($selected ? theme.colors.text : 'transparent')};
+  /* 테두리가 색에 바로 붙지 않도록 안쪽에 배경색을 한 겹 띄운다 */
+  box-shadow: ${({ theme, $selected }) =>
+    $selected ? `inset 0 0 0 ${px(1.5)} ${theme.colors.background}` : 'none'};
 `;
 
 export const ErrorText = styled.p`

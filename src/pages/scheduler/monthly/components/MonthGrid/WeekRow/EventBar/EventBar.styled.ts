@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { withAlpha } from '../../../../../utils/styleUtils';
+import { eventBg } from '@/theme/colorUtils';
 
 export const Bar = styled.div<{
   $left: number;
@@ -13,6 +14,8 @@ export const Bar = styled.div<{
   $done: boolean;
   $canEdit: boolean;
   $hasTime: boolean;
+  /** 일정에 지정된 색. 없으면 테마 포인트 색 */
+  $color?: string;
 }>`
   position: absolute;
   /* 층 자체는 클릭을 통과시킨다. 막대는 읽기 전용일 때도 hover로 제목을 펼쳐야 해서 받는다 */
@@ -28,7 +31,7 @@ export const Bar = styled.div<{
   padding: ${({ $fs }) => $fs * 0.3}px ${({ $fs }) => $fs * 0.55}px;
   box-sizing: border-box;
   border-radius: ${({ $fs }) => $fs * 0.3}px;
-  background: ${({ theme }) => withAlpha(theme.colors.primary, 0.16)};
+  background: ${({ theme, $color }) => eventBg($color ?? theme.colors.primary)};
   opacity: ${({ $done }) => ($done ? 0.55 : 1)};
 
   /* 잘린 제목을 읽으려고 펼친다. 가로는 최소 두 칸, 세로는 내용만큼 */
@@ -42,7 +45,7 @@ export const Bar = styled.div<{
     /* 아래 칸이 비쳐 보이지 않도록 불투명하게 덮는다 */
     background: ${({ theme }) => theme.colors.background};
     box-shadow:
-      inset 0 0 0 1px ${({ theme }) => withAlpha(theme.colors.primary, 0.45)},
+      inset 0 0 0 1px ${({ theme, $color }) => withAlpha($color ?? theme.colors.primary, 0.45)},
       0 3px 10px rgba(0, 0, 0, 0.18);
     ${({ $hasTime, $fs }) =>
       $hasTime &&
@@ -52,7 +55,12 @@ export const Bar = styled.div<{
   }
 `;
 
-export const Check = styled.span<{ $size: number; $done: boolean; $fs: number }>`
+export const Check = styled.span<{
+  $size: number;
+  $done: boolean;
+  $fs: number;
+  $color?: string;
+}>`
   flex-shrink: 0;
   /* 펼쳐져 여러 줄이 되면 가운데가 아니라 첫 줄 옆에 붙어야 한다 */
   ${Bar}:hover & {
@@ -66,8 +74,9 @@ export const Check = styled.span<{ $size: number; $done: boolean; $fs: number }>
   align-items: center;
   justify-content: center;
   border-radius: 2px;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  background: ${({ theme, $done }) => ($done ? theme.colors.primary : 'transparent')};
+  border: 1px solid ${({ theme, $color }) => $color ?? theme.colors.primary};
+  background: ${({ theme, $done, $color }) =>
+    $done ? $color ?? theme.colors.primary : 'transparent'};
 
   svg {
     width: 78%;

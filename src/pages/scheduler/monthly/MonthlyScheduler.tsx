@@ -24,6 +24,17 @@ export const MonthlyScheduler = () => {
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [editing, setEditing] = useState<Editing | null>(null);
+  /** 색 견본에 마우스를 올린 동안만 채워진다 */
+  const [hoverColor, setHoverColor] = useState<{ color?: string } | null>(null);
+
+  const closeModal = () => {
+    setEditing(null);
+    setHoverColor(null);
+  };
+
+  // 미리보기는 수정 중인 일정에만 적용한다. 새로 추가하는 중이면 그릴 막대가 없다
+  const colorPreview =
+    editing?.event && hoverColor ? { id: editing.event.id, color: hoverColor.color } : null;
 
   const [searchParams] = useSearchParams();
   const widgetKey = searchParams.get('u');
@@ -87,6 +98,7 @@ export const MonthlyScheduler = () => {
           layout={layout}
           today={today}
           canEdit={canEdit}
+          colorPreview={colorPreview}
           onAdd={date => setEditing({ event: null, date })}
           onToggle={toggleEvent}
           onOpen={segment => setEditing({ event: segment.event, date: segment.event.start })}
@@ -99,15 +111,16 @@ export const MonthlyScheduler = () => {
           defaultDate={editing.date}
           onSave={async event => {
             const ok = await (editing.event ? updateEvent(event) : addEvent(event));
-            if (ok) setEditing(null);
+            if (ok) closeModal();
             return ok;
           }}
           onDelete={async id => {
             const ok = await removeEvent(id);
-            if (ok) setEditing(null);
+            if (ok) closeModal();
             return ok;
           }}
-          onClose={() => setEditing(null)}
+          onClose={closeModal}
+          onPreviewColor={setHoverColor}
         />
       )}
     </Wrapper>

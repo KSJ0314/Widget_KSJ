@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { DAYS_SHORT } from '@/utils/date';
 import type { SchedulerLayout } from '../../hooks/useSchedulerLayout';
 import { buildWeekSegments, laneCount, type WeekSegment } from '../../utils/weekLayout';
-import type { DayCellData, ScheduleEvent } from '../../../types';
+import type { ColorPreview, DayCellData, ScheduleEvent } from '../../../types';
 import { WeekRow } from './WeekRow';
 import { Body, DayNameRow, DayName } from './MonthGrid.styled';
 
@@ -14,13 +14,14 @@ interface Props {
   layout: SchedulerLayout;
   today: Date;
   canEdit: boolean;
+  colorPreview: ColorPreview | null;
   onAdd: (dateKey: string) => void;
   onToggle: (id: string) => void;
   onOpen: (segment: WeekSegment) => void;
 }
 
 export const MonthGrid = ({
-  weeks, visibleCols, events, layout, today, canEdit, onAdd, onToggle, onOpen,
+  weeks, visibleCols, events, layout, today, canEdit, colorPreview, onAdd, onToggle, onOpen,
 }: Props) => {
   const { dayNameFs, dayNameH, rowMin, dateRowH, barH, barGap } = layout;
 
@@ -56,6 +57,7 @@ export const MonthGrid = ({
           layout={layout}
           today={today}
           canEdit={canEdit}
+          colorPreview={colorPreview}
           onAdd={onAdd}
           onToggle={onToggle}
           onOpen={onOpen}

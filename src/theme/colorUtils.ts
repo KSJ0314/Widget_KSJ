@@ -15,6 +15,9 @@ export const withAlpha = (color: string, alpha: number) => {
 export const lineColor = ({ theme }: { theme: DefaultTheme }) =>
   withAlpha(theme.colors.primary, 0.4);
 
+/** 일정 막대의 배경. 색 견본도 같은 값을 써야 고른 대로 보인다 */
+export const eventBg = (color: string) => withAlpha(color, 0.16);
+
 /** 주말·공휴일 칸에 까는 배경. 글자를 가리지 않을 만큼만 옅게 */
 export const restDayBg = ({ theme }: { theme: DefaultTheme }) =>
   withAlpha(theme.colors.primary, 0.025);
