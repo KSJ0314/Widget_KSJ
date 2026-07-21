@@ -6,6 +6,7 @@ import { useSchedulerStore } from '@scheduler/schedulerStore';
 import { compareEvents, covers } from '@scheduler/utils/eventOrder';
 import { PlusIcon } from '@scheduler/icons';
 import { LocalBadge } from '@scheduler/components/LocalBadge';
+import { MergeLocalButton } from '@scheduler/components/MergeLocalButton';
 import { EventRow } from '@scheduler/daily/components/EventRow';
 import { Wrapper, Inner, List, EmptyText, Footer, NewBtn } from './DailyScheduler.styled';
 
@@ -98,7 +99,9 @@ export const DailyScheduler = ({ widgetKey: keyFromProps }: Props) => {
         </List>
 
         <Footer $pad={pad} $fs={fs}>
-          {source === 'local' && <LocalBadge fs={fs} />}
+          {source === 'local'
+            ? <LocalBadge fs={fs} />
+            : widgetKey && <MergeLocalButton fs={fs} widgetKey={widgetKey} />}
           <NewBtn
             $fs={fs}
             onClick={() => setDrafts(prev => [...prev, { key: crypto.randomUUID() }])}

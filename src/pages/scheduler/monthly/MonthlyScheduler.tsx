@@ -142,6 +142,7 @@ export const MonthlyScheduler = ({ widgetKey: keyFromProps }: Props) => {
           month={month}
           showWeekend={showWeekend}
           isLocal={source === 'local'}
+          widgetKey={widgetKey}
           onChangeShowWeekend={value => setSettings({ showWeekend: value })}
           onPrev={goPrev}
           onNext={goNext}
