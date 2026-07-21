@@ -9,6 +9,8 @@ export interface ScheduleEvent {
   time?: string;
   /** 막대 색. 없으면 위젯 테마의 포인트 색을 따른다 */
   color?: string;
+  /** 막대 배경 농도. 없으면 DEFAULT_EVENT_ALPHA */
+  colorAlpha?: number;
   title: string;
   done: boolean;
 }
@@ -26,6 +28,7 @@ export interface ColorPreview {
   id: string;
   /** 없으면 '기본'을 고른 상태라 테마 포인트 색으로 보여준다 */
   color?: string;
+  alpha?: number;
 }
 
 /** 일정을 끌고 있는 동안의 상태 */

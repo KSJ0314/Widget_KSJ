@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useContainerSize } from '@/hooks/useContainerSize';
+import { DEFAULT_EVENT_ALPHA } from '@/theme/colorUtils';
 import { useSchedulerStore } from '@scheduler/schedulerStore';
 import { useSchedulerLayout } from '@scheduler/monthly/hooks/useSchedulerLayout';
 import { buildCells } from '@scheduler/utils/calendarCells';
@@ -26,7 +27,7 @@ export const MonthlyScheduler = () => {
   const [month, setMonth] = useState(today.getMonth());
   const [editing, setEditing] = useState<Editing | null>(null);
   /** 색 견본에 마우스를 올린 동안만 채워진다 */
-  const [hoverColor, setHoverColor] = useState<{ color?: string } | null>(null);
+  const [hoverColor, setHoverColor] = useState<{ color?: string; alpha?: number } | null>(null);
 
   const closeModal = () => {
     setEditing(null);
@@ -35,7 +36,9 @@ export const MonthlyScheduler = () => {
 
   // 미리보기는 수정 중인 일정에만 적용한다. 새로 추가하는 중이면 그릴 막대가 없다
   const colorPreview =
-    editing?.event && hoverColor ? { id: editing.event.id, color: hoverColor.color } : null;
+    editing?.event && hoverColor
+      ? { id: editing.event.id, color: hoverColor.color, alpha: hoverColor.alpha }
+      : null;
 
   const [drag, setDrag] = useState<DragState | null>(null);
   const ghostRef = useRef<HTMLDivElement>(null);
@@ -167,6 +170,7 @@ export const MonthlyScheduler = () => {
           $height={layout.barH}
           $fs={layout.dateFs}
           $color={drag.event.color}
+          $alpha={drag.event.colorAlpha ?? DEFAULT_EVENT_ALPHA}
         >
           {drag.event.title}
         </DragGhost>

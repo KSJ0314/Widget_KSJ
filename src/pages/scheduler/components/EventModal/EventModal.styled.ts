@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { lineColor } from '@scheduler/utils/styleUtils';
-import { eventBg } from '@/theme/colorUtils';
+import { tintOver } from '@/theme/colorUtils';
 
 /**
  * 모달은 위젯 크기와 무관하게 고정 px를 쓴다.
@@ -115,15 +115,16 @@ export const SwatchRow = styled.div`
   gap: ${px(4)};
 `;
 
-export const Swatch = styled.button<{ $color: string; $selected: boolean }>`
+export const Swatch = styled.button<{ $color: string; $alpha: number; $selected: boolean }>`
   flex: 1;
   min-width: 0;
   padding: 0;
   cursor: pointer;
   aspect-ratio: 1;
   border-radius: 50%;
-  /* 달력의 막대와 같은 값이라 고른 색이 그대로 나타난다 */
-  background: ${({ $color }) => eventBg($color)};
+  /* 달력의 막대와 같은 방식이라 고른 색이 그대로 나타난다 */
+  background: ${({ theme, $color, $alpha }) =>
+    tintOver($color, theme.colors.background, $alpha)};
   border: ${px(2)} solid
     ${({ theme, $selected }) => ($selected ? theme.colors.text : 'transparent')};
   /* 테두리가 색에 바로 붙지 않도록 안쪽에 배경색을 한 겹 띄운다 */

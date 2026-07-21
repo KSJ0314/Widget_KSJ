@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from 'styled-components';
 import { selectableColors } from '@/theme/eventColors';
+import { DEFAULT_EVENT_ALPHA } from '@/theme/colorUtils';
 import type { ScheduleEvent } from '@scheduler/types';
 import { DatePicker } from './DatePicker';
 import { TimePicker } from './TimePicker';
+import { ColorSliders } from './ColorSliders';
 import {
   Overlay,
   Box,
@@ -31,8 +33,8 @@ interface Props {
   onSave: (event: ScheduleEvent) => Promise<boolean>;
   onDelete: (id: string) => Promise<boolean>;
   onClose: () => void;
-  /** 색 견본에 마우스를 올린 동안 달력에 미리 보여준다. null이면 미리보기 해제 */
-  onPreviewColor: (preview: { color?: string } | null) => void;
+  /** 색을 고르는 동안 달력에 미리 보여준다. null이면 미리보기 해제 */
+  onPreviewColor: (preview: { color?: string; alpha?: number } | null) => void;
 }
 
 const formatRange = (start: string, end?: string) =>
@@ -48,6 +50,7 @@ export const EventModal = ({
   const [end, setEnd] = useState(event?.end);
   const [time, setTime] = useState(event?.time);
   const [color, setColor] = useState(event?.color);
+  const [alpha, setAlpha] = useState(event?.colorAlpha ?? DEFAULT_EVENT_ALPHA);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [error, setError] = useState('');
@@ -63,7 +66,14 @@ export const EventModal = ({
 
   const pickColor = (next?: string) => {
     setColor(next);
-    onPreviewColor({ color: next });
+    onPreviewColor({ color: next, alpha });
+  };
+
+  /** 슬라이더는 항상 구체적인 색을 만든다. 움직이는 동안 바로 보여준다 */
+  const pickCustom = (nextColor: string, nextAlpha: number) => {
+    setColor(nextColor);
+    setAlpha(nextAlpha);
+    onPreviewColor({ color: nextColor, alpha: nextAlpha });
   };
 
   const run = async (action: () => Promise<boolean>) => {
@@ -85,6 +95,7 @@ export const EventModal = ({
         end,
         time,
         color,
+        colorAlpha: alpha === DEFAULT_EVENT_ALPHA ? undefined : alpha,
         title: trimmed,
         done: event?.done ?? false,
       }),
@@ -130,13 +141,14 @@ export const EventModal = ({
         <Field as="div">
           <FieldLabel>색상</FieldLabel>
           {/* 마우스를 빼면 고른 색으로 돌아간다. 저장이나 취소 전까지 미리보기가 유지된다 */}
-          <SwatchRow onMouseLeave={() => onPreviewColor({ color })}>
+          <SwatchRow onMouseLeave={() => onPreviewColor({ color, alpha })}>
             {/* 맨 앞은 색 미지정. 위젯 테마의 포인트 색을 그대로 따른다 */}
             <Swatch
               type="button"
               $color={theme.colors.primary}
+              $alpha={alpha}
               $selected={color === undefined}
-              onMouseEnter={() => onPreviewColor({ color: undefined })}
+              onMouseEnter={() => onPreviewColor({ color: undefined, alpha })}
               onClick={() => pickColor(undefined)}
             />
             {selectableColors(theme.colors.primary).map(c => (
@@ -144,12 +156,19 @@ export const EventModal = ({
                 key={c}
                 type="button"
                 $color={c}
+                $alpha={alpha}
                 $selected={color === c}
-                onMouseEnter={() => onPreviewColor({ color: c })}
+                onMouseEnter={() => onPreviewColor({ color: c, alpha })}
                 onClick={() => pickColor(c)}
               />
             ))}
           </SwatchRow>
+
+          <ColorSliders
+            color={color ?? theme.colors.primary}
+            alpha={alpha}
+            onChange={pickCustom}
+          />
         </Field>
 
         {error && <ErrorText>{error}</ErrorText>}

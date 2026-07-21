@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { lineColor } from '@scheduler/utils/styleUtils';
-import { eventBg, withAlpha } from '@/theme/colorUtils';
+import { tintOver, withAlpha } from '@/theme/colorUtils';
 
 /** 스크롤 거터 두께. Inner의 오른쪽 padding 보정에도 같은 값을 쓴다 */
 const SCROLLBAR_WIDTH = 11;
@@ -43,6 +43,7 @@ export const DragGhost = styled.div<{
   $height: number;
   $fs: number;
   $color?: string;
+  $alpha: number;
 }>`
   position: fixed;
   left: 0;
@@ -57,7 +58,8 @@ export const DragGhost = styled.div<{
   box-sizing: border-box;
   padding: 0 ${({ $fs }) => $fs * 0.55}px;
   border-radius: ${({ $fs }) => $fs * 0.3}px;
-  background: ${({ theme, $color }) => eventBg($color ?? theme.colors.primary)};
+  background: ${({ theme, $color, $alpha }) =>
+    tintOver($color ?? theme.colors.primary, theme.colors.background, $alpha)};
   box-shadow:
     inset 0 0 0 1px ${({ theme, $color }) => withAlpha($color ?? theme.colors.primary, 0.55)},
     0 3px 10px rgba(0, 0, 0, 0.2);

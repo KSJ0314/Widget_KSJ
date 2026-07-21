@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { withAlpha } from '@scheduler/utils/styleUtils';
-import { eventBg } from '@/theme/colorUtils';
+import { tintOver } from '@/theme/colorUtils';
 
 export const Bar = styled.div<{
   $left: number;
@@ -17,6 +17,7 @@ export const Bar = styled.div<{
   $dragging: boolean;
   /** 일정에 지정된 색. 없으면 테마 포인트 색 */
   $color?: string;
+  $alpha: number;
 }>`
   position: absolute;
   /* 층 자체는 클릭을 통과시킨다. 막대는 읽기 전용일 때도 hover로 제목을 펼쳐야 해서 받는다 */
@@ -35,7 +36,11 @@ export const Bar = styled.div<{
   padding: ${({ $fs }) => $fs * 0.3}px ${({ $fs }) => $fs * 0.55}px;
   box-sizing: border-box;
   border-radius: ${({ $fs }) => $fs * 0.3}px;
-  background: ${({ theme, $color }) => eventBg($color ?? theme.colors.primary)};
+  /* 칸 배경이나 격자선이 비치지 않도록 합성 결과를 불투명 단색으로 쓴다 */
+  background: ${({ theme, $color, $alpha }) =>
+    tintOver($color ?? theme.colors.primary, theme.colors.background, $alpha)};
+  /* 칸에서 살짝 떠 보이는 정도로만 */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   opacity: ${({ $done, $dragging }) => {
     if ($dragging) return 0.4;
     return $done ? 0.55 : 1;

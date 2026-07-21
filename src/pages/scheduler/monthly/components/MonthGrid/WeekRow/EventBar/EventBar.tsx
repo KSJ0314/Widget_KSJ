@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { CheckIcon } from '@scheduler/icons';
+import { DEFAULT_EVENT_ALPHA } from '@/theme/colorUtils';
 import type { SchedulerLayout } from '@scheduler/monthly/hooks/useSchedulerLayout';
 import type { WeekSegment } from '@scheduler/monthly/utils/weekLayout';
 import type { ColorPreview, ScheduleEvent } from '@scheduler/types';
@@ -83,7 +84,9 @@ export const EventBar = ({
   };
 
   // 미리보기 중인 일정이면 저장된 색 대신 고르는 중인 색으로 그린다
-  const color = colorPreview?.id === event.id ? colorPreview.color : event.color;
+  const preview = colorPreview?.id === event.id ? colorPreview : null;
+  const color = preview ? preview.color : event.color;
+  const alpha = (preview ? preview.alpha : event.colorAlpha) ?? DEFAULT_EVENT_ALPHA;
 
   // 펼쳤을 때 최소 두 칸은 확보한다. 오른쪽 끝이면 왼쪽으로 당겨 칸을 넘지 않게 한다
   const hoverSpan = Math.min(Math.max(span, 2), cols);
@@ -103,6 +106,7 @@ export const EventBar = ({
       $canEdit={canEdit}
       $hasTime={Boolean(event.time)}
       $color={color}
+      $alpha={alpha}
       $dragging={dragging}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { withAlpha, lineColor } from '@/theme/colorUtils';
+import { tintOver, lineColor } from '@/theme/colorUtils';
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -11,11 +11,7 @@ export const Wrapper = styled.div`
    * 흰 배경 대신 테마 포인트 색을 옅게 깐다.
    * 틴트만 두면 뒤가 비쳐 홈 미리보기에서 색이 섞이므로 불투명 바탕을 함께 깐다.
    */
-  background-color: ${({ theme }) => theme.colors.background};
-  background-image: ${({ theme }) => {
-    const tint = withAlpha(theme.colors.primary, 0.07);
-    return `linear-gradient(${tint}, ${tint})`;
-  }};
+  background: ${({ theme }) => tintOver(theme.colors.primary, theme.colors.background, 0.07)};
 
   scrollbar-width: thin;
   scrollbar-color: ${lineColor} transparent;
