@@ -1,5 +1,6 @@
 import { MONTHS_SHORT } from '@/utils/date';
 import { ChevronIcon } from '@scheduler/icons';
+import { LocalBadge } from '@scheduler/components/LocalBadge';
 import { SettingsPopover } from './SettingsPopover';
 import { Bar, Left, MonthLabel, NavGroup, NavBtn, TodayBtn } from './MonthNavigator.styled';
 
@@ -8,6 +9,8 @@ interface Props {
   year: number;
   month: number;
   showWeekend: boolean;
+  /** 고유키 없이 이 브라우저에만 저장되는 상태인지 */
+  isLocal: boolean;
   onChangeShowWeekend: (value: boolean) => void;
   onPrev: () => void;
   onNext: () => void;
@@ -15,7 +18,7 @@ interface Props {
 }
 
 export const MonthNavigator = ({
-  fs, year, month, showWeekend, onChangeShowWeekend, onPrev, onNext, onToday,
+  fs, year, month, showWeekend, isLocal, onChangeShowWeekend, onPrev, onNext, onToday,
 }: Props) => (
   <Bar $fs={fs}>
     <Left $fs={fs}>
@@ -27,6 +30,7 @@ export const MonthNavigator = ({
         showWeekend={showWeekend}
         onChangeShowWeekend={onChangeShowWeekend}
       />
+      {isLocal && <LocalBadge fs={fs} />}
     </Left>
 
     <NavGroup $fs={fs}>

@@ -165,6 +165,16 @@ export const CategorySection = styled.section`
   animation: ${fadeIn} 0.5s ease;
 `;
 
+/** 제목과 그 옆에 붙는 버튼을 함께 담는다 */
+export const CategoryHeaderRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
 export const CategoryHeader = styled.h2`
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: 11px;
@@ -173,9 +183,29 @@ export const CategoryHeader = styled.h2`
   letter-spacing: 0.25em;
   text-transform: uppercase;
   text-shadow: 0 0 10px ${({ theme }) => theme.colors.primaryGlow};
-  margin-bottom: 28px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+export const MigrateBtn = styled.button`
+  flex-shrink: 0;
+  cursor: pointer;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  background: none;
+  color: ${({ theme }) => theme.colors.primary};
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.75;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
 `;
 
 export const WidgetSection = styled.div`

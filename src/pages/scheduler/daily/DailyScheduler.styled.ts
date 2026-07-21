@@ -49,9 +49,11 @@ export const EmptyText = styled.p<{ $fs: number }>`
   padding: ${({ $fs }) => $fs * 0.55}px 0;
 `;
 
-export const Footer = styled.div<{ $pad: number }>`
+export const Footer = styled.div<{ $pad: number; $fs: number }>`
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: ${({ $fs }) => $fs * 1.2}px;
   margin-top: ${({ $pad }) => $pad}px;
 `;
 

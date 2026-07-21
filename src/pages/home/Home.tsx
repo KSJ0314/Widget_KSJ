@@ -8,6 +8,7 @@ import { getCurrentPosition } from '@weather/useWeather';
 import { findNearestCity } from '@/data/cityMap';
 import { useAuthStore } from '@/store/authStore';
 import { LockableThemeRow } from './LockableThemeRow';
+import { LocalMigrateButton } from './LocalMigrateButton';
 import {
   HomeContainer,
   Header,
@@ -23,6 +24,7 @@ import {
   ModalButton,
   CategorySection,
   CategoryHeader,
+  CategoryHeaderRow,
   WidgetSection,
   SectionHeader,
   SectionName,
@@ -145,7 +147,10 @@ export const Home = () => {
 
       {[...grouped.entries()].map(([category, categoryWidgets]) => (
         <CategorySection key={category}>
-          <CategoryHeader>{category}</CategoryHeader>
+          <CategoryHeaderRow>
+            <CategoryHeader>{category}</CategoryHeader>
+            {category === 'Scheduler' && <LocalMigrateButton />}
+          </CategoryHeaderRow>
 
           {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, requiresWidgetKey, requiresLogin, previewPortrait, hideFont, description }) => {
             const font = fontByWidget[id] ?? 'default';
@@ -199,7 +204,7 @@ export const Home = () => {
                           $scale={preview.scale}
                         >
                           <StyledThemeProvider theme={withFont(themes[themeName], font)}>
-                            <Widget />
+                            <Widget widgetKey={widgetKey} />
                           </StyledThemeProvider>
                         </PreviewScaler>
                       </PreviewArea>

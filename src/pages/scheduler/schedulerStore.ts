@@ -87,7 +87,8 @@ export const useSchedulerStore = create<SchedulerState>((set, get) => ({
     storage = widgetKey ? createRemoteStorage(widgetKey) : createLocalStorage();
     set({
       source: widgetKey ? 'remote' : 'local',
-      canEdit: Boolean(widgetKey),
+      // 고유키가 없어도 이 브라우저에는 저장된다
+      canEdit: true,
       loading: true,
     });
 

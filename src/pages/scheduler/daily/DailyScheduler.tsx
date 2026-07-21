@@ -5,6 +5,7 @@ import { toDateKey } from '@/utils/date';
 import { useSchedulerStore } from '@scheduler/schedulerStore';
 import { compareEvents, covers } from '@scheduler/utils/eventOrder';
 import { PlusIcon } from '@scheduler/icons';
+import { LocalBadge } from '@scheduler/components/LocalBadge';
 import { EventRow } from '@scheduler/daily/components/EventRow';
 import { Wrapper, Inner, List, EmptyText, Footer, NewBtn } from './DailyScheduler.styled';
 
@@ -13,14 +14,19 @@ interface Draft {
   key: string;
 }
 
-export const DailyScheduler = () => {
+interface Props {
+  /** 홈 미리보기처럼 URL을 쓸 수 없는 곳에서 넘긴다 */
+  widgetKey?: string | null;
+}
+
+export const DailyScheduler = ({ widgetKey: keyFromProps }: Props) => {
   const { ref, width, height } = useContainerSize();
   const [drafts, setDrafts] = useState<Draft[]>([]);
 
   const [searchParams] = useSearchParams();
-  const widgetKey = searchParams.get('u');
+  const widgetKey = keyFromProps ?? searchParams.get('u');
 
-  const { events, init, cleanup, addEvent, updateEvent, removeEvent, toggleEvent } =
+  const { events, source, init, cleanup, addEvent, updateEvent, removeEvent, toggleEvent } =
     useSchedulerStore();
 
   useEffect(() => {
@@ -91,7 +97,8 @@ export const DailyScheduler = () => {
           ))}
         </List>
 
-        <Footer $pad={pad}>
+        <Footer $pad={pad} $fs={fs}>
+          {source === 'local' && <LocalBadge fs={fs} />}
           <NewBtn
             $fs={fs}
             onClick={() => setDrafts(prev => [...prev, { key: crypto.randomUUID() }])}

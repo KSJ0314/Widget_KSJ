@@ -18,7 +18,12 @@ interface Editing {
   date: string;
 }
 
-export const MonthlyScheduler = () => {
+interface Props {
+  /** 홈 미리보기처럼 URL을 쓸 수 없는 곳에서 넘긴다 */
+  widgetKey?: string | null;
+}
+
+export const MonthlyScheduler = ({ widgetKey: keyFromProps }: Props) => {
   const { ref, width, height } = useContainerSize();
   const layout = useSchedulerLayout(width, height);
 
@@ -88,10 +93,10 @@ export const MonthlyScheduler = () => {
   }, [isDragging]);
 
   const [searchParams] = useSearchParams();
-  const widgetKey = searchParams.get('u');
+  const widgetKey = keyFromProps ?? searchParams.get('u');
 
   const {
-    events, settings, canEdit,
+    events, settings, canEdit, source,
     setSettings, init, cleanup, addEvent, updateEvent, removeEvent, toggleEvent,
   } = useSchedulerStore();
   const { showWeekend } = settings;
@@ -136,6 +141,7 @@ export const MonthlyScheduler = () => {
           year={year}
           month={month}
           showWeekend={showWeekend}
+          isLocal={source === 'local'}
           onChangeShowWeekend={value => setSettings({ showWeekend: value })}
           onPrev={goPrev}
           onNext={goNext}
