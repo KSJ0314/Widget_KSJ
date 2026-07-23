@@ -13,6 +13,8 @@ export interface ScheduleEvent {
   colorAlpha?: number;
   title: string;
   done: boolean;
+  /** 생성 시각(ms). 목록을 만든 순서대로 유지하는 데 쓴다. 옛 일정에는 없다 */
+  createdAt?: number;
 }
 
 export interface SchedulerSettings {
