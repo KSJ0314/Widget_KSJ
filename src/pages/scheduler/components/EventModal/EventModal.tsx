@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from 'styled-components';
-import { selectableColors } from '@/theme/eventColors';
+import { EVENT_COLORS } from '@/theme/eventColors';
 import { DEFAULT_EVENT_ALPHA } from '@/theme/colorUtils';
 import type { ScheduleEvent } from '@scheduler/types';
 import { DatePicker } from './DatePicker';
@@ -142,16 +142,17 @@ export const EventModal = ({
           <FieldLabel>색상</FieldLabel>
           {/* 마우스를 빼면 고른 색으로 돌아간다. 저장이나 취소 전까지 미리보기가 유지된다 */}
           <SwatchRow onMouseLeave={() => onPreviewColor({ color, alpha })}>
-            {/* 맨 앞은 색 미지정. 위젯 테마의 포인트 색을 그대로 따른다 */}
+            {/* 맨 앞은 색 미지정. 막대는 테마 배경색(흰/검정)으로 그려진다 */}
             <Swatch
               type="button"
-              $color={theme.colors.primary}
+              $color={theme.colors.background}
               $alpha={alpha}
               $selected={color === undefined}
+              $outlined
               onMouseEnter={() => onPreviewColor({ color: undefined, alpha })}
               onClick={() => pickColor(undefined)}
             />
-            {selectableColors(theme.colors.primary).map(c => (
+            {EVENT_COLORS.map(c => (
               <Swatch
                 key={c}
                 type="button"

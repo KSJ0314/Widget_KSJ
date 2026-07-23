@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { lineColor } from '@scheduler/utils/styleUtils';
-import { tintOver, withAlpha } from '@/theme/colorUtils';
+import { tintOver } from '@/theme/colorUtils';
 
 /** 스크롤 거터 두께. Inner의 오른쪽 padding 보정에도 같은 값을 쓴다 */
 const SCROLLBAR_WIDTH = 11;
@@ -59,10 +59,10 @@ export const DragGhost = styled.div<{
   padding: 0 ${({ $fs }) => $fs * 0.55}px;
   border-radius: ${({ $fs }) => $fs * 0.3}px;
   background: ${({ theme, $color, $alpha }) =>
-    tintOver($color ?? theme.colors.primary, theme.colors.background, $alpha)};
-  box-shadow:
-    inset 0 0 0 1px ${({ theme, $color }) => withAlpha($color ?? theme.colors.primary, 0.55)},
-    0 3px 10px rgba(0, 0, 0, 0.2);
+    $color ? tintOver($color, theme.colors.background, $alpha) : theme.colors.background};
+  /* 막대와 같이 색 없는 것만 옅은 테두리로 구분한다 */
+  border: 1px solid ${({ theme, $color }) => ($color ? 'transparent' : lineColor({ theme }))};
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: ${({ $fs }) => $fs}px;

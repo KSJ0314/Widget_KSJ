@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { withAlpha } from '@scheduler/utils/styleUtils';
-import { tintOver } from '@/theme/colorUtils';
+import { tintOver, lineColor } from '@/theme/colorUtils';
 
 export const Bar = styled.div<{
   $left: number;
@@ -36,9 +36,15 @@ export const Bar = styled.div<{
   padding: ${({ $fs }) => $fs * 0.3}px ${({ $fs }) => $fs * 0.55}px;
   box-sizing: border-box;
   border-radius: ${({ $fs }) => $fs * 0.3}px;
-  /* 칸 배경이나 격자선이 비치지 않도록 합성 결과를 불투명 단색으로 쓴다 */
+  /*
+   * 색을 지정하지 않으면 테마 배경색(흰/검정)을 그대로 쓴다.
+   * 지정하면 칸 배경이나 격자선이 비치지 않도록 합성 결과를 불투명 단색으로 쓴다.
+   */
   background: ${({ theme, $color, $alpha }) =>
-    tintOver($color ?? theme.colors.primary, theme.colors.background, $alpha)};
+    $color ? tintOver($color, theme.colors.background, $alpha) : theme.colors.background};
+  /* 배경이 칸과 같을 수 있어, 색 없는 막대는 옅은 테두리로 구분한다 */
+  border: 1px solid ${({ theme, $color }) =>
+    $color ? 'transparent' : lineColor({ theme })};
   /* 칸에서 살짝 떠 보이는 정도로만 */
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   opacity: ${({ $done, $dragging }) => {
@@ -60,9 +66,9 @@ export const Bar = styled.div<{
         opacity: 1;
         /* 아래 칸이 비쳐 보이지 않도록 불투명하게 덮는다 */
         background: ${theme.colors.background};
-        box-shadow:
-          inset 0 0 0 1px ${withAlpha($color ?? theme.colors.primary, 0.45)},
-          0 3px 10px rgba(0, 0, 0, 0.18);
+        /* 바깥 테두리로 감싼다. inset 그림자는 박스 안쪽에 선이 생겨 어색하다 */
+        border-color: ${withAlpha($color ?? theme.colors.primary, 0.45)};
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
         ${$hasTime &&
         css`
           padding-bottom: ${$fs * 1.5}px;

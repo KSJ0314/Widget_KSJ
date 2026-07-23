@@ -115,7 +115,13 @@ export const SwatchRow = styled.div`
   gap: ${px(4)};
 `;
 
-export const Swatch = styled.button<{ $color: string; $alpha: number; $selected: boolean }>`
+export const Swatch = styled.button<{
+  $color: string;
+  $alpha: number;
+  $selected: boolean;
+  /** 배경색과 같아 안 보일 수 있는 '기본' 견본은 옅은 테두리를 준다 */
+  $outlined?: boolean;
+}>`
   flex: 1;
   min-width: 0;
   padding: 0;
@@ -126,7 +132,8 @@ export const Swatch = styled.button<{ $color: string; $alpha: number; $selected:
   background: ${({ theme, $color, $alpha }) =>
     tintOver($color, theme.colors.background, $alpha)};
   border: ${px(2)} solid
-    ${({ theme, $selected }) => ($selected ? theme.colors.text : 'transparent')};
+    ${({ theme, $selected, $outlined }) =>
+      $selected ? theme.colors.text : $outlined ? lineColor({ theme }) : 'transparent'};
   /* 테두리가 색에 바로 붙지 않도록 안쪽에 배경색을 한 겹 띄운다 */
   box-shadow: ${({ theme, $selected }) =>
     $selected ? `inset 0 0 0 ${px(1.5)} ${theme.colors.background}` : 'none'};
