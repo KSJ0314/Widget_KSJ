@@ -69,9 +69,11 @@ interface WeatherProps extends BaseProps {
   city?: CityName;
   /**
    * 기상청 공공데이터포털 API 키.
-   * 발급: https://www.data.go.kr → 기상청_단기예보 조회서비스
+   *
+   * @deprecated 사용하지 않습니다. 기상청 API는 Cloudflare Worker 프록시를 경유하며
+   * 인증키는 Worker 쪽에 보관합니다. 하위 호환을 위해 남겨둔 속성입니다.
    */
-  weatherApiKey: string;
+  weatherApiKey?: string;
   /**
    * Firebase 프로젝트 설정. 제공 시 Firestore를 캐시로 활용해 API 호출을 줄입니다.
    * 미제공 시 매번 기상청 API를 직접 호출합니다.
@@ -101,7 +103,7 @@ export const WidgetKSJ = (props: WidgetKSJProps) => {
     <ThemeProvider theme={theme}>
       <div style={{ width, height }}>
         {props.widget === 'weather' && (
-          <WeatherCurrent city={props.city} apiKey={props.weatherApiKey} db={dbRef.current} />
+          <WeatherCurrent city={props.city} db={dbRef.current} />
         )}
         {props.widget === 'clock/digital' && <DigitalClock />}
         {props.widget === 'clock/analog' && <AnalogClock />}

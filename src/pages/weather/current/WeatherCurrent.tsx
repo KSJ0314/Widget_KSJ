@@ -18,7 +18,6 @@ import {
 
 export interface WeatherCurrentProps {
   city?: CityName;
-  apiKey: string;
   db?: Firestore | null;
 }
 
@@ -27,10 +26,10 @@ function formatTime(time: string): string {
   return `${h}시`;
 }
 
-export const WeatherCurrent = ({ city, apiKey, db }: WeatherCurrentProps) => {
+export const WeatherCurrent = ({ city, db }: WeatherCurrentProps) => {
   const { ref, width, height } = useContainerSize();
   const drag = useDragScroll<HTMLDivElement>();
-  const state = useWeather({ city, apiKey, db });
+  const state = useWeather({ city, db });
   const theme = useTheme();
 
   const RATIO = 16 / 9;

@@ -1,6 +1,8 @@
 // 기상청 단기예보 조회서비스 API 호출 모듈
-
-const BASE_URL = 'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0';
+//
+// apis.data.go.kr을 브라우저에서 직접 부르면 Origin 헤더 때문에 403이 떨어진다.
+// Cloudflare Worker를 경유해 서버 대 서버로 호출하고, 인증키도 Worker 쪽에 둔다.
+const BASE_URL = 'https://weather-proxy.sojung017.workers.dev';
 
 /** 현재 날씨 데이터 (초단기실황) */
 export interface CurrentWeather {
@@ -77,10 +79,8 @@ function getFcstBaseDateTime(): { date: string; time: string } {
 async function fetchKma(
   endpoint: string,
   params: Record<string, string | number>,
-  apiKey: string,
 ): Promise<any[]> {
   const query = new URLSearchParams({
-    serviceKey: apiKey,
     dataType: 'JSON',
     numOfRows: '1000',
     pageNo: '1',
@@ -96,9 +96,9 @@ async function fetchKma(
   return items;
 }
 
-export async function fetchCurrentWeather(nx: number, ny: number, apiKey: string): Promise<CurrentWeather> {
+export async function fetchCurrentWeather(nx: number, ny: number): Promise<CurrentWeather> {
   const { date, time } = getNcstBaseDateTime();
-  const items = await fetchKma('getUltraSrtNcst', { base_date: date, base_time: time, nx, ny }, apiKey);
+  const items = await fetchKma('getUltraSrtNcst', { base_date: date, base_time: time, nx, ny });
 
   const map: Record<string, string> = {};
   for (const item of items) {
@@ -114,9 +114,9 @@ export async function fetchCurrentWeather(nx: number, ny: number, apiKey: string
   };
 }
 
-export async function fetchHourlyForecast(nx: number, ny: number, apiKey: string): Promise<HourlyForecast[]> {
+export async function fetchHourlyForecast(nx: number, ny: number): Promise<HourlyForecast[]> {
   const { date, time } = getFcstBaseDateTime();
-  const items = await fetchKma('getVilageFcst', { base_date: date, base_time: time, nx, ny }, apiKey);
+  const items = await fetchKma('getVilageFcst', { base_date: date, base_time: time, nx, ny });
 
   const grouped: Record<string, Record<string, string>> = {};
   for (const item of items) {

@@ -21,7 +21,6 @@ export const WeatherCurrentPage = () => {
   return (
     <WeatherCurrent
       city={city}
-      apiKey={import.meta.env.VITE_KMA_KEY}
       db={db}
     />
   );

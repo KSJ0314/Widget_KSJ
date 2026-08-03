@@ -20,7 +20,6 @@ export type WeatherState =
 export interface WeatherOptions {
   /** 영어 도시명 (예: "Seoul"). 없으면 Geolocation으로 자동 감지. */
   city?: string;
-  apiKey: string;
   db?: Firestore | null;
 }
 
@@ -34,7 +33,7 @@ export function getCurrentPosition(): Promise<GeolocationPosition> {
   );
 }
 
-export function useWeather({ city, apiKey, db }: WeatherOptions): WeatherState {
+export function useWeather({ city, db }: WeatherOptions): WeatherState {
   const [state, setState] = useState<WeatherState>({ status: 'loading', step: '위치 확인 중...' });
 
   useEffect(() => {
@@ -69,8 +68,8 @@ export function useWeather({ city, apiKey, db }: WeatherOptions): WeatherState {
 
         const { nx, ny } = latLonToGrid(lat, lon);
         const [current, hourly] = await Promise.all([
-          fetchCurrentWeather(nx, ny, apiKey),
-          fetchHourlyForecast(nx, ny, apiKey),
+          fetchCurrentWeather(nx, ny),
+          fetchHourlyForecast(nx, ny),
         ]);
         if (cancelled) return;
 
@@ -90,7 +89,7 @@ export function useWeather({ city, apiKey, db }: WeatherOptions): WeatherState {
 
     load();
     return () => { cancelled = true; };
-  }, [city, apiKey, db]);
+  }, [city, db]);
 
   return state;
 }
