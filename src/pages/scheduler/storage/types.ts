@@ -1,8 +1,10 @@
-import type { ScheduleEvent, SchedulerSettings } from '@scheduler/types';
+import type { RecentColor, ScheduleEvent, SchedulerSettings } from '@scheduler/types';
 
 export interface SchedulerSnapshot {
   events: ScheduleEvent[];
   settings: SchedulerSettings;
+  /** 최근에 쓴 색부터 앞에 온다 */
+  recentColors: RecentColor[];
 }
 
 /**
@@ -22,4 +24,5 @@ export interface SchedulerStorage {
   updateEvent(event: ScheduleEvent): Promise<void>;
   removeEvent(id: string): Promise<void>;
   saveSettings(settings: SchedulerSettings): Promise<void>;
+  saveRecentColors(colors: RecentColor[]): Promise<void>;
 }

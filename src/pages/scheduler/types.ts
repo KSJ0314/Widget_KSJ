@@ -25,6 +25,16 @@ export const DEFAULT_SETTINGS: SchedulerSettings = {
   showWeekend: true,
 };
 
+/** 최근에 쓴 일정 색. 농도까지 함께 남겨 고른 그대로 되살린다 */
+export interface RecentColor {
+  /** 소문자 hex */
+  color: string;
+  alpha: number;
+}
+
+/** 최근 사용 색상을 남겨 두는 최대 개수. 프리셋 줄보다 짧아 한 줄에 들어간다 */
+export const MAX_RECENT_COLORS = 10;
+
 /** 색을 고르는 동안 달력에 미리 보여줄 값. 저장 전까지만 쓰인다 */
 export interface ColorPreview {
   id: string;

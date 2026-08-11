@@ -1,8 +1,9 @@
-import { DEFAULT_SETTINGS, type ScheduleEvent } from '@scheduler/types';
+import { DEFAULT_SETTINGS, type RecentColor, type ScheduleEvent } from '@scheduler/types';
 import type { SchedulerStorage } from './types';
 
 const SETTINGS_KEY = 'widget-ksj:scheduler:settings';
 const EVENTS_KEY = 'widget-ksj:scheduler:events';
+const RECENT_COLORS_KEY = 'widget-ksj:scheduler:recentColors';
 
 const read = <T>(key: string, fallback: T): T => {
   try {
@@ -24,6 +25,7 @@ const write = (key: string, value: unknown) => {
 // 저장된 뒤에 항목이 추가됐을 수 있으니 기본값 위에 덮어쓴다
 const loadSettings = () => ({ ...DEFAULT_SETTINGS, ...read(SETTINGS_KEY, {}) });
 const loadEvents = () => read<ScheduleEvent[]>(EVENTS_KEY, []);
+const loadRecentColors = () => read<RecentColor[]>(RECENT_COLORS_KEY, []);
 
 /**
  * 고유키가 없을 때 쓰는 저장소. 이 브라우저에만 남는다.
@@ -37,11 +39,16 @@ export const createLocalStorage = (): SchedulerStorage => {
 
   return {
     subscribe(onData) {
-      const emit = () => onData({ events: loadEvents(), settings: loadSettings() });
+      const emit = () =>
+        onData({
+          events: loadEvents(),
+          settings: loadSettings(),
+          recentColors: loadRecentColors(),
+        });
       emit();
 
       const onStorage = (e: StorageEvent) => {
-        if (e.key === EVENTS_KEY || e.key === SETTINGS_KEY) emit();
+        if (e.key === EVENTS_KEY || e.key === SETTINGS_KEY || e.key === RECENT_COLORS_KEY) emit();
       };
       window.addEventListener('storage', onStorage);
       return () => window.removeEventListener('storage', onStorage);
@@ -55,6 +62,8 @@ export const createLocalStorage = (): SchedulerStorage => {
     removeEvent: async id => save(loadEvents().filter(e => e.id !== id)),
 
     saveSettings: async settings => write(SETTINGS_KEY, settings),
+
+    saveRecentColors: async colors => write(RECENT_COLORS_KEY, colors),
   };
 };
 

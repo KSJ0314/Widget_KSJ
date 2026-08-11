@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { lineColor } from '@scheduler/utils/styleUtils';
 import { tintOver } from '@/theme/colorUtils';
+import { tooltipCss } from '@/theme/tooltip';
+import { EVENT_COLORS } from '@/theme/eventColors';
 
 /**
  * 모달은 위젯 크기와 무관하게 고정 px를 쓴다.
@@ -122,6 +124,8 @@ export const Swatch = styled.button<{
   /** 배경색과 같아 안 보일 수 있는 '기본' 견본은 옅은 테두리를 준다 */
   $outlined?: boolean;
 }>`
+  ${tooltipCss}
+
   flex: 1;
   min-width: 0;
   padding: 0;
@@ -137,6 +141,19 @@ export const Swatch = styled.button<{
   /* 테두리가 색에 바로 붙지 않도록 안쪽에 배경색을 한 겹 띄운다 */
   box-shadow: ${({ theme, $selected }) =>
     $selected ? `inset 0 0 0 ${px(1.5)} ${theme.colors.background}` : 'none'};
+`;
+
+/** 아래 견본 줄이 나눠 갖는 칸 수. 최근 색을 같은 지름으로 맞추는 기준이 된다 */
+const PRESET_SLOTS = EVENT_COLORS.length + 1;
+
+/**
+ * 최근 색은 프리셋보다 적어 SwatchRow처럼 폭을 나눠 가지면 동그라미가 더 커진다.
+ * 아래 줄과 같은 지름이 되도록 칸 폭을 고정하고 왼쪽부터 채운다.
+ */
+export const RecentRow = styled(SwatchRow)`
+  & > button {
+    flex: 0 0 calc((100% - ${px(4)} * ${PRESET_SLOTS - 1}) / ${PRESET_SLOTS});
+  }
 `;
 
 export const ErrorText = styled.p`

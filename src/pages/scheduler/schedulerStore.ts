@@ -1,5 +1,11 @@
 import { create } from 'zustand';
-import { DEFAULT_SETTINGS, type ScheduleEvent, type SchedulerSettings } from './types';
+import {
+  DEFAULT_SETTINGS,
+  MAX_RECENT_COLORS,
+  type RecentColor,
+  type ScheduleEvent,
+  type SchedulerSettings,
+} from './types';
 import { createRemoteStorage } from './storage/remote';
 import { createLocalStorage } from './storage/local';
 import type { SchedulerStorage } from './storage/types';
@@ -10,6 +16,8 @@ type Source = 'local' | 'remote';
 interface SchedulerState {
   events: ScheduleEvent[];
   settings: SchedulerSettings;
+  /** 최근에 쓴 색부터 앞에 온다 */
+  recentColors: RecentColor[];
   source: Source;
   loading: boolean;
   /** 일정을 저장할 수 있는 상태인지 */
@@ -18,6 +26,8 @@ interface SchedulerState {
   init: (widgetKey: string | null) => void;
   cleanup: () => void;
   setSettings: (patch: Partial<SchedulerSettings>) => void;
+  /** 방금 쓴 색을 최근 목록 맨 앞으로 올린다 */
+  pushRecentColor: (color: string, alpha: number) => void;
   /** 저장에 성공했는지. 실패하면 이전 상태로 되돌린 뒤 false를 준다 */
   addEvent: (event: ScheduleEvent) => Promise<boolean>;
   updateEvent: (event: ScheduleEvent) => Promise<boolean>;
@@ -72,6 +82,7 @@ const commit = async (
 export const useSchedulerStore = create<SchedulerState>((set, get) => ({
   events: [],
   settings: DEFAULT_SETTINGS,
+  recentColors: [],
   source: 'local',
   loading: true,
   canEdit: false,
@@ -94,7 +105,8 @@ export const useSchedulerStore = create<SchedulerState>((set, get) => ({
 
     // 여러 위젯을 함께 임베드했을 때 한쪽 변경이 다른 쪽에 바로 반영되도록 구독한다
     unsubscribe = storage.subscribe(
-      ({ events, settings }) => set({ events, settings, loading: false }),
+      ({ events, settings, recentColors }) =>
+        set({ events, settings, recentColors, loading: false }),
       err => {
         console.warn('[scheduler] 구독 실패', err);
         set({ loading: false });
@@ -119,6 +131,22 @@ export const useSchedulerStore = create<SchedulerState>((set, get) => ({
     storage?.saveSettings(next).catch(err => {
       console.warn('[scheduler] 설정 저장 실패', err);
       set({ settings: previous });
+    });
+  },
+
+  pushRecentColor: (color, alpha) => {
+    const key = color.toLowerCase();
+    const previous = get().recentColors;
+    // 같은 색을 다시 쓰면 자리를 늘리지 않고 맨 앞으로 올리면서 농도만 갱신한다
+    const next = [
+      { color: key, alpha },
+      ...previous.filter(c => c.color.toLowerCase() !== key),
+    ].slice(0, MAX_RECENT_COLORS);
+    set({ recentColors: next });
+
+    storage?.saveRecentColors(next).catch(err => {
+      console.warn('[scheduler] 최근 색 저장 실패', err);
+      set({ recentColors: previous });
     });
   },
 

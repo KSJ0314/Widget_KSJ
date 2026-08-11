@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTheme } from 'styled-components';
 import { EVENT_COLORS } from '@/theme/eventColors';
 import { DEFAULT_EVENT_ALPHA } from '@/theme/colorUtils';
-import type { ScheduleEvent } from '@scheduler/types';
+import type { RecentColor, ScheduleEvent } from '@scheduler/types';
 import { DatePicker } from './DatePicker';
 import { TimePicker } from './TimePicker';
 import { ColorSliders } from './ColorSliders';
@@ -22,6 +22,7 @@ import {
   ErrorText,
   SwatchRow,
   Swatch,
+  RecentRow,
 } from './EventModal.styled';
 
 interface Props {
@@ -29,6 +30,8 @@ interface Props {
   event: ScheduleEvent | null;
   /** 추가 모드에서 + 를 누른 칸의 날짜 */
   defaultDate: string;
+  /** 최근에 쓴 색. 최근 것부터 앞에 온다 */
+  recentColors: RecentColor[];
   /** 저장에 성공했는지. 실패하면 모달을 닫지 않고 오류를 보여준다 */
   onSave: (event: ScheduleEvent) => Promise<boolean>;
   onDelete: (id: string) => Promise<boolean>;
@@ -41,7 +44,7 @@ const formatRange = (start: string, end?: string) =>
   end && end !== start ? `${start} ~ ${end}` : start;
 
 export const EventModal = ({
-  event, defaultDate, onSave, onDelete, onClose, onPreviewColor,
+  event, defaultDate, recentColors, onSave, onDelete, onClose, onPreviewColor,
 }: Props) => {
   const theme = useTheme();
   const isEdit = event !== null;
@@ -138,6 +141,27 @@ export const EventModal = ({
           </PickerButton>
         </Field>
 
+        {recentColors.length > 0 && (
+          <Field as="div">
+            <FieldLabel>최근 사용 색상</FieldLabel>
+            {/* 농도까지 같이 남겨 둬서 그때 쓰던 그대로 되살아난다 */}
+            <RecentRow onMouseLeave={() => onPreviewColor({ color, alpha })}>
+              {recentColors.map(c => (
+                <Swatch
+                  key={c.color}
+                  type="button"
+                  $color={c.color}
+                  $alpha={c.alpha}
+                  $selected={color === c.color && alpha === c.alpha}
+                  data-tooltip={c.color.toUpperCase()}
+                  onMouseEnter={() => onPreviewColor({ color: c.color, alpha: c.alpha })}
+                  onClick={() => pickCustom(c.color, c.alpha)}
+                />
+              ))}
+            </RecentRow>
+          </Field>
+        )}
+
         <Field as="div">
           <FieldLabel>색상</FieldLabel>
           {/* 마우스를 빼면 고른 색으로 돌아간다. 저장이나 취소 전까지 미리보기가 유지된다 */}
@@ -149,6 +173,7 @@ export const EventModal = ({
               $alpha={alpha}
               $selected={color === undefined}
               $outlined
+              data-tooltip="기본"
               onMouseEnter={() => onPreviewColor({ color: undefined, alpha })}
               onClick={() => pickColor(undefined)}
             />
@@ -159,6 +184,7 @@ export const EventModal = ({
                 $color={c}
                 $alpha={alpha}
                 $selected={color === c}
+                data-tooltip={c.toUpperCase()}
                 onMouseEnter={() => onPreviewColor({ color: c, alpha })}
                 onClick={() => pickColor(c)}
               />

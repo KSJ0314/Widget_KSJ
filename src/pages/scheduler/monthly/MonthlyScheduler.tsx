@@ -96,8 +96,9 @@ export const MonthlyScheduler = ({ widgetKey: keyFromProps }: Props) => {
   const widgetKey = keyFromProps ?? searchParams.get('u');
 
   const {
-    events, settings, canEdit, source,
-    setSettings, init, cleanup, addEvent, updateEvent, removeEvent, toggleEvent,
+    events, settings, recentColors, canEdit, source,
+    setSettings, pushRecentColor,
+    init, cleanup, addEvent, updateEvent, removeEvent, toggleEvent,
   } = useSchedulerStore();
   const { showWeekend } = settings;
 
@@ -187,9 +188,16 @@ export const MonthlyScheduler = ({ widgetKey: keyFromProps }: Props) => {
         <EventModal
           event={editing.event}
           defaultDate={editing.date}
+          recentColors={recentColors}
           onSave={async event => {
             const ok = await (editing.event ? updateEvent(event) : addEvent(event));
-            if (ok) closeModal();
+            if (ok) {
+              // 색을 고른 일정만 남긴다. '기본'은 색을 지정하지 않은 것이다
+              if (event.color) {
+                pushRecentColor(event.color, event.colorAlpha ?? DEFAULT_EVENT_ALPHA);
+              }
+              closeModal();
+            }
             return ok;
           }}
           onDelete={async id => {
