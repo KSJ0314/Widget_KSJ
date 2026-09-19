@@ -1,20 +1,49 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { widgets } from './widgetRegistry';
-import { themes } from '@/theme/theme';
-import { fontNames, fontPreview, withFont, type FontName } from '@/theme/fonts';
+import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
+import { widgets, type WidgetMeta } from './widgetRegistry';
+import { themes, type ThemeName } from '@/theme/theme';
+import { fontNames, fontPreview, type FontName } from '@/theme/fonts';
 import { getCurrentPosition } from '@weather/useWeather';
 import { findNearestCity } from '@/data/cityMap';
 import { useAuthStore } from '@/store/authStore';
+import { useContainerSize } from '@/hooks/useContainerSize';
 import { LockableThemeRow } from './LockableThemeRow';
 import { LocalMigrateButton } from './LocalMigrateButton';
 import {
+  CalendarIcon,
+  CheckIcon,
+  ClipboardIcon,
+  ClockIcon,
+  PinIcon,
+  SchedulerIcon,
+  TypeIcon,
+  UserIcon,
+  WeatherIcon,
+  WidgetIcon,
+} from './HomeIcons';
+import {
   HomeContainer,
-  Header,
-  HeaderInfo,
+  Sidebar,
+  SidebarInner,
+  SidebarSection,
+  SidebarBody,
+  AccountSection,
+  LogoRow,
   Title,
-  Subtitle,
+  IconButton,
+  RailIcon,
+  GroupLabel,
+  ChipList,
+  FontChip,
+  FontChipLabel,
+  ThemeChip,
+  ThemeDot,
+  CategoryGroup,
+  CategoryTitle,
+  WidgetItem,
+  WidgetDescription,
+  AccountRow,
+  AccountEmail,
+  MigrateSlot,
   LoginButton,
   ProfileButton,
   ModalOverlay,
@@ -22,42 +51,27 @@ import {
   ModalText,
   ModalActions,
   ModalButton,
-  CategorySection,
-  CategoryHeader,
-  CategoryHeaderRow,
-  WidgetSection,
-  SectionHeader,
-  SectionName,
-  SectionCategory,
-  FontRow,
-  FontLabel,
-  FontChip,
-  FontChipLabel,
-  ThemeCard,
-  PreviewArea,
-  PreviewScaler,
-  previewSpec,
-  WidgetDescription,
+  Stage,
+  StageToolbar,
+  CopyUrlButton,
+  FitBox,
+  PreviewFrame,
+  PreviewLoading,
+  PreviewShield,
   WidgetWarning,
-  ThemeBadge,
-  CopyButton,
+  LANDSCAPE_RATIO,
+  PORTRAIT_RATIO,
 } from './Home.styled';
 
-const ClipboardIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="9" y="9" width="13" height="13" rx="2" />
-    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12" />
-  </svg>
-);
+const categoryIcons: Record<string, ComponentType> = {
+  Clock: ClockIcon,
+  Calendar: CalendarIcon,
+  Scheduler: SchedulerIcon,
+  Weather: WeatherIcon,
+};
 
 const groupByCategory = () => {
-  const map = new Map<string, typeof widgets>();
+  const map = new Map<string, WidgetMeta[]>();
   for (const widget of widgets) {
     if (!map.has(widget.category)) map.set(widget.category, []);
     map.get(widget.category)!.push(widget);
@@ -65,65 +79,271 @@ const groupByCategory = () => {
   return map;
 };
 
+const grouped = groupByCategory();
+
+/** 남은 공간 안에 비율을 지키며 가장 크게 들어가는 크기 */
+const fitSize = (boxWidth: number, boxHeight: number, ratio: number) => {
+  const width = Math.min(boxWidth, boxHeight * ratio);
+  return { width: Math.floor(width), height: Math.floor(width / ratio) };
+};
+
 export const Home = () => {
-  const navigate = useNavigate();
-  const grouped = groupByCategory();
   const { user, loading, keyError, widgetKey, signIn, signOut } = useAuthStore();
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [fontByWidget, setFontByWidget] = useState<Record<string, FontName>>({});
+  const [copied, setCopied] = useState(false);
+  const [widget, setWidget] = useState<WidgetMeta>(widgets[0]);
+  const [themeName, setThemeName] = useState<ThemeName>('dark');
+  const [font, setFont] = useState<FontName>('default');
+  const [hovered, setHovered] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  // 미리보기 iframe이 처음 불러오기를 마쳤는지. 이후 전환은 해시만 바뀌어 load가 오지 않는다
+  const [frameLoaded, setFrameLoaded] = useState(false);
+  // iframe이 사라지면(크기가 0이 되는 등) 다시 만들어질 때 처음부터 불러오므로 로딩 표시를 되살린다
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const frameRef = useCallback((node: HTMLIFrameElement | null) => {
+    iframeRef.current = node;
+    if (!node) setFrameLoaded(false);
+  }, []);
+  // iframe의 src 속성은 만들어질 때의 주소로 고정한다. 속성을 바꾸면 방문 기록이 쌓여 뒤로가기가 생긴다
+  const [frameSrc, setFrameSrc] = useState<string | null>(null);
+  const { ref: fitRef, width: boxWidth, height: boxHeight } = useContainerSize();
+
+  const expanded = hovered || pinned;
+
+  // 글자가 없는 위젯은 폰트를 고를 수 없으므로 URL에도 넣지 않는다
+  const activeFont: FontName = widget.hideFont ? 'default' : font;
 
   // 기본 폰트는 테마가 정의한 값을 쓰므로 URL에 넣지 않는다
-  const fontParam = (font: FontName) => (font === 'default' ? '' : `&font=${font}`);
+  const fontParam = (name: FontName) => (name === 'default' ? '' : `&font=${name}`);
 
   // 개인 데이터를 다루는 위젯만, 그리고 로그인해 키가 있을 때만 붙인다
   const keyParam = (needsKey?: boolean) =>
     needsKey && widgetKey ? `&u=${widgetKey}` : '';
 
-  const copyUrl = async (
-    e: React.MouseEvent,
-    path: string,
-    themeName: string,
-    font: FontName,
-    requiresLocation?: boolean,
-    needsKey?: boolean,
-  ) => {
-    e.stopPropagation();
+  const widgetHash = (extra = '') =>
+    `#${widget.path}?theme=${themeName}${fontParam(activeFont)}${extra}${keyParam(widget.requiresWidgetKey)}`;
+
+  // 복사할 URL과 같은 페이지를 띄운다. 도시는 복사할 때만 정한다
+  const previewSrc = `${import.meta.env.BASE_URL}${widgetHash()}`;
+
+  const selectWidget = (next: WidgetMeta) => {
+    setWidget(next);
+    // 새 위젯이 지금 테마를 지원하지 않으면 그 위젯의 첫 테마로 바꾼다
+    if (!next.themes.includes(themeName)) setThemeName(next.themes[0]);
+  };
+
+  const copyUrl = async () => {
     let extra = '';
-    if (requiresLocation) {
+    if (widget.requiresLocation) {
       try {
         const pos = await getCurrentPosition();
         const { latitude: lat, longitude: lon } = pos.coords;
         const city = findNearestCity(lat, lon);
         extra = `&city=${city.en}`;
-      } catch {}
+      } catch {
+        // 위치를 못 얻으면 도시 없이 복사한다
+      }
     }
-    const url = `${window.location.origin}${import.meta.env.BASE_URL}#${path}?theme=${themeName}${fontParam(font)}${extra}${keyParam(needsKey)}`;
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}${widgetHash(extra)}`;
     navigator.clipboard.writeText(url);
-    const key = `${path}-${themeName}`;
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
+
+  const ratio = widget.previewPortrait ? PORTRAIT_RATIO : LANDSCAPE_RATIO;
+  const frame = fitSize(boxWidth, boxHeight, ratio);
+  const locked = Boolean(widget.requiresLogin) && !loading && !user;
+  const showFrame = frame.width > 0 && frame.height > 0;
+
+  // iframe이 새로 만들어질 때는 그 시점의 주소로 고정하고, 사라지면 고정을 푼다
+  if (showFrame && frameSrc === null) setFrameSrc(previewSrc);
+  if (!showFrame && frameSrc !== null) setFrameSrc(null);
+
+  // 주소가 바뀌면 iframe 안에서 replace로 해시만 옮긴다. 다시 불러오지 않고 방문 기록도 쌓이지 않는다
+  // 첫 로드 전에는 건너뛰고, 로드가 끝나면(frameLoaded) 최신 주소와 한 번 맞춘다
+  useEffect(() => {
+    if (!frameLoaded) return;
+    const win = iframeRef.current?.contentWindow;
+    if (!win) return;
+    const target = new URL(previewSrc, window.location.href).href;
+    try {
+      if (win.location.href !== target) win.location.replace(target);
+    } catch {
+      // 출처가 달라 접근할 수 없으면 건너뛴다
+    }
+  }, [previewSrc, frameLoaded]);
 
   return (
     <HomeContainer>
-      <Header>
-        <HeaderInfo>
-          <Title>WIDGET KSJ</Title>
-          <Subtitle>Personal widget collection</Subtitle>
-        </HeaderInfo>
-        {!loading && (
-          user ? (
-            <ProfileButton onClick={() => setLogoutOpen(true)} title={user.email ?? '계정'}>
-              {user.photoURL
-                ? <img src={user.photoURL} alt="" referrerPolicy="no-referrer" />
-                : (user.email?.[0]?.toUpperCase() ?? '?')}
-            </ProfileButton>
-          ) : (
-            <LoginButton onClick={() => signIn()}>Google로 로그인</LoginButton>
-          )
+      <Sidebar
+        $expanded={expanded}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <SidebarInner $expanded={expanded}>
+          <LogoRow $expanded={expanded}>
+            <Title>{expanded ? 'WIDGET KSJ' : 'W'}</Title>
+            {expanded && (
+              <IconButton
+                $active={pinned}
+                onClick={() => setPinned(prev => !prev)}
+                title={pinned ? '펼침 고정 해제' : '펼침 고정'}
+              >
+                <PinIcon />
+              </IconButton>
+            )}
+          </LogoRow>
+
+          <SidebarBody>
+            <SidebarSection $expanded={expanded}>
+              {expanded ? (
+                <>
+                  {!widget.hideFont && (
+                    <>
+                      <GroupLabel>폰트</GroupLabel>
+                      <ChipList>
+                        {fontNames.map(fontName => {
+                          const { family, scale, nudge } = fontPreview(fontName);
+                          return (
+                            <FontChip
+                              key={fontName}
+                              $active={font === fontName}
+                              $family={family}
+                              $scale={scale}
+                              onClick={() => setFont(fontName)}
+                            >
+                              <FontChipLabel $offsetY={nudge}>{fontName}</FontChipLabel>
+                            </FontChip>
+                          );
+                        })}
+                      </ChipList>
+                    </>
+                  )}
+                  <GroupLabel>색상</GroupLabel>
+                  <ChipList>
+                    {widget.themes.map(name => (
+                      <ThemeChip
+                        key={name}
+                        $active={themeName === name}
+                        onClick={() => setThemeName(name)}
+                      >
+                        <ThemeDot $color={themes[name].colors.primary} />
+                        {name}
+                      </ThemeChip>
+                    ))}
+                  </ChipList>
+                </>
+              ) : (
+                <RailIcon title="폰트·색상">
+                  <TypeIcon />
+                </RailIcon>
+              )}
+            </SidebarSection>
+
+            <SidebarSection $expanded={expanded}>
+              {expanded ? (
+                <>
+                  <GroupLabel>위젯</GroupLabel>
+                  {[...grouped.entries()].map(([category, categoryWidgets]) => {
+                    const Icon = categoryIcons[category] ?? WidgetIcon;
+                    return (
+                      <CategoryGroup key={category}>
+                        <CategoryTitle>
+                          <Icon />
+                          {category}
+                        </CategoryTitle>
+                        {categoryWidgets.map(item => (
+                          <WidgetItem
+                            key={item.id}
+                            $active={item.id === widget.id}
+                            onClick={() => selectWidget(item)}
+                          >
+                            {item.name}
+                          </WidgetItem>
+                        ))}
+                      </CategoryGroup>
+                    );
+                  })}
+                  {widget.description && <WidgetDescription>{widget.description}</WidgetDescription>}
+                </>
+              ) : (
+                [...grouped.entries()].map(([category, categoryWidgets]) => {
+                  const Icon = categoryIcons[category] ?? WidgetIcon;
+                  return (
+                    <IconButton
+                      key={category}
+                      $active={category === widget.category}
+                      onClick={() => selectWidget(categoryWidgets[0])}
+                      title={category}
+                    >
+                      <Icon />
+                    </IconButton>
+                  );
+                })
+              )}
+            </SidebarSection>
+          </SidebarBody>
+
+          <AccountSection $expanded={expanded}>
+            {!loading && (
+              user ? (
+                <>
+                  <AccountRow>
+                    <ProfileButton onClick={() => setLogoutOpen(true)} title={user.email ?? '계정'}>
+                      {user.photoURL
+                        ? <img src={user.photoURL} alt="" referrerPolicy="no-referrer" />
+                        : (user.email?.[0]?.toUpperCase() ?? '?')}
+                    </ProfileButton>
+                    {expanded && user.email && <AccountEmail>{user.email}</AccountEmail>}
+                  </AccountRow>
+                  {/* 옮기는 도중에 바가 접혀도 확인 창이 사라지지 않게 버튼만 숨긴다 */}
+                  <MigrateSlot $hidden={!expanded}>
+                    <LocalMigrateButton />
+                  </MigrateSlot>
+                </>
+              ) : expanded ? (
+                <LoginButton onClick={() => signIn()}>Google로 로그인</LoginButton>
+              ) : (
+                <IconButton onClick={() => signIn()} title="Google로 로그인">
+                  <UserIcon />
+                </IconButton>
+              )
+            )}
+          </AccountSection>
+        </SidebarInner>
+      </Sidebar>
+
+      <Stage>
+        <StageToolbar>
+          <CopyUrlButton $copied={copied} onClick={copyUrl}>
+            {copied ? <CheckIcon /> : <ClipboardIcon />}
+            {copied ? '복사됨' : '노션용 URL 복사'}
+          </CopyUrlButton>
+        </StageToolbar>
+
+        <FitBox ref={fitRef}>
+          {showFrame && (
+            <PreviewFrame $width={frame.width} $height={frame.height}>
+              {/* 새로 만들지 않고 src 속성도 바꾸지 않는다. 주소 전환은 위 effect가 replace로 한다 */}
+              <iframe
+                ref={frameRef}
+                src={frameSrc ?? previewSrc}
+                title={`${widget.name} 미리보기`}
+                onLoad={() => setFrameLoaded(true)}
+              />
+              {!frameLoaded && <PreviewLoading>LOADING</PreviewLoading>}
+              <LockableThemeRow locked={locked} />
+              {hovered && !pinned && <PreviewShield />}
+            </PreviewFrame>
+          )}
+        </FitBox>
+
+        {widget.requiresWidgetKey && keyError && (
+          <WidgetWarning>
+            고유키를 불러오지 못했습니다. 지금 URL을 복사하면 일정이 저장되지 않습니다. 새로고침해 주세요.
+          </WidgetWarning>
         )}
-      </Header>
+      </Stage>
 
       {logoutOpen && (
         <ModalOverlay onClick={() => setLogoutOpen(false)}>
@@ -144,88 +364,6 @@ export const Home = () => {
           </ModalBox>
         </ModalOverlay>
       )}
-
-      {[...grouped.entries()].map(([category, categoryWidgets]) => (
-        <CategorySection key={category}>
-          <CategoryHeaderRow>
-            <CategoryHeader>{category}</CategoryHeader>
-            {category === 'Scheduler' && <LocalMigrateButton />}
-          </CategoryHeaderRow>
-
-          {categoryWidgets.map(({ id, name, category: cat, path, themes: widgetThemes, component: Widget, requiresLocation, requiresWidgetKey, requiresLogin, previewPortrait, hideFont, description }) => {
-            const font = fontByWidget[id] ?? 'default';
-            const preview = previewSpec(Boolean(previewPortrait));
-
-            return (
-              <WidgetSection key={id}>
-                <SectionHeader>
-                  <SectionName>{name}</SectionName>
-                  <SectionCategory>{cat}</SectionCategory>
-                  {!hideFont && (
-                    <FontRow>
-                      <FontLabel>Font</FontLabel>
-                      {fontNames.map(fontName => {
-                        const { family, scale, nudge } = fontPreview(fontName);
-                        return (
-                          <FontChip
-                            key={fontName}
-                            $active={font === fontName}
-                            $family={family}
-                            $scale={scale}
-                            onClick={() => setFontByWidget(prev => ({ ...prev, [id]: fontName }))}
-                          >
-                            <FontChipLabel $offsetY={nudge}>{fontName}</FontChipLabel>
-                          </FontChip>
-                        );
-                      })}
-                    </FontRow>
-                  )}
-                </SectionHeader>
-                {description && <WidgetDescription>{description}</WidgetDescription>}
-                {id === 'calendar-scheduler' && keyError && (
-                  <WidgetWarning>
-                    고유키를 불러오지 못했습니다. 지금 URL을 복사하면 일정이 저장되지 않습니다. 새로고침해 주세요.
-                  </WidgetWarning>
-                )}
-                <LockableThemeRow
-                  locked={Boolean(requiresLogin) && !loading && !user}
-                  cardWidth={preview.cardWidth}
-                >
-                  {widgetThemes.map(themeName => (
-                    <ThemeCard
-                      key={themeName}
-                      $width={preview.cardWidth}
-                      onClick={() => navigate(`${path}?theme=${themeName}${fontParam(font)}${keyParam(requiresWidgetKey)}`)}
-                    >
-                      <PreviewArea $ratio={preview.ratio}>
-                        <PreviewScaler
-                          $w={preview.baseWidth}
-                          $h={preview.baseHeight}
-                          $scale={preview.scale}
-                        >
-                          <StyledThemeProvider theme={withFont(themes[themeName], font)}>
-                            <Widget widgetKey={widgetKey} />
-                          </StyledThemeProvider>
-                        </PreviewScaler>
-                      </PreviewArea>
-                      <ThemeBadge $color={themes[themeName].colors.primary}>
-                        {themeName}
-                        <CopyButton
-                          $copied={copiedKey === `${path}-${themeName}`}
-                          onClick={(e) => copyUrl(e, path, themeName, font, requiresLocation, requiresWidgetKey)}
-                          title="URL 복사"
-                        >
-                          {copiedKey === `${path}-${themeName}` ? <CheckIcon /> : <ClipboardIcon />}
-                        </CopyButton>
-                      </ThemeBadge>
-                    </ThemeCard>
-                  ))}
-                </LockableThemeRow>
-              </WidgetSection>
-            );
-          })}
-        </CategorySection>
-      ))}
     </HomeContainer>
   );
 };

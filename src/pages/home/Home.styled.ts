@@ -1,19 +1,20 @@
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { withAlpha } from '@/theme/colorUtils';
 
 const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
-export const HomeContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  background: ${({ theme }) => theme.colors.background};
-  padding: 48px 40px 64px;
-  box-sizing: border-box;
+/** 접힌 사이드바 폭. 미리보기 영역은 항상 이만큼만 비켜 선다 */
+export const RAIL_WIDTH = 56;
+export const SIDEBAR_WIDTH = 272;
 
+/** 미리보기 비율. 기존 카드 미리보기와 같은 값을 쓴다 */
+export const LANDSCAPE_RATIO = 16 / 9;
+export const PORTRAIT_RATIO = 170 / 215;
+
+const scrollbar = css`
   &::-webkit-scrollbar {
     width: 4px;
   }
@@ -26,17 +27,302 @@ export const HomeContainer = styled.div`
   }
 `;
 
-export const Header = styled.header`
-  margin-bottom: 48px;
-  animation: ${fadeIn} 0.5s ease;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
+export const HomeContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: ${({ theme }) => theme.colors.background};
 `;
 
-/** 로고 + 소개글 묶음 */
-export const HeaderInfo = styled.div``;
+/* ---------- 사이드바 ---------- */
+
+/** 펼쳐져도 미리보기를 밀어내지 않고 그 위로 겹친다 */
+export const Sidebar = styled.aside<{ $expanded: boolean }>`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  width: ${({ $expanded }) => ($expanded ? SIDEBAR_WIDTH : RAIL_WIDTH)}px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.colors.surface};
+  border-right: 1px solid ${({ theme }) => theme.colors.border};
+  box-shadow: ${({ $expanded }) => ($expanded ? '8px 0 32px rgba(0, 0, 0, 0.3)' : 'none')};
+  transition: width 0.18s ease, box-shadow 0.18s ease;
+`;
+
+/** 폭이 바뀌는 동안 내용이 줄바꿈되며 흔들리지 않게 안쪽 폭은 고정한다 */
+export const SidebarInner = styled.div<{ $expanded: boolean }>`
+  width: ${({ $expanded }) => ($expanded ? SIDEBAR_WIDTH : RAIL_WIDTH)}px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const SidebarSection = styled.div<{ $expanded: boolean }>`
+  padding: ${({ $expanded }) => ($expanded ? '16px 18px' : '12px 0')};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  display: flex;
+  flex-direction: column;
+  align-items: ${({ $expanded }) => ($expanded ? 'stretch' : 'center')};
+  gap: ${({ $expanded }) => ($expanded ? 12 : 6)}px;
+`;
+
+/** 로고와 로그인 사이. 내용이 길면 이 부분만 스크롤한다 */
+export const SidebarBody = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  ${scrollbar}
+`;
+
+export const AccountSection = styled(SidebarSection)`
+  border-bottom: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+export const LogoRow = styled.div<{ $expanded: boolean }>`
+  height: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: ${({ $expanded }) => ($expanded ? 'space-between' : 'center')};
+  padding: ${({ $expanded }) => ($expanded ? '0 12px 0 18px' : '0')};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+export const Title = styled.h1`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 16px;
+  font-weight: 900;
+  color: ${({ theme }) => theme.colors.primary};
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  text-shadow:
+    0 0 12px ${({ theme }) => theme.colors.primary},
+    0 0 24px ${({ theme }) => theme.colors.primaryGlow};
+`;
+
+/** 버튼 공통: 아이콘 하나가 들어가는 정사각형 */
+export const IconButton = styled.button<{ $active?: boolean }>`
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.primary : 'transparent')};
+  background: ${({ $active, theme }) => ($active ? withAlpha(theme.colors.primary, 0.18) : 'none')};
+  color: ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.textDim)};
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+/** 접힌 바의 아이콘 자리. 누를 일이 없는 구역 표시용 */
+export const RailIcon = styled.div`
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.colors.textDim};
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+`;
+
+export const GroupLabel = styled.span`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 10px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.primary};
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+`;
+
+export const ChipList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+`;
+
+export const FontChip = styled.button<{
+  $active: boolean;
+  /** 없으면 default 칩이라 테마 폰트를 그대로 쓴다 */
+  $family?: string;
+  $scale: number;
+}>`
+  /* 칩마다 자기 폰트로 이름을 보여준다 */
+  font-family: ${({ theme, $family }) => $family ?? theme.fonts.display};
+  /* scale을 그대로 곱하면 칩 크기가 제각각이라 살짝만 반영한다 */
+  font-size: ${({ $scale }) => 9 * Math.min($scale, 1.15)}px;
+  /* 폰트마다 글자 상자 높이가 달라 세로 중앙이 어긋난다 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 22px;
+  box-sizing: border-box;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0 10px;
+  border-radius: 20px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  /* primaryGlow는 글자색과 밝기가 비슷해 고른 칩의 글자가 묻힌다 */
+  background: ${({ $active, theme }) =>
+    $active ? withAlpha(theme.colors.primary, 0.18) : 'transparent'};
+  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.border)};
+  color: ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.textDim)};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+/** 칩 크기는 그대로 두고 글자만 위아래로 미세하게 옮긴다 */
+export const FontChipLabel = styled.span<{ $offsetY: number }>`
+  transform: translateY(${({ $offsetY }) => $offsetY}px);
+`;
+
+export const ThemeChip = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 10px 0 7px;
+  cursor: pointer;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 20px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  background: ${({ $active, theme }) =>
+    $active ? withAlpha(theme.colors.primary, 0.18) : 'transparent'};
+  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.border)};
+  color: ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.textDim)};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+/** 테마의 대표색 */
+export const ThemeDot = styled.span<{ $color: string }>`
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: ${({ $color }) => $color};
+  /* 흰 배경 테마의 옅은 색도 경계가 보이게 한다 */
+  box-shadow: 0 0 0 1px rgba(128, 128, 128, 0.35);
+`;
+
+export const CategoryGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+export const CategoryTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 10px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.primary};
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px ${({ theme }) => theme.colors.primaryGlow};
+
+  svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+`;
+
+export const WidgetItem = styled.button<{ $active: boolean }>`
+  text-align: left;
+  cursor: pointer;
+  padding: 7px 10px 7px 24px;
+  border-radius: 4px;
+  border: none;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 11px;
+  font-weight: ${({ $active }) => ($active ? 700 : 400)};
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  background: ${({ $active, theme }) =>
+    $active ? withAlpha(theme.colors.primary, 0.18) : 'transparent'};
+  color: ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.text)};
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+export const WidgetDescription = styled.p`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 12px;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textDim};
+  letter-spacing: 0.03em;
+  line-height: 1.6;
+  /* 설명에 넣은 줄바꿈(\n)을 그대로 살린다 */
+  white-space: pre-line;
+`;
+
+export const AccountRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+`;
+
+export const AccountEmail = styled.span`
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.text};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+/** 접힌 바에서는 옮기기 버튼만 숨기고, 열려 있는 확인 창은 그대로 둔다 */
+export const MigrateSlot = styled.div<{ $hidden: boolean }>`
+  /* 자리를 차지하지 않고 버튼이 구역에 바로 놓이게 한다 */
+  display: contents;
+
+  & > button {
+    display: ${({ $hidden }) => ($hidden ? 'none' : 'block')};
+  }
+`;
 
 export const LoginButton = styled.button`
   flex-shrink: 0;
@@ -65,6 +351,8 @@ export const ProfileButton = styled.button`
   border-radius: 50%;
   overflow: hidden;
   background: none;
+  font-family: ${({ theme }) => theme.fonts.display};
+  color: ${({ theme }) => theme.colors.primary};
   border: 1px solid ${({ theme }) => theme.colors.border};
   transition: border-color 0.15s;
 
@@ -79,6 +367,31 @@ export const ProfileButton = styled.button`
     border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
+
+export const MigrateBtn = styled.button`
+  flex-shrink: 0;
+  cursor: pointer;
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  background: none;
+  color: ${({ theme }) => theme.colors.primary};
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.75;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+`;
+
+/* ---------- 모달 ---------- */
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -139,87 +452,108 @@ export const ModalButton = styled.button<{ $primary?: boolean }>`
   }
 `;
 
-export const Title = styled.h1`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 28px;
-  font-weight: 900;
-  color: ${({ theme }) => theme.colors.primary};
-  letter-spacing: 0.1em;
-  text-shadow:
-    0 0 12px ${({ theme }) => theme.colors.primary},
-    0 0 24px ${({ theme }) => theme.colors.primaryGlow};
-  margin-bottom: 8px;
-`;
+/* ---------- 미리보기 영역 ---------- */
 
-export const Subtitle = styled.p`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 11px;
-  font-weight: 400;
-  color: ${({ theme }) => theme.colors.textDim};
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-`;
-
-export const CategorySection = styled.section`
-  margin-bottom: 64px;
-  animation: ${fadeIn} 0.5s ease;
-`;
-
-/** 제목과 그 옆에 붙는 버튼을 함께 담는다 */
-export const CategoryHeaderRow = styled.div`
+/** 사이드바 상태와 상관없이 접힌 바 폭만큼만 비켜 서므로 위치·크기가 바뀌지 않는다 */
+export const Stage = styled.main`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: ${RAIL_WIDTH}px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  padding: 16px 32px 32px;
   gap: 16px;
-  margin-bottom: 28px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
-export const CategoryHeader = styled.h2`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 11px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  text-shadow: 0 0 10px ${({ theme }) => theme.colors.primaryGlow};
-`;
-
-export const MigrateBtn = styled.button`
+export const StageToolbar = styled.div`
+  display: flex;
+  justify-content: flex-end;
   flex-shrink: 0;
+`;
+
+export const CopyUrlButton = styled.button<{ $copied: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: 11px;
-  letter-spacing: 0.04em;
-  padding: 6px 12px;
+  letter-spacing: 0.08em;
+  padding: 8px 14px;
   border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
   background: none;
-  color: ${({ theme }) => theme.colors.primary};
-  transition: opacity 0.15s;
+  border: 1px solid ${({ $copied, theme }) => ($copied ? theme.colors.secondary : theme.colors.primary)};
+  color: ${({ $copied, theme }) => ($copied ? theme.colors.secondary : theme.colors.primary)};
+  transition: color 0.2s, border-color 0.2s, opacity 0.2s;
+
+  svg {
+    width: 13px;
+    height: 13px;
+    display: block;
+  }
 
   &:hover {
-    opacity: 0.75;
-  }
-
-  &:disabled {
-    cursor: default;
-    opacity: 0.4;
+    opacity: 0.8;
   }
 `;
 
-export const WidgetSection = styled.div`
-  margin-bottom: 36px;
+/** 미리보기가 들어갈 수 있는 남은 공간. 이 크기를 재서 미리보기 크기를 정한다 */
+export const FitBox = styled.div`
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
-/** 로그인해야 쓸 수 있는 위젯의 미리보기만 가린다. 이름·설명은 그대로 보인다 */
-export const LockOverlay = styled.div<{ $width: number }>`
+export const PreviewFrame = styled.div<{ $width: number; $height: number }>`
+  position: relative;
+  width: ${({ $width }) => $width}px;
+  height: ${({ $height }) => $height}px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 8px;
+  overflow: hidden;
+  animation: ${fadeIn} 0.3s ease;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+`;
+
+/** 다시 불러오는 동안 깜빡임을 가린다 */
+export const PreviewLoading = styled.div`
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  /* 카드가 실제로 차지하는 폭. 그래야 문구가 카드 무리의 중앙에 온다 */
-  width: ${({ $width }) => ($width > 0 ? `${$width}px` : '100%')};
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${({ theme }) => theme.colors.background};
+  font-family: ${({ theme }) => theme.fonts.display};
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: ${({ theme }) => theme.colors.textDim};
+`;
+
+/**
+ * iframe 위로 마우스가 들어가면 홈 페이지는 이벤트를 받지 못한다.
+ * 사이드바가 펼쳐진 동안 투명한 막을 덮어, 바 밖으로 나간 것을 알아챈다.
+ */
+export const PreviewShield = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+`;
+
+/** 로그인해야 쓸 수 있는 위젯의 미리보기를 가린다 */
+export const LockOverlay = styled.div`
+  position: absolute;
+  inset: 0;
   z-index: 5;
   display: flex;
   flex-direction: column;
@@ -233,7 +567,6 @@ export const LockOverlay = styled.div<{ $width: number }>`
     display: block;
     color: ${({ theme }) => theme.colors.textDim};
   }
-  border-radius: 6px;
   /* 뒤의 미리보기가 비쳐 보일 만큼만 덮는다 */
   background: ${({ theme }) => withAlpha(theme.colors.background, 0.72)};
 `;
@@ -245,221 +578,17 @@ export const LockText = styled.p`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const SectionHeader = styled.div`
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 16px;
-`;
-
-export const SectionName = styled.h2`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 13px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.text};
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-`;
-
-export const SectionCategory = styled.span`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 9px;
-  font-weight: 400;
-  color: ${({ theme }) => theme.colors.secondary};
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  border: 1px solid ${({ theme }) => theme.colors.secondary};
-  padding: 2px 8px;
-  border-radius: 20px;
-  opacity: 0.8;
-`;
-
-export const WidgetDescription = styled.p`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 13px;
-  font-weight: 400;
-  color: ${({ theme }) => theme.colors.textDim};
-  letter-spacing: 0.05em;
-  line-height: 1.6;
-  margin-bottom: 14px;
-  /* 설명에 넣은 줄바꿈(\n)을 그대로 살린다 */
-  white-space: pre-line;
-`;
-
 /** 고유키를 못 가져왔을 때처럼, 그냥 두면 잘못된 URL이 복사되는 상황을 알린다 */
 export const WidgetWarning = styled.p`
+  flex-shrink: 0;
+  align-self: center;
+  max-width: 640px;
   font-family: ${({ theme }) => theme.fonts.display};
   font-size: 12px;
   line-height: 1.6;
   letter-spacing: 0.04em;
   color: ${({ theme }) => theme.colors.accent};
   padding: 8px 12px;
-  margin-bottom: 14px;
   border-radius: 4px;
   border: 1px solid ${({ theme }) => theme.colors.accent};
-`;
-
-/** 제목 줄에 함께 놓는다. 아래에 따로 두면 있는 줄도 모르고 지나친다 */
-export const FontRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  /* 카테고리 표시에 바로 붙지 않게 한 칸 띄운다 */
-  margin-left: 16px;
-`;
-
-export const FontLabel = styled.span`
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 11px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-`;
-
-export const FontChip = styled.button<{
-  $active: boolean;
-  /** 없으면 default 칩이라 테마 폰트를 그대로 쓴다 */
-  $family?: string;
-  $scale: number;
-}>`
-  /* 칩마다 자기 폰트로 이름을 보여준다 */
-  font-family: ${({ theme, $family }) => $family ?? theme.fonts.display};
-  /* scale을 그대로 곱하면 칩 크기가 제각각이라 살짝만 반영한다 */
-  font-size: ${({ $scale }) => 9 * Math.min($scale, 1.15)}px;
-  /* 폰트마다 글자 상자 높이가 달라 세로 중앙이 어긋난다 */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  height: 22px;
-  box-sizing: border-box;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  padding: 0 10px;
-  border-radius: 20px;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
-  /* primaryGlow는 글자색과 밝기가 비슷해 고른 칩의 글자가 묻힌다 */
-  background: ${({ $active, theme }) =>
-    $active ? withAlpha(theme.colors.primary, 0.18) : 'transparent'};
-  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.border)};
-  color: ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.textDim)};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-/** 칩 크기는 그대로 두고 글자만 위아래로 미세하게 옮긴다 */
-export const FontChipLabel = styled.span<{ $offsetY: number }>`
-  transform: translateY(${({ $offsetY }) => $offsetY}px);
-`;
-
-/** 잠금 화면이 카드 무리의 폭을 계산할 때도 같은 값을 써야 한다 */
-export const CARD_WIDTH = 220;
-export const CARD_GAP = 16;
-
-/** 세로형 미리보기 크기. 가로만 조정하고 세로는 그대로 두면 된다 */
-const PORTRAIT_CARD_WIDTH = 170;
-const PORTRAIT_CARD_HEIGHT = 215;
-
-/**
- * 미리보기는 실제 위젯을 축소해 보여준다.
- * 위젯을 그리는 기준 크기를 카드와 같은 비율로 잡아야 잘리지 않는다.
- */
-export const previewSpec = (portrait: boolean) => {
-  if (!portrait) {
-    return {
-      cardWidth: CARD_WIDTH,
-      ratio: '16 / 9',
-      baseWidth: 400,
-      baseHeight: 225,
-      scale: 0.55,
-    };
-  }
-
-  const baseHeight = 400;
-  const baseWidth = Math.round((baseHeight * PORTRAIT_CARD_WIDTH) / PORTRAIT_CARD_HEIGHT);
-
-  return {
-    cardWidth: PORTRAIT_CARD_WIDTH,
-    ratio: `${PORTRAIT_CARD_WIDTH} / ${PORTRAIT_CARD_HEIGHT}`,
-    baseWidth,
-    baseHeight,
-    scale: PORTRAIT_CARD_WIDTH / baseWidth,
-  };
-};
-
-export const ThemeRow = styled.div`
-  display: flex;
-  gap: ${CARD_GAP}px;
-  flex-wrap: wrap;
-  /* 잠금 화면이 이 영역만 덮는다 */
-  position: relative;
-`;
-
-export const ThemeCard = styled.div<{ $width: number }>`
-  width: ${({ $width }) => $width}px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  flex-shrink: 0;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    transform: translateY(-3px);
-    box-shadow: 0 0 20px ${({ theme }) => theme.colors.primaryGlow};
-  }
-`;
-
-export const PreviewArea = styled.div<{ $ratio: string }>`
-  width: 100%;
-  aspect-ratio: ${({ $ratio }) => $ratio};
-  overflow: hidden;
-  position: relative;
-`;
-
-export const PreviewScaler = styled.div<{ $w: number; $h: number; $scale: number }>`
-  width: ${({ $w }) => $w}px;
-  height: ${({ $h }) => $h}px;
-  transform: scale(${({ $scale }) => $scale});
-  transform-origin: top left;
-  pointer-events: none;
-`;
-
-export const ThemeBadge = styled.div<{ $color: string }>`
-  padding: 8px 12px;
-  font-family: ${({ theme }) => theme.fonts.display};
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  background: ${({ theme }) => theme.colors.surface};
-  color: ${({ $color }) => $color};
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-export const CopyButton = styled.button<{ $copied: boolean }>`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  color: ${({ $copied, theme }) => $copied ? theme.colors.secondary : theme.colors.text};
-  opacity: ${({ $copied }) => $copied ? 1 : 0.6};
-  transition: opacity 0.2s, color 0.2s;
-  flex-shrink: 0;
-
-  &:hover {
-    opacity: 1;
-  }
 `;

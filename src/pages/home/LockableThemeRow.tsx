@@ -1,11 +1,7 @@
-import type { ReactNode } from 'react';
-import { useCardRowWidth } from './useCardRowWidth';
-import { ThemeRow, LockOverlay, LockText } from './Home.styled';
+import { LockOverlay, LockText } from './Home.styled';
 
 interface Props {
   locked: boolean;
-  cardWidth: number;
-  children: ReactNode;
 }
 
 const LockIcon = () => (
@@ -15,19 +11,14 @@ const LockIcon = () => (
   </svg>
 );
 
-/** 테마 카드 줄. 잠겨 있으면 카드 무리 위에만 반투명 막을 덮는다 */
-export const LockableThemeRow = ({ locked, cardWidth, children }: Props) => {
-  const { ref, width } = useCardRowWidth(cardWidth);
+/** 잠겨 있으면 미리보기 위에 반투명 막을 덮는다. 미리보기 틀 안에 둔다 */
+export const LockableThemeRow = ({ locked }: Props) => {
+  if (!locked) return null;
 
   return (
-    <ThemeRow ref={ref}>
-      {locked && (
-        <LockOverlay $width={width}>
-          <LockIcon />
-          <LockText>로그인이 필요합니다</LockText>
-        </LockOverlay>
-      )}
-      {children}
-    </ThemeRow>
+    <LockOverlay>
+      <LockIcon />
+      <LockText>로그인이 필요합니다</LockText>
+    </LockOverlay>
   );
 };
