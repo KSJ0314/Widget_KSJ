@@ -21,19 +21,11 @@ export const CheckIcon = () => (
   </Svg>
 );
 
-export const PinIcon = () => (
+/** 펼침 고정 버튼. 사이드바 토글 모양(둥근 사각형 + 왼쪽 세로선) */
+export const PanelIcon = () => (
   <Svg>
-    <path d="M9 4h6l-1 6 3 3H7l3-3z" />
-    <line x1="12" y1="13" x2="12" y2="20" />
-  </Svg>
-);
-
-/** 폰트·색상 구역 */
-export const TypeIcon = () => (
-  <Svg>
-    <polyline points="4 7 4 4 20 4 20 7" />
-    <line x1="9" y1="20" x2="15" y2="20" />
-    <line x1="12" y1="4" x2="12" y2="20" />
+    <rect x="3" y="4" width="18" height="16" rx="2.5" />
+    <line x1="9" y1="4" x2="9" y2="20" />
   </Svg>
 );
 

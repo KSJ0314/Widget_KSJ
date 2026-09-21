@@ -7,6 +7,7 @@ import { MonthlyCalendar } from '@calendar/monthly';
 import { MonthlyScheduler } from '@scheduler/monthly';
 import { DailyScheduler } from '@scheduler/daily';
 import { WeatherCurrentPage } from '@weather/current';
+import type { ChipBgKey, ChipDotKey } from './chipColors';
 
 /**
  * 위젯은 보통 URL의 ?u= 로 고유키를 받는다.
@@ -23,6 +24,10 @@ export interface WidgetMeta {
   path: string;
   themes: ThemeName[];
   component: ComponentType<WidgetProps>;
+  /** 색상 버튼 바탕에 쓸 테마 필드. 이 위젯이 화면에서 가장 크게 쓰는 바탕과 같아야 한다 */
+  chipBg: ChipBgKey;
+  /** 색상 버튼의 테두리·가운데 원에 쓸 테마 필드. 이 위젯의 대표(강조) 색 */
+  chipDot: ChipDotKey;
   requiresLocation?: boolean;
   /** URL에 계정 고유키(&u=)를 붙여야 하는 위젯. 개인 데이터를 다루는 위젯만 해당한다 */
   requiresWidgetKey?: boolean;
@@ -43,6 +48,8 @@ export const widgets: WidgetMeta[] = [
     path: '/clock/digital',
     themes: ['dark', 'pink', 'green', 'ivory'],
     component: DigitalClock,
+    chipBg: 'background',
+    chipDot: 'primary',
   },
   {
     id: 'clock-analog',
@@ -51,6 +58,8 @@ export const widgets: WidgetMeta[] = [
     path: '/clock/analog',
     themes: ['dark', 'pink', 'green', 'ivory'],
     component: AnalogClock,
+    chipBg: 'surface',
+    chipDot: 'primary',
     hideFont: true,
   },
   {
@@ -64,6 +73,8 @@ export const widgets: WidgetMeta[] = [
       'lightBlueWhite', 'lightPinkWhite', 'lightGreenWhite',
     ],
     component: FlipClock,
+    chipBg: 'surface',
+    chipDot: 'primary',
   },
   {
     id: 'calendar-monthly',
@@ -76,6 +87,8 @@ export const widgets: WidgetMeta[] = [
       'lightBlue', 'lightPink', 'lightGreen',
     ],
     component: MonthlyCalendar,
+    chipBg: 'paperSurface',
+    chipDot: 'primary',
     previewPortrait: true,
   },
   {
@@ -89,6 +102,8 @@ export const widgets: WidgetMeta[] = [
       'lightBlue', 'lightPink', 'lightGreen',
     ],
     component: MonthlyScheduler,
+    chipBg: 'background',
+    chipDot: 'primary',
     requiresWidgetKey: true,
     description:
       '로그인하면 일정을 관리할 수 있고, 복사되는 URL에 사용자의 고유키가 추가됩니다.\n' +
@@ -107,6 +122,8 @@ export const widgets: WidgetMeta[] = [
       'lightBlue', 'lightPink', 'lightGreen',
     ],
     component: DailyScheduler,
+    chipBg: 'primaryTint',
+    chipDot: 'primary',
     requiresWidgetKey: true,
     previewPortrait: true,
     description:
@@ -121,6 +138,8 @@ export const widgets: WidgetMeta[] = [
     path: '/weather/current',
     themes: ['dark', 'pink', 'green', 'ivory', 'lightBlue', 'lightPink', 'lightGreen'],
     component: WeatherCurrentPage,
+    chipBg: 'background',
+    chipDot: 'accent',
     requiresLocation: true,
     description: 'URL 복사 시 현재 위치가 자동으로 포함됩니다. 복사된 URL을 임베드하면 해당 지역 날씨로 고정됩니다.',
   },

@@ -10,7 +10,8 @@ const pulse = keyframes`
   50% { opacity: 0.75; }
 `;
 
-const DIGIT_FONT = "'Orbitron', sans-serif";
+// 폰트 칩을 고르지 않았을 때(default) 시각 숫자 폰트. 한글이 들어 있는 pretendard 패키지의 가변 폰트(main.tsx에서 불러옴)
+const DIGIT_FONT = "'Pretendard Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif";
 
 export const ClockContainer = styled.div`
   width: 100%;

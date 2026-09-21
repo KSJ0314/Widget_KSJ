@@ -39,6 +39,10 @@ declare module 'styled-components' {
   export interface DefaultTheme extends AppTheme {}
 }
 
+/** 한글이 들어 있는 pretendard 패키지의 가변 폰트(main.tsx에서 불러옴) */
+const PRETENDARD_DISPLAY =
+  "'Pretendard Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif";
+
 const dark: AppTheme = {
   colors: {
     background: '#0a0a0f',
@@ -54,7 +58,7 @@ const dark: AppTheme = {
     scanline: 'rgba(255, 255, 255, 0.04)',
   },
   fonts: {
-    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    display: PRETENDARD_DISPLAY,
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -76,7 +80,7 @@ const pink: AppTheme = {
     scanline: 'rgba(255, 255, 255, 0.04)',
   },
   fonts: {
-    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    display: PRETENDARD_DISPLAY,
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -98,7 +102,7 @@ const green: AppTheme = {
     scanline: 'rgba(255, 255, 255, 0.04)',
   },
   fonts: {
-    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    display: PRETENDARD_DISPLAY,
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -120,7 +124,7 @@ const ivory: AppTheme = {
     scanline: 'rgba(0, 0, 0, 0.03)',
   },
   fonts: {
-    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    display: PRETENDARD_DISPLAY,
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -142,7 +146,7 @@ const lightBlue: AppTheme = {
     scanline: 'rgba(0, 0, 0, 0.03)',
   },
   fonts: {
-    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    display: PRETENDARD_DISPLAY,
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -164,7 +168,7 @@ const lightPink: AppTheme = {
     scanline: 'rgba(0, 0, 0, 0.03)',
   },
   fonts: {
-    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    display: PRETENDARD_DISPLAY,
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',
@@ -186,7 +190,7 @@ const lightGreen: AppTheme = {
     scanline: 'rgba(0, 0, 0, 0.03)',
   },
   fonts: {
-    display: "'Orbitron', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif",
+    display: PRETENDARD_DISPLAY,
     mono: "'Courier New', Courier, monospace",
   },
   variant: 'digital',

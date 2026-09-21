@@ -6,6 +6,8 @@ import { getCurrentPosition } from '@weather/useWeather';
 import { findNearestCity } from '@/data/cityMap';
 import { useAuthStore } from '@/store/authStore';
 import { useContainerSize } from '@/hooks/useContainerSize';
+import { homeFontFor, homeFontScale } from './homeTheme';
+import { chipColors } from './chipColors';
 import { LockableThemeRow } from './LockableThemeRow';
 import { LocalMigrateButton } from './LocalMigrateButton';
 import {
@@ -13,9 +15,8 @@ import {
   CheckIcon,
   ClipboardIcon,
   ClockIcon,
-  PinIcon,
+  PanelIcon,
   SchedulerIcon,
-  TypeIcon,
   UserIcon,
   WeatherIcon,
   WidgetIcon,
@@ -37,6 +38,7 @@ import {
   FontChipLabel,
   ThemeChip,
   ThemeDot,
+  RailThemeDot,
   CategoryGroup,
   CategoryTitle,
   WidgetItem,
@@ -52,7 +54,9 @@ import {
   ModalActions,
   ModalButton,
   Stage,
-  StageToolbar,
+  StageHeader,
+  StageTitleRow,
+  StageTitle,
   CopyUrlButton,
   FitBox,
   PreviewFrame,
@@ -92,7 +96,7 @@ export const Home = () => {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [widget, setWidget] = useState<WidgetMeta>(widgets[0]);
-  const [themeName, setThemeName] = useState<ThemeName>('dark');
+  const [themeName, setThemeName] = useState<ThemeName>('ivory');
   const [font, setFont] = useState<FontName>('default');
   const [hovered, setHovered] = useState(false);
   const [pinned, setPinned] = useState(false);
@@ -174,7 +178,11 @@ export const Home = () => {
   }, [previewSrc, frameLoaded]);
 
   return (
-    <HomeContainer>
+    <HomeContainer
+      $font={homeFontFor(font)}
+      $fontScale={homeFontScale(font)}
+      $dark={themes[themeName].isDark}
+    >
       <Sidebar
         $expanded={expanded}
         onMouseEnter={() => setHovered(true)}
@@ -189,7 +197,7 @@ export const Home = () => {
                 onClick={() => setPinned(prev => !prev)}
                 title={pinned ? '펼침 고정 해제' : '펼침 고정'}
               >
-                <PinIcon />
+                <PanelIcon />
               </IconButton>
             )}
           </LogoRow>
@@ -203,12 +211,12 @@ export const Home = () => {
                       <GroupLabel>폰트</GroupLabel>
                       <ChipList>
                         {fontNames.map(fontName => {
-                          const { family, scale, nudge } = fontPreview(fontName);
+                          const { scale, nudge } = fontPreview(fontName);
                           return (
                             <FontChip
                               key={fontName}
                               $active={font === fontName}
-                              $family={family}
+                              $family={homeFontFor(fontName)}
                               $scale={scale}
                               onClick={() => setFont(fontName)}
                             >
@@ -221,26 +229,35 @@ export const Home = () => {
                   )}
                   <GroupLabel>색상</GroupLabel>
                   <ChipList>
-                    {widget.themes.map(name => (
-                      <ThemeChip
-                        key={name}
-                        $active={themeName === name}
-                        onClick={() => setThemeName(name)}
-                      >
-                        <ThemeDot $color={themes[name].colors.primary} />
-                        {name}
-                      </ThemeChip>
-                    ))}
+                    {widget.themes.map(name => {
+                      // 버튼 색은 고른 위젯이 그 테마에서 실제로 쓰는 색이다
+                      const { bg, dot } = chipColors(themes[name], widget.chipBg, widget.chipDot);
+                      return (
+                        <ThemeChip
+                          key={name}
+                          $active={themeName === name}
+                          $bg={bg}
+                          $color={dot}
+                          title={name}
+                          onClick={() => setThemeName(name)}
+                        >
+                          <ThemeDot $color={dot} />
+                        </ThemeChip>
+                      );
+                    })}
                   </ChipList>
                 </>
               ) : (
-                <RailIcon title="폰트·색상">
-                  <TypeIcon />
-                </RailIcon>
+                <>
+                  <RailIcon title="폰트·색상">T</RailIcon>
+                  <RailThemeDot
+                    $color={chipColors(themes[themeName], widget.chipBg, widget.chipDot).dot}
+                  />
+                </>
               )}
             </SidebarSection>
 
-            <SidebarSection $expanded={expanded}>
+            <SidebarSection $expanded={expanded} $divider>
               {expanded ? (
                 <>
                   <GroupLabel>위젯</GroupLabel>
@@ -248,9 +265,8 @@ export const Home = () => {
                     const Icon = categoryIcons[category] ?? WidgetIcon;
                     return (
                       <CategoryGroup key={category}>
-                        <CategoryTitle>
+                        <CategoryTitle title={category}>
                           <Icon />
-                          {category}
                         </CategoryTitle>
                         {categoryWidgets.map(item => (
                           <WidgetItem
@@ -264,7 +280,6 @@ export const Home = () => {
                       </CategoryGroup>
                     );
                   })}
-                  {widget.description && <WidgetDescription>{widget.description}</WidgetDescription>}
                 </>
               ) : (
                 [...grouped.entries()].map(([category, categoryWidgets]) => {
@@ -313,13 +328,17 @@ export const Home = () => {
         </SidebarInner>
       </Sidebar>
 
-      <Stage>
-        <StageToolbar>
-          <CopyUrlButton $copied={copied} onClick={copyUrl}>
-            {copied ? <CheckIcon /> : <ClipboardIcon />}
-            {copied ? '복사됨' : '노션용 URL 복사'}
-          </CopyUrlButton>
-        </StageToolbar>
+      <Stage $pinned={pinned} $bg={themes[themeName].colors.background}>
+        <StageHeader>
+          <StageTitleRow>
+            <StageTitle>{widget.name}</StageTitle>
+            <CopyUrlButton $copied={copied} onClick={copyUrl}>
+              {copied ? <CheckIcon /> : <ClipboardIcon />}
+              {copied ? '복사됨' : '노션용 URL 복사'}
+            </CopyUrlButton>
+          </StageTitleRow>
+          {widget.description && <WidgetDescription>{widget.description}</WidgetDescription>}
+        </StageHeader>
 
         <FitBox ref={fitRef}>
           {showFrame && (

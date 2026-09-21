@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import { tintOver, lineColor } from '@/theme/colorUtils';
 
+/** 배경에 까는 테마 포인트 색의 농도. 홈의 색상 버튼(chipColors.ts)도 이 값을 쓴다 */
+export const TINT_ALPHA = 0.07;
+
 export const Wrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -11,7 +14,7 @@ export const Wrapper = styled.div`
    * 흰 배경 대신 테마 포인트 색을 옅게 깐다.
    * 틴트만 두면 뒤가 비쳐 홈 미리보기에서 색이 섞이므로 불투명 바탕을 함께 깐다.
    */
-  background: ${({ theme }) => tintOver(theme.colors.primary, theme.colors.background, 0.07)};
+  background: ${({ theme }) => tintOver(theme.colors.primary, theme.colors.background, TINT_ALPHA)};
 
   scrollbar-width: thin;
   scrollbar-color: ${lineColor} transparent;

@@ -8,10 +8,10 @@ const KO_FALLBACK = "'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', san
  */
 export const fontSets: Record<string, AppTheme['fonts'] | undefined> = {
   default: undefined,
-  pretendard: {
-    display: `'Pretendard', ${KO_FALLBACK}`,
-    mono: `'Pretendard', ${KO_FALLBACK}`,
-    digit: `'Pretendard', ${KO_FALLBACK}`,
+  orbitron: {
+    display: `'Orbitron', ${KO_FALLBACK}`,
+    mono: `'Orbitron', ${KO_FALLBACK}`,
+    digit: `'Orbitron', ${KO_FALLBACK}`,
   },
   griun: {
     display: `'Griun', ${KO_FALLBACK}`,
@@ -37,11 +37,22 @@ export const fontSets: Record<string, AppTheme['fonts'] | undefined> = {
     digit: `'Nanum Pen Script', ${KO_FALLBACK}`,
     scale: 1.25,
   },
+  // 칩 목록에서는 숨긴다. 이미 복사된 `&font=pretendard` 주소가 계속 동작하도록 남겨 둔다
+  pretendard: {
+    display: `'Pretendard', ${KO_FALLBACK}`,
+    mono: `'Pretendard', ${KO_FALLBACK}`,
+    digit: `'Pretendard', ${KO_FALLBACK}`,
+  },
 };
 
 export type FontName = keyof typeof fontSets;
 
-export const fontNames = Object.keys(fontSets) as FontName[];
+/** 폰트 칩에서 숨길 프리셋 이름 */
+const HIDDEN_FONTS: FontName[] = ['pretendard'];
+
+export const fontNames = Object.keys(fontSets).filter(
+  (name) => !HIDDEN_FONTS.includes(name),
+) as FontName[];
 
 /** 글리프가 em 상자 위쪽에 치우친 폰트를 칩에서 눈으로 맞추기 위한 보정 (px) */
 const CHIP_NUDGE: Partial<Record<string, number>> = {
@@ -50,7 +61,7 @@ const CHIP_NUDGE: Partial<Record<string, number>> = {
 
 /**
  * 홈에서 폰트 이름을 그 폰트로 보여줄 때 쓴다.
- * family가 없으면 default라, 부르는 쪽에서 테마 폰트를 그대로 쓰면 된다.
+ * family가 없으면 default라, 부르는 쪽이 기본 폰트를 정한다.
  */
 export const fontPreview = (name: FontName) => ({
   family: fontSets[name]?.display,
